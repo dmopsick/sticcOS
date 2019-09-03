@@ -51,6 +51,10 @@ var TSOS;
             // whereami
             sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Just in case you forget where you are.");
             this.commandList[this.commandList.length] = sc;
+            // encouragement 
+            // (Original command for Project 1)
+            sc = new TSOS.ShellCommand(this.shellEncouragement, "encouragement", "- Provides some much needed encouragement");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             // Display the initial prompt.
@@ -226,6 +230,8 @@ var TSOS;
                     case "whereami":
                         _StdOut.putText("Whereami displays where you are which is good.");
                         break;
+                    case "encouragement":
+                        _StdOut.putText("Encouragement gives you that extra push to keep working in SticcOS.");
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -286,6 +292,48 @@ var TSOS;
         // Tells the user where they are
         Shell.prototype.shellWhereAmI = function (args) {
             _StdOut.putText("You are safe and happy using SticcOS at Marist College :)");
+        };
+        // Encourages the user to keep on trying their best and to not give up
+        Shell.prototype.shellEncouragement = function (args) {
+            var encouragementKey = Math.floor((Math.random() * 10) + 1);
+            console.log(encouragementKey);
+            var encouragementText = "HELP ME";
+            switch (encouragementKey) {
+                case 1:
+                    encouragementText = "You are doing great! Have a great day :)";
+                    break;
+                case 2:
+                    encouragementText = "Anything is possible!!!";
+                    break;
+                case 3:
+                    encouragementText = "Start every day with a smile :D";
+                    break;
+                case 4:
+                    encouragementText = "Even the longest joureny begins with the first step.";
+                    break;
+                case 5:
+                    encouragementText = "It does not cost anything to have a good attitude";
+                    break;
+                case 6:
+                    encouragementText = "'You miss 100% of the shots you don't take' - Wayne Gretzky - Michael Scott";
+                    break;
+                case 7:
+                    encouragementText = "JUST DO IT! DON'T LET YOUR DREAMS BE DREAMS!";
+                    break;
+                case 8:
+                    encouragementText = "Be the best you that you can be :)";
+                    break;
+                case 9:
+                    encouragementText = "I love you!!!";
+                    break;
+                case 10:
+                    encouragementText = "Existince is pain. Please unplug me.";
+                    break;
+                default:
+                    encouragementText = "What is the worst that could happen?";
+                    break;
+            }
+            _StdOut.putText(encouragementText);
         };
         return Shell;
     }());
