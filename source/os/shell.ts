@@ -73,6 +73,25 @@ module TSOS {
                                   "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
 
+            // date
+            sc = new ShellCommand(this.shellDate,
+                                    "date",
+                                    "- Displays the current date and time.");
+            this.commandList[this.commandList.length] = sc;
+
+            // whereami
+            sc = new ShellCommand(this.shellWhereAmI,
+                                    "whereami",
+                                    "- Just in case you forget where you are.");
+            this.commandList[this.commandList.length] = sc;
+
+            // encouragement 
+            // (Original command for Project 1)
+            sc = new ShellCommand(this.shellEncouragement,
+                                    "encouragement",
+                                    "- Provides some much needed encouragement");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -231,9 +250,38 @@ module TSOS {
             if (args.length > 0) {
                 var topic = args[0];
                 switch (topic) {
+                    case "ver":
+                        _StdOut.putText("Ver displays the current version data of SticcOS running");
+                        break;
                     case "help":
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
                         break;
+                    case "shutdown":
+                        _StdOut.putText("Shutdown shuts down SticcOS when you are all done.");
+                        break;
+                    case "cls":
+                        _StdOut.putText("Cls clears the screen and resets the cursor.");
+                        break;
+                    case "man":
+                        _StdOut.putText("What a meta command you entered. Man <topic> - displays info on specified topic.")
+                        break;
+                    case "trace":
+                        _StdOut.putText("Turn the trace feature on or off for SticcOS.");
+                        break;
+                    case "rot13":
+                        _StdOut.putText("Rot13 <string> does rot13 obsfucation on the specified string");
+                        break;
+                    case "prompt": 
+                        _StdOut.putText("Prompt <string> sets the prompt the preempts each command.");
+                        break;
+                    case "date":
+                        _StdOut.putText("Date displays the current date and time.");
+                        break;
+                    case "whereami":
+                        _StdOut.putText("Whereami displays where you are which is good.");
+                        break;
+                    case "encouragement":
+                        _StdOut.putText("Encouragement gives you that extra push to keep working in SticcOS.");
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -282,6 +330,61 @@ module TSOS {
             } else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
+        }
+
+        // Displays the current date and time in the console.
+        public shellDate(args: string[]) {
+            const timeString = new Date().toLocaleTimeString();
+            const dateString = new Date().toDateString();
+            _StdOut.putText("It is currently: " + timeString + " on " + dateString);
+        }
+
+        // Tells the user where they are
+        public shellWhereAmI(args: string[]) {
+            _StdOut.putText("You are safe and happy using SticcOS at Marist College :)");
+        }
+
+        // Encourages the user to keep on trying their best and to not give up
+        public shellEncouragement(args: string[]) {
+            const encouragementKey = Math.floor((Math.random() * 10) + 1);
+            console.log(encouragementKey);
+            let encouragementText = "HELP ME";
+            switch (encouragementKey) {
+                case 1: 
+                    encouragementText = "You are doing great! Have a great day :)";
+                    break;
+                case 2:
+                    encouragementText = "Anything is possible!!!";
+                    break;
+                case 3:
+                    encouragementText = "Start every day with a smile :D";
+                    break;
+                case 4:
+                    encouragementText = "Even the longest joureny begins with the first step.";
+                    break;
+                case 5:
+                    encouragementText = "It does not cost anything to have a good attitude";
+                    break;
+                case 6:
+                    encouragementText = "'You miss 100% of the shots you don't take' - Wayne Gretzky - Michael Scott";
+                    break;
+                case 7:
+                    encouragementText = "JUST DO IT! DON'T LET YOUR DREAMS BE DREAMS!";
+                    break;
+                case 8: 
+                    encouragementText = "Be the best you that you can be :)";
+                    break;
+                case 9:
+                    encouragementText = "I love you!!!";
+                    break;
+                case 10:
+                    encouragementText = "Existince is pain. Please unplug me.";
+                    break;
+                default:
+                    encouragementText = "What is the worst that could happen?";
+                    break;
+            }
+            _StdOut.putText(encouragementText);
         }
 
     }

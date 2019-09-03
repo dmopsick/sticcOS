@@ -9,15 +9,15 @@
 // TODO: Write a base class / prototype for system services and let Shell inherit from it.
 var TSOS;
 (function (TSOS) {
-    class Shell {
-        constructor() {
+    var Shell = /** @class */ (function () {
+        function Shell() {
             // Properties
             this.promptStr = ">";
             this.commandList = [];
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
         }
-        init() {
+        Shell.prototype.init = function () {
             var sc;
             //
             // Load the command list.
@@ -45,15 +45,25 @@ var TSOS;
             // prompt <string>
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
+            // date
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "- Displays the current date and time.");
+            this.commandList[this.commandList.length] = sc;
+            // whereami
+            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Just in case you forget where you are.");
+            this.commandList[this.commandList.length] = sc;
+            // encouragement 
+            // (Original command for Project 1)
+            sc = new TSOS.ShellCommand(this.shellEncouragement, "encouragement", "- Provides some much needed encouragement");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             // Display the initial prompt.
             this.putPrompt();
-        }
-        putPrompt() {
+        };
+        Shell.prototype.putPrompt = function () {
             _StdOut.putText(this.promptStr);
-        }
-        handleInput(buffer) {
+        };
+        Shell.prototype.handleInput = function (buffer) {
             _Kernel.krnTrace("Shell Command~" + buffer);
             //
             // Parse the input...
@@ -95,9 +105,9 @@ var TSOS;
                     this.execute(this.shellInvalidCommand);
                 }
             }
-        }
+        };
         // Note: args is an optional parameter, ergo the ? which allows TypeScript to understand that.
-        execute(fn, args) {
+        Shell.prototype.execute = function (fn, args) {
             // We just got a command, so advance the line...
             _StdOut.advanceLine();
             // ... call the command function passing in the args with some über-cool functional programming ...
@@ -108,8 +118,8 @@ var TSOS;
             }
             // ... and finally write the prompt again.
             this.putPrompt();
-        }
-        parseInput(buffer) {
+        };
+        Shell.prototype.parseInput = function (buffer) {
             var retVal = new TSOS.UserCommand();
             // 1. Remove leading and trailing spaces.
             buffer = TSOS.Utils.trim(buffer);
@@ -131,12 +141,12 @@ var TSOS;
                 }
             }
             return retVal;
-        }
+        };
         //
         // Shell Command Functions. Kinda not part of Shell() class exactly, but
         // called from here, so kept here to avoid violating the law of least astonishment.
         //
-        shellInvalidCommand() {
+        Shell.prototype.shellInvalidCommand = function () {
             _StdOut.putText("Invalid Command. ");
             if (_SarcasticMode) {
                 _StdOut.putText("Unbelievable. You, [subject name here],");
@@ -146,14 +156,14 @@ var TSOS;
             else {
                 _StdOut.putText("Type 'help' for, well... help.");
             }
-        }
-        shellCurse() {
+        };
+        Shell.prototype.shellCurse = function () {
             _StdOut.putText("Oh, so that's how it's going to be, eh? Fine.");
             _StdOut.advanceLine();
             _StdOut.putText("Bitch.");
             _SarcasticMode = true;
-        }
-        shellApology() {
+        };
+        Shell.prototype.shellApology = function () {
             if (_SarcasticMode) {
                 _StdOut.putText("I think we can put our differences behind us.");
                 _StdOut.advanceLine();
@@ -163,36 +173,65 @@ var TSOS;
             else {
                 _StdOut.putText("For what?");
             }
-        }
+        };
         // Although args is unused in some of these functions, it is always provided in the 
         // actual parameter list when this function is called, so I feel like we need it.
-        shellVer(args) {
+        Shell.prototype.shellVer = function (args) {
             _StdOut.putText(APP_NAME + " version " + APP_VERSION);
-        }
-        shellHelp(args) {
+        };
+        Shell.prototype.shellHelp = function (args) {
             _StdOut.putText("Commands:");
             for (var i in _OsShell.commandList) {
                 _StdOut.advanceLine();
                 _StdOut.putText("  " + _OsShell.commandList[i].command + " " + _OsShell.commandList[i].description);
             }
-        }
-        shellShutdown(args) {
+        };
+        Shell.prototype.shellShutdown = function (args) {
             _StdOut.putText("Shutting down...");
             // Call Kernel shutdown routine.
             _Kernel.krnShutdown();
             // TODO: Stop the final prompt from being displayed. If possible. Not a high priority. (Damn OCD!)
-        }
-        shellCls(args) {
+        };
+        Shell.prototype.shellCls = function (args) {
             _StdOut.clearScreen();
             _StdOut.resetXY();
-        }
-        shellMan(args) {
+        };
+        Shell.prototype.shellMan = function (args) {
             if (args.length > 0) {
                 var topic = args[0];
                 switch (topic) {
+                    case "ver":
+                        _StdOut.putText("Ver displays the current version data of SticcOS running");
+                        break;
                     case "help":
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
                         break;
+                    case "shutdown":
+                        _StdOut.putText("Shutdown shuts down SticcOS when you are all done.");
+                        break;
+                    case "cls":
+                        _StdOut.putText("Cls clears the screen and resets the cursor.");
+                        break;
+                    case "man":
+                        _StdOut.putText("What a meta command you entered. Man <topic> - displays info on specified topic.");
+                        break;
+                    case "trace":
+                        _StdOut.putText("Turn the trace feature on or off for SticcOS.");
+                        break;
+                    case "rot13":
+                        _StdOut.putText("Rot13 <string> does rot13 obsfucation on the specified string");
+                        break;
+                    case "prompt":
+                        _StdOut.putText("Prompt <string> sets the prompt the preempts each command.");
+                        break;
+                    case "date":
+                        _StdOut.putText("Date displays the current date and time.");
+                        break;
+                    case "whereami":
+                        _StdOut.putText("Whereami displays where you are which is good.");
+                        break;
+                    case "encouragement":
+                        _StdOut.putText("Encouragement gives you that extra push to keep working in SticcOS.");
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -201,8 +240,8 @@ var TSOS;
             else {
                 _StdOut.putText("Usage: man <topic>  Please supply a topic.");
             }
-        }
-        shellTrace(args) {
+        };
+        Shell.prototype.shellTrace = function (args) {
             if (args.length > 0) {
                 var setting = args[0];
                 switch (setting) {
@@ -226,8 +265,8 @@ var TSOS;
             else {
                 _StdOut.putText("Usage: trace <on | off>");
             }
-        }
-        shellRot13(args) {
+        };
+        Shell.prototype.shellRot13 = function (args) {
             if (args.length > 0) {
                 // Requires Utils.ts for rot13() function.
                 _StdOut.putText(args.join(' ') + " = '" + TSOS.Utils.rot13(args.join(' ')) + "'");
@@ -235,16 +274,68 @@ var TSOS;
             else {
                 _StdOut.putText("Usage: rot13 <string>  Please supply a string.");
             }
-        }
-        shellPrompt(args) {
+        };
+        Shell.prototype.shellPrompt = function (args) {
             if (args.length > 0) {
                 _OsShell.promptStr = args[0];
             }
             else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
-        }
-    }
+        };
+        // Displays the current date and time in the console.
+        Shell.prototype.shellDate = function (args) {
+            var timeString = new Date().toLocaleTimeString();
+            var dateString = new Date().toDateString();
+            _StdOut.putText("It is currently: " + timeString + " on " + dateString);
+        };
+        // Tells the user where they are
+        Shell.prototype.shellWhereAmI = function (args) {
+            _StdOut.putText("You are safe and happy using SticcOS at Marist College :)");
+        };
+        // Encourages the user to keep on trying their best and to not give up
+        Shell.prototype.shellEncouragement = function (args) {
+            var encouragementKey = Math.floor((Math.random() * 10) + 1);
+            console.log(encouragementKey);
+            var encouragementText = "HELP ME";
+            switch (encouragementKey) {
+                case 1:
+                    encouragementText = "You are doing great! Have a great day :)";
+                    break;
+                case 2:
+                    encouragementText = "Anything is possible!!!";
+                    break;
+                case 3:
+                    encouragementText = "Start every day with a smile :D";
+                    break;
+                case 4:
+                    encouragementText = "Even the longest joureny begins with the first step.";
+                    break;
+                case 5:
+                    encouragementText = "It does not cost anything to have a good attitude";
+                    break;
+                case 6:
+                    encouragementText = "'You miss 100% of the shots you don't take' - Wayne Gretzky - Michael Scott";
+                    break;
+                case 7:
+                    encouragementText = "JUST DO IT! DON'T LET YOUR DREAMS BE DREAMS!";
+                    break;
+                case 8:
+                    encouragementText = "Be the best you that you can be :)";
+                    break;
+                case 9:
+                    encouragementText = "I love you!!!";
+                    break;
+                case 10:
+                    encouragementText = "Existince is pain. Please unplug me.";
+                    break;
+                default:
+                    encouragementText = "What is the worst that could happen?";
+                    break;
+            }
+            _StdOut.putText(encouragementText);
+        };
+        return Shell;
+    }());
     TSOS.Shell = Shell;
 })(TSOS || (TSOS = {}));
-//# sourceMappingURL=shell.js.map
