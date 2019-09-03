@@ -46,7 +46,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
             // date
-            sc = new TSOS.ShellCommand(this.shellPrompt, "date", "- Displays the current date and time.");
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "- Displays the current date and time.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -217,6 +217,9 @@ var TSOS;
                     case "prompt":
                         _StdOut.putText("Prompt <string> sets the prompt the preempts each command.");
                         break;
+                    case "date":
+                        _StdOut.putText("Date displays the current date and time.");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -269,8 +272,11 @@ var TSOS;
             }
         };
         // Displays the current date and time in the console.
-        Shell.prototype.shellDate = function () {
-            _StdOut.putText(new Date());
+        Shell.prototype.shellDate = function (args) {
+            var timeString = new Date().toLocaleTimeString();
+            var dateString = new Date().toDateString();
+            console.log(dateString);
+            _StdOut.putText("It is currently: " + timeString + " on " + dateString);
         };
         return Shell;
     }());

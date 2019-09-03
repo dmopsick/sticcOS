@@ -74,7 +74,7 @@ module TSOS {
             this.commandList[this.commandList.length] = sc;
 
             // date
-            sc = new ShellCommand(this.shellPrompt,
+            sc = new ShellCommand(this.shellDate,
                                     "date",
                                     "- Displays the current date and time.");
             this.commandList[this.commandList.length] = sc;
@@ -261,6 +261,9 @@ module TSOS {
                     case "prompt": 
                         _StdOut.putText("Prompt <string> sets the prompt the preempts each command.");
                         break;
+                    case "date":
+                        _StdOut.putText("Date displays the current date and time.");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -312,8 +315,11 @@ module TSOS {
         }
 
         // Displays the current date and time in the console.
-        public shellDate() {
-            _StdOut.putText(new Date());
+        public shellDate(args: string[]) {
+            const timeString = new Date().toLocaleTimeString();
+            const dateString = new Date().toDateString();
+            console.log(dateString);
+            _StdOut.putText("It is currently: " + timeString + " on " + dateString);
         }
 
     }
