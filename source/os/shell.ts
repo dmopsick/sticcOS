@@ -89,7 +89,13 @@ module TSOS {
             // (Original command for Project 1)
             sc = new ShellCommand(this.shellEncouragement,
                                     "encouragement",
-                                    "- Provides some much needed encouragement");
+                                    "- Provides some much needed encouragement.");
+            this.commandList[this.commandList.length] = sc;
+
+            // status <string>
+            sc = new ShellCommand(this.shellStatus,
+                                    "status",
+                                    "<string> - Sets the current status of the system.");
             this.commandList[this.commandList.length] = sc;
 
             // ps  - list the running processes and their IDs
@@ -282,7 +288,9 @@ module TSOS {
                         break;
                     case "encouragement":
                         _StdOut.putText("Encouragement gives you that extra push to keep working in SticcOS.");
-                    // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
+                    case "status":
+                        _StdOut.putText("Status <string> sets the status message displayed in the top host status bar.")
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -347,8 +355,7 @@ module TSOS {
         // Encourages the user to keep on trying their best and to not give up
         public shellEncouragement(args: string[]) {
             const encouragementKey = Math.floor((Math.random() * 10) + 1);
-            console.log(encouragementKey);
-            let encouragementText = "HELP ME";
+            let encouragementText = "";
             switch (encouragementKey) {
                 case 1: 
                     encouragementText = "You are doing great! Have a great day :)";
@@ -380,11 +387,27 @@ module TSOS {
                 case 10:
                     encouragementText = "Existince is pain. Please unplug me.";
                     break;
+                // This should never be reached ideally but I wanted the safety net of a default case
                 default:
                     encouragementText = "What is the worst that could happen?";
                     break;
             }
             _StdOut.putText(encouragementText);
+        }
+
+        // Allows the user to modify the current status message
+        public shellStatus(args: string[]) {
+            if (args.length > 0) {
+                let statusString = "";
+                for (let i = 0; i < args.length; i++) {
+                    statusString += args[i] + " "
+                }
+                console.log(statusString);
+                _Status = statusString;
+            }
+            else {
+                _StdOut.putText("Usage: status <string> Please supply a string");
+            }
         }
 
     }
