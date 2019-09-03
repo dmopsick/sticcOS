@@ -73,6 +73,12 @@ module TSOS {
                                   "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
 
+            // date
+            sc = new ShellCommand(this.shellPrompt,
+                                    "date",
+                                    "- Displays the current date and time.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -231,8 +237,29 @@ module TSOS {
             if (args.length > 0) {
                 var topic = args[0];
                 switch (topic) {
+                    case "ver":
+                        _StdOut.putText("Ver displays the current version data of SticcOS running");
+                        break;
                     case "help":
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
+                        break;
+                    case "shutdown":
+                        _StdOut.putText("Shutdown shuts down SticcOS when you are all done.");
+                        break;
+                    case "cls":
+                        _StdOut.putText("Cls clears the screen and resets the cursor.");
+                        break;
+                    case "man":
+                        _StdOut.putText("What a meta command you entered. Man <topic> - displays info on specified topic.")
+                        break;
+                    case "trace":
+                        _StdOut.putText("Turn the trace feature on or off for SticcOS.");
+                        break;
+                    case "rot13":
+                        _StdOut.putText("Rot13 <string> does rot13 obsfucation on the specified string");
+                        break;
+                    case "prompt": 
+                        _StdOut.putText("Prompt <string> sets the prompt the preempts each command.");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -282,6 +309,11 @@ module TSOS {
             } else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
+        }
+
+        // Displays the current date and time in the console.
+        public shellDate() {
+            _StdOut.putText(new Date());
         }
 
     }
