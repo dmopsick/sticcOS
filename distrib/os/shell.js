@@ -48,6 +48,9 @@ var TSOS;
             // date
             sc = new TSOS.ShellCommand(this.shellDate, "date", "- Displays the current date and time.");
             this.commandList[this.commandList.length] = sc;
+            // whereami
+            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Just in case you forget where you are.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             // Display the initial prompt.
@@ -220,6 +223,9 @@ var TSOS;
                     case "date":
                         _StdOut.putText("Date displays the current date and time.");
                         break;
+                    case "whereami":
+                        _StdOut.putText("Whereami displays where you are which is good.");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -275,8 +281,11 @@ var TSOS;
         Shell.prototype.shellDate = function (args) {
             var timeString = new Date().toLocaleTimeString();
             var dateString = new Date().toDateString();
-            console.log(dateString);
             _StdOut.putText("It is currently: " + timeString + " on " + dateString);
+        };
+        // Tells the user where they are
+        Shell.prototype.shellWhereAmI = function (args) {
+            _StdOut.putText("You are safe and happy using SticcOS at Marist College :)");
         };
         return Shell;
     }());

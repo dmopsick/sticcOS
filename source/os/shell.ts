@@ -79,6 +79,12 @@ module TSOS {
                                     "- Displays the current date and time.");
             this.commandList[this.commandList.length] = sc;
 
+            // whereami
+            sc = new ShellCommand(this.shellWhereAmI,
+                                    "whereami",
+                                    "- Just in case you forget where you are.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -264,6 +270,9 @@ module TSOS {
                     case "date":
                         _StdOut.putText("Date displays the current date and time.");
                         break;
+                    case "whereami":
+                        _StdOut.putText("Whereami displays where you are which is good.");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -318,8 +327,12 @@ module TSOS {
         public shellDate(args: string[]) {
             const timeString = new Date().toLocaleTimeString();
             const dateString = new Date().toDateString();
-            console.log(dateString);
             _StdOut.putText("It is currently: " + timeString + " on " + dateString);
+        }
+
+        // Tells the user where they are
+        public shellWhereAmI(args: string[]) {
+            _StdOut.putText("You are safe and happy using SticcOS at Marist College :)");
         }
 
     }
