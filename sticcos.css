@@ -31,9 +31,22 @@ h3 {
 }
 
 #display {
-  background-color:#DFDBC3;
-  border: 2px solid red;
+  background-color: lavender;
+  border: 2px solid navy;
   cursor: default;
+}
+
+#hostStatus {
+  background-color: lavender;
+  color: black;
+  cursor: default;
+  margin: 4px 4px 0 4px;
+  width: 500px;
+  height: 25px;
+  float: left;
+  border-top: 2px solid navy;
+  border-right: 2px solid navy;
+  border-left: 2px solid navy;
 }
 
 .normal_button {

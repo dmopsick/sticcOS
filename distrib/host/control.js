@@ -42,7 +42,7 @@ var TSOS;
                 // function Glados() is here, so instantiate Her into
                 // the global (and properly capitalized) _GLaDOS variable.
                 _GLaDOS = new Glados();
-                _GLaDOS.init();
+                // _GLaDOS.init(); 
             }
         };
         Control.hostLog = function (msg, source) {
@@ -64,6 +64,10 @@ var TSOS;
         Control.hostBtnStartOS_click = function (btn) {
             // Disable the (passed-in) start button...
             btn.disabled = true;
+            // Set the host status bar message
+            document.getElementById("hostStatusVer").innerHTML = APP_NAME + " ver " + APP_VERSION + " | ";
+            document.getElementById("hostStatusTime").innerHTML = new Date().toLocaleTimeString() + " | ";
+            document.getElementById("hostStatusMessage").innerHTML = "Status: " + _Status;
             // .. enable the Halt and Reset buttons ...
             document.getElementById("btnHaltOS").disabled = false;
             document.getElementById("btnReset").disabled = false;
