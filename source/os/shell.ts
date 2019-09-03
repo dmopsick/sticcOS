@@ -403,7 +403,7 @@ module TSOS {
                     statusString += args[i] + " "
                 }
                 console.log(statusString);
-                _Status = statusString;
+                _Status = statusString; 
             }
             else {
                 _StdOut.putText("Usage: status <string> Please supply a string");

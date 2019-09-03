@@ -36,11 +36,11 @@ module TSOS {
 
             // Clear the log text box.
             // Use the TypeScript cast to HTMLInputElement
-            (<HTMLInputElement> document.getElementById("taHostLog")).value="";
+            (<HTMLInputElement>document.getElementById("taHostLog")).value = "";
 
             // Set focus on the start button.
             // Use the TypeScript cast to HTMLInputElement
-            (<HTMLInputElement> document.getElementById("btnStartOS")).focus();
+            (<HTMLInputElement>document.getElementById("btnStartOS")).focus();
 
             // Check for our testing and enrichment core, which
             // may be referenced here (from index.html) as function Glados().
@@ -48,7 +48,7 @@ module TSOS {
                 // function Glados() is here, so instantiate Her into
                 // the global (and properly capitalized) _GLaDOS variable.
                 _GLaDOS = new Glados();
-               _GLaDOS.init(); 
+                _GLaDOS.init();
             }
         }
 
@@ -60,13 +60,17 @@ module TSOS {
             var now: number = new Date().getTime();
 
             // Build the log string.
-            var str: string = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now  + " })"  + "\n";
+            var str: string = "({ clock:" + clock + ", source:" + source + ", msg:" + msg + ", now:" + now + " })" + "\n";
 
             // Update the log console.
-            var taLog = <HTMLInputElement> document.getElementById("taHostLog");
+            var taLog = <HTMLInputElement>document.getElementById("taHostLog");
             taLog.value = str + taLog.value;
 
             // TODO in the future: Optionally update a log database or some streaming service.
+
+            // Issue #3 update host status time... and ensure most up to date message displayed
+            console.log("Flag");
+            this.updateHostStatusBar();
         }
 
 
@@ -79,8 +83,7 @@ module TSOS {
 
             // Set the host status bar message
             (<HTMLElement>document.getElementById("hostStatusVer")).innerHTML = APP_NAME + " ver " + APP_VERSION + " | ";
-            (<HTMLElement>document.getElementById("hostStatusTime")).innerHTML = new Date().toLocaleTimeString() + " | ";
-            (<HTMLElement>document.getElementById("hostStatusMessage")).innerHTML = "Status: " + _Status;
+            this.updateHostStatusBar();
 
             // .. enable the Halt and Reset buttons ...
             (<HTMLButtonElement>document.getElementById("btnHaltOS")).disabled = false;
@@ -116,6 +119,11 @@ module TSOS {
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
+        }
+
+        private static updateHostStatusBar() {
+            (<HTMLElement>document.getElementById("hostStatusTime")).innerHTML = new Date().toLocaleTimeString() + " | ";
+            (<HTMLElement>document.getElementById("hostStatusMessage")).innerHTML = "Status: " + _Status;
         }
     }
 }
