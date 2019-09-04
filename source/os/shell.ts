@@ -98,6 +98,12 @@ module TSOS {
                                     "<string> - Sets the current status of the system.");
             this.commandList[this.commandList.length] = sc;
 
+            // bsod
+            sc = new ShellCommand(this.shellBSOD,
+                                    "bsod",
+                                "- Displays the SticcOS bluescreen of death");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -291,6 +297,9 @@ module TSOS {
                     case "status":
                         _StdOut.putText("Status <string> sets the status message displayed in the top host status bar.")
                         break;
+                    case "bsod":
+                        _StdOut.putText("BSOD is used to test the blue screen of death in SticcOS.")
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -407,6 +416,23 @@ module TSOS {
             else {
                 _StdOut.putText("Usage: status <string> Please supply a string");
             }
+        }
+
+        // Displays the DREADED blue screen of death :( Issue #6
+        public shellBSOD(args: string[]) {
+            // Clear the shell
+            _StdOut.clearScreen();     
+            _StdOut.resetXY();
+
+            // Display BSOD method
+            _StdOut.putText("Oh no! SticcOS has crashed! What did you do!?");
+            _StdOut.advanceLine();
+            _StdOut.putText("It was probably my fault...");
+            _StdOut.advanceLine();
+            _StdOut.putText("Either way, restart the system and give SticcOS another chance please.");
+
+            // Should the BSOD lock the keyboard and require a reset?
+
         }
 
     }
