@@ -53,7 +53,16 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             // encouragement 
             // (Original command for Project 1)
-            sc = new TSOS.ShellCommand(this.shellEncouragement, "encouragement", "- Provides some much needed encouragement");
+            sc = new TSOS.ShellCommand(this.shellEncouragement, "encouragement", "- Provides some much needed encouragement.");
+            this.commandList[this.commandList.length] = sc;
+            // status <string>
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Sets the current status of the system.");
+            this.commandList[this.commandList.length] = sc;
+            // bsod
+            sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", "- Displays the SticcOS bluescreen of death");
+            this.commandList[this.commandList.length] = sc;
+            // load 
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Validates the user entered code in the program input.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -232,7 +241,15 @@ var TSOS;
                         break;
                     case "encouragement":
                         _StdOut.putText("Encouragement gives you that extra push to keep working in SticcOS.");
-                    // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
+                    case "status":
+                        _StdOut.putText("Status <string> sets the status message displayed in the top host status bar.");
+                        break;
+                    case "bsod":
+                        _StdOut.putText("BSOD is used to test the blue screen of death in SticcOS.");
+                        break;
+                    case "load":
+                        _StdOut.putText("Load is used to validate the user entered program code.");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -296,8 +313,7 @@ var TSOS;
         // Encourages the user to keep on trying their best and to not give up
         Shell.prototype.shellEncouragement = function (args) {
             var encouragementKey = Math.floor((Math.random() * 10) + 1);
-            console.log(encouragementKey);
-            var encouragementText = "HELP ME";
+            var encouragementText = "";
             switch (encouragementKey) {
                 case 1:
                     encouragementText = "You are doing great! Have a great day :)";
@@ -329,11 +345,44 @@ var TSOS;
                 case 10:
                     encouragementText = "Existince is pain. Please unplug me.";
                     break;
+                // This should never be reached ideally but I wanted the safety net of a default case
                 default:
                     encouragementText = "What is the worst that could happen?";
                     break;
             }
             _StdOut.putText(encouragementText);
+        };
+        // Allows the user to modify the current status message
+        Shell.prototype.shellStatus = function (args) {
+            if (args.length > 0) {
+                var statusString = "";
+                for (var i = 0; i < args.length; i++) {
+                    statusString += args[i] + " ";
+                }
+                document.getElementById("hostStatusMessage").innerHTML = "Status: " + statusString;
+            }
+            else {
+                _StdOut.putText("Usage: status <string> Please supply a string");
+            }
+        };
+        // Displays the DREADED blue screen of death :( Issue #6
+        Shell.prototype.shellBSOD = function (args) {
+            // Clear the shell
+            _StdOut.clearScreen();
+            _StdOut.resetXY();
+            // Display BSOD method
+            _StdOut.putText("Oh no! SticcOS has crashed! What did you do!?");
+            _StdOut.advanceLine();
+            _StdOut.putText("It was probably my fault...");
+            _StdOut.advanceLine();
+            _StdOut.putText("Either way, restart the system and give SticcOS another chance please.");
+            // Should the BSOD lock the keyboard and require a reset?
+        };
+        // Validates the program code entered by the user in the HTML5 text field Issue #7
+        Shell.prototype.shellLoad = function (args) {
+            // Verify that the user entered code only contains hex codes and spaces
+            // Let user know if code is valid
+            // Let user know if code is invalid
         };
         return Shell;
     }());

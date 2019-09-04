@@ -31,13 +31,35 @@ h3 {
 }
 
 #display {
-  background-color:#DFDBC3;
-  border: 2px solid red;
+  background-color: lavender;
+  border: 2px solid navy;
   cursor: default;
+  flex-basis: 100%;
+}
+
+#hostStatus {
+  background-color: lavender;
+  color: black;
+  cursor: default;
+  margin: 4px 4px 0 4px;
+  width: 500px;
+  height: 25px;
+  float: left;
+  border-top: 2px solid navy;
+  border-right: 2px solid navy;
+  border-left: 2px solid navy;
+  flex-basis: 100%;
 }
 
 .normal_button {
   width: 100px;
+}
+
+.flex-box {
+  width: 512px;
+  display: flex;
+  flex-wrap: wrap;
+  float: left;
 }
 
 .footerText {
