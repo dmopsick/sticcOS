@@ -104,6 +104,12 @@ module TSOS {
                                 "- Displays the SticcOS bluescreen of death");
             this.commandList[this.commandList.length] = sc;
 
+            // load 
+            sc = new ShellCommand(this.shellLoad,
+                                    "load",
+                                    "- Validates the user entered code in the program input.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -300,6 +306,9 @@ module TSOS {
                     case "bsod":
                         _StdOut.putText("BSOD is used to test the blue screen of death in SticcOS.")
                         break;
+                    case "load":
+                        _StdOut.putText("Load is used to validate the user entered program code.");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -433,6 +442,15 @@ module TSOS {
 
             // Should the BSOD lock the keyboard and require a reset?
 
+        }
+
+        // Validates the program code entered by the user in the HTML5 text field Issue #7
+        public shellLoad(args: string[]) {
+            // Verify that the user entered code only contains hex codes and spaces
+
+            // Let user know if code is valid
+
+            // Let user know if code is invalid
         }
 
     }
