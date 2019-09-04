@@ -79,6 +79,7 @@ module TSOS {
             this.currentYPosition += _DefaultFontSize + 
                                      _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                                      _FontHeightMargin;
+            // Check if going down a line would 
 
             // TODO: Handle scrolling. (iProject 1)
 
