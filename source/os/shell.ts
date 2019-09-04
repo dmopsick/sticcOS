@@ -446,7 +446,15 @@ module TSOS {
 
         // Validates the program code entered by the user in the HTML5 text field Issue #7
         public shellLoad(args: string[]) {
-            // Verify that the user entered code only contains hex codes and spaces
+            // Get the user entered program code
+            const programInput = (<HTMLTextAreaElement>document.getElementById("taProgramInput")).value;
+            console.log("Flag 1_" + programInput + "_");
+
+            // Verify that the user entered code only contains hex codes and spaces using a regular expression
+            let regularExpression = new RegExp("/[0-9a-f]+/i");
+            let valid = regularExpression.test(programInput);
+            console.log("FLAG 2 " + valid);
+
 
             // Let user know if code is valid
 
