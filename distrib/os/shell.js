@@ -347,8 +347,7 @@ var TSOS;
                 for (var i = 0; i < args.length; i++) {
                     statusString += args[i] + " ";
                 }
-                console.log(statusString);
-                _Status = statusString;
+                document.getElementById("hostStatusMessage").innerHTML = "Status: " + statusString;
             }
             else {
                 _StdOut.putText("Usage: status <string> Please supply a string");

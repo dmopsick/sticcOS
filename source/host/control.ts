@@ -68,9 +68,8 @@ module TSOS {
 
             // TODO in the future: Optionally update a log database or some streaming service.
 
-            // Issue #3 update host status time... and ensure most up to date message displayed
-            console.log("Flag");
-            this.updateHostStatusBar();
+            // Issue #3
+            (<HTMLElement>document.getElementById("hostStatusTime")).innerHTML = new Date().toLocaleTimeString() + " " + new Date().toLocaleDateString() + " | ";
         }
 
 
@@ -83,7 +82,8 @@ module TSOS {
 
             // Set the host status bar message
             (<HTMLElement>document.getElementById("hostStatusVer")).innerHTML = APP_NAME + " ver " + APP_VERSION + " | ";
-            this.updateHostStatusBar();
+            (<HTMLElement>document.getElementById("hostStatusTime")).innerHTML = new Date().toLocaleTimeString() + " | ";
+            (<HTMLElement>document.getElementById("hostStatusMessage")).innerHTML = "Status: ";
 
             // .. enable the Halt and Reset buttons ...
             (<HTMLButtonElement>document.getElementById("btnHaltOS")).disabled = false;
@@ -119,11 +119,6 @@ module TSOS {
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
-        }
-
-        private static updateHostStatusBar() {
-            (<HTMLElement>document.getElementById("hostStatusTime")).innerHTML = new Date().toLocaleTimeString() + " | ";
-            (<HTMLElement>document.getElementById("hostStatusMessage")).innerHTML = "Status: " + _Status;
         }
     }
 }

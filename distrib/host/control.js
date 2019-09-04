@@ -57,9 +57,8 @@ var TSOS;
             var taLog = document.getElementById("taHostLog");
             taLog.value = str + taLog.value;
             // TODO in the future: Optionally update a log database or some streaming service.
-            // Issue #3 update host status time... and ensure most up to date message displayed
-            console.log("Flag");
-            this.updateHostStatusBar();
+            // Issue #3
+            document.getElementById("hostStatusTime").innerHTML = new Date().toLocaleTimeString() + " " + new Date().toLocaleDateString() + " | ";
         };
         //
         // Host Events
@@ -69,7 +68,8 @@ var TSOS;
             btn.disabled = true;
             // Set the host status bar message
             document.getElementById("hostStatusVer").innerHTML = APP_NAME + " ver " + APP_VERSION + " | ";
-            this.updateHostStatusBar();
+            document.getElementById("hostStatusTime").innerHTML = new Date().toLocaleTimeString() + " | ";
+            document.getElementById("hostStatusMessage").innerHTML = "Status: ";
             // .. enable the Halt and Reset buttons ...
             document.getElementById("btnHaltOS").disabled = false;
             document.getElementById("btnReset").disabled = false;
@@ -99,10 +99,6 @@ var TSOS;
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
-        };
-        Control.updateHostStatusBar = function () {
-            document.getElementById("hostStatusTime").innerHTML = new Date().toLocaleTimeString() + " | ";
-            document.getElementById("hostStatusMessage").innerHTML = "Status: " + _Status;
         };
         return Control;
     }());
