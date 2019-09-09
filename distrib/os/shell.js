@@ -380,9 +380,19 @@ var TSOS;
         };
         // Validates the program code entered by the user in the HTML5 text field Issue #7
         Shell.prototype.shellLoad = function (args) {
-            // Verify that the user entered code only contains hex codes and spaces
-            // Let user know if code is valid
-            // Let user know if code is invalid
+            // Get the user entered program code
+            var programInput = document.getElementById("taProgramInput").value;
+            // Verify that the user entered code only contains hex codes and spaces using a regular expression
+            var regularExpression = new RegExp(/^[0-9a-fA-F\s]+$/);
+            var valid = regularExpression.test(programInput);
+            console.log("FLAG 2 " + valid);
+            // Let the user know whether or not they entered valid HEX code.
+            if (valid) {
+                _StdOut.putText("That is some highquality Hex code.");
+            }
+            else {
+                _StdOut.putText("Error: Invalid hex code. Please double check.");
+            }
         };
         return Shell;
     }());
