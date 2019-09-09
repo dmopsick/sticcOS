@@ -375,7 +375,7 @@ var TSOS;
             _StdOut.advanceLine();
             _StdOut.putText("It was probably my fault...");
             _StdOut.advanceLine();
-            _StdOut.putText("Please reset the system and give SticcOS another chance please.");
+            _StdOut.putText("Please reset SticcOS and give it another chance");
             // Should the BSOD lock the keyboard and require a reset?
             _Kernel.krnShutdown();
         };

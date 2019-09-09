@@ -10,10 +10,10 @@ module TSOS {
     export class Console {
 
         constructor(public currentFont = _DefaultFontFamily,
-                    public currentFontSize = _DefaultFontSize,
-                    public currentXPosition = 0,
-                    public currentYPosition = _DefaultFontSize,
-                    public buffer = "") {
+            public currentFontSize = _DefaultFontSize,
+            public currentXPosition = 0,
+            public currentYPosition = _DefaultFontSize,
+            public buffer = "") {
         }
 
         public init(): void {
@@ -67,7 +67,7 @@ module TSOS {
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 this.currentXPosition = this.currentXPosition + offset;
             }
-         }
+        }
 
         public advanceLine(): void {
             this.currentXPosition = 0;
@@ -76,13 +76,31 @@ module TSOS {
              * Font descent measures from the baseline to the lowest point in the font.
              * Font height margin is extra spacing between the lines.
              */
-            this.currentYPosition += _DefaultFontSize + 
-                                     _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
-                                     _FontHeightMargin;
-            // Check if going down a line would 
 
-            // TODO: Handle scrolling. (iProject 1)
+            // Moved this existing code into a variable so I could use it below for scrolling purposes.
+            const lineIncrement = _DefaultFontSize +
+                _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                _FontHeightMargin;
 
+            // This is the default code, just saved as a variable.
+            this.currentYPosition += lineIncrement;
+
+            // Check if the next line goes off the screen
+            if (this.currentYPosition >= 500) {
+                // Take a snapshot of the current canvas minus the top line, starting at postion (0, lineincrement)
+                let snapshot = _DrawingContext.getImageData(0, lineIncrement, _Canvas.width, (_Canvas.height - lineIncrement));
+
+                // Clear screen
+                this.clearScreen();
+
+                // Reprint canvas with adjusted canvas from the top.
+                _DrawingContext.putImageData(snapshot, 0, 0);
+
+                // Have to set current y positon to bottom of the screen
+                // Setting the y position to be one line's increment away from the bottom
+                // The plus 5 is to prevent commands from bunching up
+                this.currentYPosition = (_Canvas.height - lineIncrement) + 10;
+            }
         }
     }
- }
+}
