@@ -382,13 +382,17 @@ var TSOS;
         Shell.prototype.shellLoad = function (args) {
             // Get the user entered program code
             var programInput = document.getElementById("taProgramInput").value;
-            console.log("Flag 1_" + programInput + "_");
             // Verify that the user entered code only contains hex codes and spaces using a regular expression
-            var regularExpression = new RegExp("/[0-9a-f]+/i");
+            var regularExpression = new RegExp(/^[0-9a-fA-F\s]+$/);
             var valid = regularExpression.test(programInput);
             console.log("FLAG 2 " + valid);
-            // Let user know if code is valid
-            // Let user know if code is invalid
+            // Let the user know whether or not they entered valid HEX code.
+            if (valid) {
+                _StdOut.putText("That is some highquality Hex code.");
+            }
+            else {
+                _StdOut.putText("Error: Invalid hex code. Please double check.");
+            }
         };
         return Shell;
     }());
