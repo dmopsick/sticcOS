@@ -375,8 +375,9 @@ var TSOS;
             _StdOut.advanceLine();
             _StdOut.putText("It was probably my fault...");
             _StdOut.advanceLine();
-            _StdOut.putText("Either way, restart the system and give SticcOS another chance please.");
+            _StdOut.putText("Please reset the system and give SticcOS another chance please.");
             // Should the BSOD lock the keyboard and require a reset?
+            _Kernel.krnShutdown();
         };
         // Validates the program code entered by the user in the HTML5 text field Issue #7
         Shell.prototype.shellLoad = function (args) {
@@ -388,7 +389,7 @@ var TSOS;
             console.log("FLAG 2 " + valid);
             // Let the user know whether or not they entered valid HEX code.
             if (valid) {
-                _StdOut.putText("That is some highquality Hex code.");
+                _StdOut.putText("That is some highquality hex code.");
             }
             else {
                 _StdOut.putText("Error: Invalid hex code. Please double check.");
