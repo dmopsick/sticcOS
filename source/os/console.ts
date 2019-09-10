@@ -42,8 +42,15 @@ module TSOS {
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
 
-                    // Save the executed command
-                    this.bufferHistory[this.bufferHistory.length] = this.buffer;
+                    // Issue #5 do not want to save empty commands in the buffer
+                    if (this.bufferHistory[this.bufferHistory.length-1] == "") {
+                        // Save the executed command
+                        this.bufferHistory[this.bufferHistory.length - 1] = this.buffer;
+                    }
+                    else {
+                        // Save the executed command
+                        this.bufferHistory[this.bufferHistory.length] = this.buffer;
+                    }
 
                     // Reset the current buffer history index
                     this.currentBufferIndex = this.bufferHistory.length;
@@ -194,7 +201,6 @@ module TSOS {
 
             // Get the width of the last character in the string
             const deleteWidth = TSOS.CanvasTextFunctions.measure(this.currentFont, this.currentFontSize, charToDelete);
-            console.log(deleteWidth);
 
             // Remove the last character from the canvas
             _DrawingContext.clearRect((this.currentXPosition - deleteWidth), (this.currentYPosition - this.currentFontSize), deleteWidth, (this.currentFontSize + 5));
@@ -205,7 +211,6 @@ module TSOS {
 
         // Issue #5 Handles the up arrow for command recalling
         public handleUpArrow() {
-            console.log("Up arrow pressed");
             // Check if there is any previous commands to recall
             if (this.currentBufferIndex > 0) {
                 // Save current command in the buffer history
@@ -236,16 +241,32 @@ module TSOS {
 
         // Issue #5 Handles the down arrow for command recalling
         public handleDownArrow() {
-            console.log("Down arrow pressed");
             // Check if there are any following commands in the buffer
             if (this.currentBufferIndex < (this.bufferHistory.length - 1)) {
+                console.log("GO DOWN");
                 // Save the current command in the buffer history 
+                this.bufferHistory[this.currentBufferIndex] = this.buffer;
+
+                // Get the length of the current buffer to delete it
+                const deleteWidth = TSOS.CanvasTextFunctions.measure(this.currentFont, this.currentFontSize, this.buffer);
 
                 // Erase the current listed command on the canvas
+                _DrawingContext.clearRect((this.currentXPosition - deleteWidth), (this.currentYPosition - this.currentFontSize), deleteWidth, (this.currentFontSize + 5));
 
                 // Increment the currentBufferIndex, go down in the history
+                this.currentBufferIndex++;
+
+                // Assign the following command to the buffer
+                this.buffer = this.bufferHistory[this.currentBufferIndex];
+
+                // Move the x index back to 0
+                this.currentXPosition = 0;
+
+                // Display the prompt
+                _OsShell.putPrompt();
 
                 // Display the new current command on the canvas
+                _StdOut.putText(this.buffer);
             }
         }
     }
