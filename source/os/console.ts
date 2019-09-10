@@ -169,14 +169,22 @@ module TSOS {
         }
 
         // Issue #5 handles the backspace action
-        // Deletes one character from the buffer, removes the most recent character, moves the cursor back
-        public  handleBackspace() {
-            console.log("Flag 1: handleBackspace() is reached");
-            // Delete character from the buffer
+        public handleBackspace() {
+            // Get the last character in the string
+            const charToDelete = this.buffer.substring(this.buffer.length - 1);
 
-            // Remove one character from the canvas
+            // Remove the last character from the buffer string
+            this.buffer = this.buffer.substring(0, this.buffer.length - 1)
+
+            // Get the width of the last character in the string
+            const deleteWidth = TSOS.CanvasTextFunctions.measure(this.currentFont, this.currentFontSize, charToDelete);
+            console.log(deleteWidth);
+
+            // Remove the last character from the canvas
+            _DrawingContext.clearRect((this.currentXPosition - deleteWidth), (this.currentYPosition - this.currentFontSize), deleteWidth, (this.currentFontSize + 5));
 
             // Move the cursor back so next character printed in proper location
+            this.currentXPosition -= deleteWidth;
         }
     }
 }
