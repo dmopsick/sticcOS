@@ -13,7 +13,9 @@ module TSOS {
             public currentFontSize = _DefaultFontSize,
             public currentXPosition = 0,
             public currentYPosition = _DefaultFontSize,
-            public buffer = "") {
+            public buffer = "",
+            public bufferHistory = [], // Issue #5 records the history of the commands issued
+            public currentBufferIndex = 0) { // Issue #5 keeps track of the current spot in the buffer history
         }
 
         public init(): void {
@@ -49,6 +51,13 @@ module TSOS {
                     // Issue #5 handle backspacing
                     this.handleBackspace();
 
+                } else if (chr === String.fromCharCode(38)) {
+                    // Issue #5 handle the up arrow for command recalling
+                    this.handleUpArrow();
+
+                } else if (chr === String.fromCharCode(40)) {
+                    // Issue #5 handle the down arrow for command recalling
+                    this.handleDownArrow();
                 } else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
@@ -185,6 +194,38 @@ module TSOS {
 
             // Move the cursor back so next character printed in proper location
             this.currentXPosition -= deleteWidth;
+        }
+
+        // Issue #5 Handles the up arrow for command recalling
+        public handleUpArrow() {
+            console.log("Up arrow pressed");
+            // Check if there is any previous commands to recall
+
+            // Save current command in the buffer history
+            
+            
+            // Erase the current listed command on the canvas
+
+
+            // Decrement the currentBufferIndex, go back up in the history
+
+            // Display the new current command on the canvas
+
+        } 
+
+        // Issue #5 Handles the down arrow for command recalling
+        public handleDownArrow() {
+            console.log("Down arrow pressed");
+            // Check if there are any following commands in the buffer
+
+            // Save the current command in the buffer history 
+
+            // Erase the current listed command on the canvas
+
+            // Increment the currentBufferIndex, go down in the history
+
+            // Display the new current command on the canvas
+
         }
     }
 }

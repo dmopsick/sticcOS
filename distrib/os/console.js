@@ -7,17 +7,22 @@
 var TSOS;
 (function (TSOS) {
     var Console = /** @class */ (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer) {
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, bufferHistory, // Issue #5 records the history of the commands issued
+        currentBufferIndex) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
             if (currentYPosition === void 0) { currentYPosition = _DefaultFontSize; }
             if (buffer === void 0) { buffer = ""; }
+            if (bufferHistory === void 0) { bufferHistory = []; }
+            if (currentBufferIndex === void 0) { currentBufferIndex = 0; }
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
             this.buffer = buffer;
+            this.bufferHistory = bufferHistory;
+            this.currentBufferIndex = currentBufferIndex;
         }
         Console.prototype.init = function () {
             this.clearScreen();
@@ -49,6 +54,14 @@ var TSOS;
                 else if (chr === String.fromCharCode(8)) {
                     // Issue #5 handle backspacing
                     this.handleBackspace();
+                }
+                else if (chr === String.fromCharCode(38)) {
+                    // Issue #5 handle the up arrow for command recalling
+                    this.handleUpArrow();
+                }
+                else if (chr === String.fromCharCode(40)) {
+                    // Issue #5 handle the down arrow for command recalling
+                    this.handleDownArrow();
                 }
                 else {
                     // This is a "normal" character, so ...
@@ -166,6 +179,24 @@ var TSOS;
             _DrawingContext.clearRect((this.currentXPosition - deleteWidth), (this.currentYPosition - this.currentFontSize), deleteWidth, (this.currentFontSize + 5));
             // Move the cursor back so next character printed in proper location
             this.currentXPosition -= deleteWidth;
+        };
+        // Issue #5 Handles the up arrow for command recalling
+        Console.prototype.handleUpArrow = function () {
+            console.log("Up arrow pressed");
+            // Check if there is any previous commands to recall
+            // Save current command in the buffer history
+            // Erase the current listed command on the canvas
+            // Decrement the currentBufferIndex, go back up in the history
+            // Display the new current command on the canvas
+        };
+        // Issue #5 Handles the down arrow for command recalling
+        Console.prototype.handleDownArrow = function () {
+            console.log("Down arrow pressed");
+            // Check if there are any following commands in the buffer
+            // Save the current command in the buffer history 
+            // Erase the current listed command on the canvas
+            // Increment the currentBufferIndex, go down in the history
+            // Display the new current command on the canvas
         };
         return Console;
     }());
