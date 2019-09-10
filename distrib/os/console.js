@@ -44,7 +44,11 @@ var TSOS;
                 }
                 else if (chr === String.fromCharCode(9)) {
                     // Issue #5 tab command completion
-                    this.handleTabAutoComplete(this.buffer);
+                    this.handleTabAutoComplete();
+                }
+                else if (chr === String.fromCharCode(8)) {
+                    // Issue #5 handle backspacing
+                    this.handleBackspace();
                 }
                 else {
                     // This is a "normal" character, so ...
@@ -101,7 +105,7 @@ var TSOS;
         };
         // Issue #5 Handles the autocompletion of commands with the tab key
         // Doing it in this file rather than shell.js so I can edit the buffer
-        Console.prototype.handleTabAutoComplete = function (buffer) {
+        Console.prototype.handleTabAutoComplete = function () {
             var _this = this;
             // Create array to all string of all potential commands
             var commandList = [];
@@ -115,11 +119,11 @@ var TSOS;
             // Will I get an array out of bounds error if I press tab on a very long string though?
             commandList.forEach(function (command) {
                 // Command can only be a potential autocomplete match if the command is longer than the buffer
-                if (command.length > buffer.length) {
+                if (command.length > _this.buffer.length) {
                     // Get substring the length of the buffer of the command
-                    var commandSubString = command.substring(0, buffer.length);
+                    var commandSubString = command.substring(0, _this.buffer.length);
                     // Compare substring to the buffer, if they are the same then it is a potential match
-                    if (commandSubString === buffer) {
+                    if (commandSubString === _this.buffer) {
                         potentialMatches.push(command);
                     }
                     // If not, do not need to do anything
@@ -129,7 +133,7 @@ var TSOS;
             });
             // If there is one match, autocomplete
             if (potentialMatches.length == 1) {
-                var missingCommandHalf = potentialMatches[0].substring(buffer.length);
+                var missingCommandHalf = potentialMatches[0].substring(this.buffer.length);
                 this.putText(missingCommandHalf);
                 // Set the buffer to have the value of the autocompleted command
                 this.buffer = potentialMatches[0];
@@ -148,6 +152,14 @@ var TSOS;
                 _OsShell.putPrompt();
             }
             // If no matches, nothing needs to be done
+        };
+        // Issue #5 handles the backspace action
+        // Deletes one character from the buffer, removes the most recent character, moves the cursor back
+        Console.prototype.handleBackspace = function () {
+            console.log("Flag 1: handleBackspace() is reached");
+            // Delete character from the buffer
+            // Remove one character from the canvas
+            // Move the cursor back so next character printed in proper location
         };
         return Console;
     }());

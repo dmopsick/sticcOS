@@ -43,7 +43,12 @@ module TSOS {
                     this.buffer = "";
                 } else if (chr === String.fromCharCode(9)) {
                     // Issue #5 tab command completion
-                    this.handleTabAutoComplete(this.buffer);
+                    this.handleTabAutoComplete();
+                }
+                else if (chr === String.fromCharCode(8)) {
+                    // Issue #5 handle backspacing
+                    this.handleBackspace();
+
                 } else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
@@ -108,7 +113,7 @@ module TSOS {
 
         // Issue #5 Handles the autocompletion of commands with the tab key
         // Doing it in this file rather than shell.js so I can edit the buffer
-        public handleTabAutoComplete(buffer) {
+        public handleTabAutoComplete() {
             // Create array to all string of all potential commands
             const commandList = [];
 
@@ -124,12 +129,12 @@ module TSOS {
             // Will I get an array out of bounds error if I press tab on a very long string though?
             commandList.forEach(command => {
                 // Command can only be a potential autocomplete match if the command is longer than the buffer
-                if (command.length > buffer.length) {
+                if (command.length > this.buffer.length) {
                     // Get substring the length of the buffer of the command
-                    const commandSubString = command.substring(0, buffer.length);
-                    
+                    const commandSubString = command.substring(0, this.buffer.length);
+
                     // Compare substring to the buffer, if they are the same then it is a potential match
-                    if (commandSubString === buffer) {
+                    if (commandSubString === this.buffer) {
                         potentialMatches.push(command);
                     }
                     // If not, do not need to do anything
@@ -140,7 +145,7 @@ module TSOS {
 
             // If there is one match, autocomplete
             if (potentialMatches.length == 1) {
-                const missingCommandHalf = potentialMatches[0].substring(buffer.length);
+                const missingCommandHalf = potentialMatches[0].substring(this.buffer.length);
                 this.putText(missingCommandHalf);
                 // Set the buffer to have the value of the autocompleted command
                 this.buffer = potentialMatches[0];
@@ -161,6 +166,17 @@ module TSOS {
             }
             // If no matches, nothing needs to be done
 
-        } 
+        }
+
+        // Issue #5 handles the backspace action
+        // Deletes one character from the buffer, removes the most recent character, moves the cursor back
+        public  handleBackspace() {
+            console.log("Flag 1: handleBackspace() is reached");
+            // Delete character from the buffer
+
+            // Remove one character from the canvas
+
+            // Move the cursor back so next character printed in proper location
+        }
     }
 }
