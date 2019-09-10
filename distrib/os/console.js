@@ -42,6 +42,10 @@ var TSOS;
                     // ... and reset our buffer.
                     this.buffer = "";
                 }
+                else if (chr === String.fromCharCode(9)) {
+                    // Issue #5 tab command completion
+                    this.handleTabAutoComplete(this.buffer);
+                }
                 else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
@@ -94,6 +98,17 @@ var TSOS;
                 // The plus 5 is to prevent commands from bunching up
                 this.currentYPosition = (_Canvas.height - lineIncrement) + 10;
             }
+        };
+        // Issue #5 Handles the autocompletion of commands with the tab key
+        // Doing it in this file rather than shell.js so I can edit the buffer
+        Console.prototype.handleTabAutoComplete = function (buffer) {
+            console.log("Flag 1: Tab pressed");
+            console.log(buffer);
+            // Get array of all potential commands
+            // Create a list of matches to the buffer
+            // Loop through all potenial commands and check for potential matches
+            // If there is one match, autocomplete
+            // If there are more than one match, display the matches
         };
         return Console;
     }());
