@@ -35,18 +35,59 @@ module TSOS {
             var chr = "";
             // Check to see if we even want to deal with the key that was pressed.
             if ((keyCode >= 65) && (keyCode <= 90)) { // letter
-                if (isShifted === true) { 
+                if (isShifted === true) {
                     chr = String.fromCharCode(keyCode); // Uppercase A-Z
                 } else {
                     chr = String.fromCharCode(keyCode + 32); // Lowercase a-z
                 }
                 // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
-            } else if (((keyCode >= 48) && (keyCode <= 57)) ||   // digits
-                        (keyCode == 32)                     ||   // space
-                        (keyCode == 13)                     ||   // enter
-                        (keyCode == 9)) {                        // tab
+            }
+            else if ((keyCode == 32) ||   // space
+                (keyCode == 13) ||   // enter
+                (keyCode == 9)) {    // tab
                 chr = String.fromCharCode(keyCode);
+                _KernelInputQueue.enqueue(chr);
+            }
+            // Issue #5 Handle digits and shifted digits
+            else if ((keyCode >= 48) && (keyCode <= 57)) {
+                if (isShifted == true) {
+                    switch (keyCode) {
+                        case 48:
+                            chr = String.fromCharCode(41); // )
+                            break;
+                        case 49:
+                            chr = String.fromCharCode(33); // !
+                            break;
+                        case 50:
+                            chr = String.fromCharCode(64); // @
+                            break;
+                        case 51:
+                            chr = String.fromCharCode(35); // #
+                            break;
+                        case 52:
+                            chr = String.fromCharCode(36); // $
+                            break;
+                        case 53:
+                            chr = String.fromCharCode(37); // %
+                            break;
+                        case 54:
+                            chr = String.fromCharCode(94); // ^
+                            break;
+                        case 55:
+                            chr = String.fromCharCode(38); // &
+                            break;
+                        case 56:
+                            chr = String.fromCharCode(42); // *
+                            break;
+                        case 57:
+                            chr = String.fromCharCode(40); // (
+                            break;
+                    }
+                }
+                else {
+                    chr = String.fromCharCode(keyCode); // Digits
+                }
                 _KernelInputQueue.enqueue(chr);
             }
         }
