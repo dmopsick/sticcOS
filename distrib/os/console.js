@@ -102,13 +102,52 @@ var TSOS;
         // Issue #5 Handles the autocompletion of commands with the tab key
         // Doing it in this file rather than shell.js so I can edit the buffer
         Console.prototype.handleTabAutoComplete = function (buffer) {
-            console.log("Flag 1: Tab pressed");
-            console.log(buffer);
-            // Get array of all potential commands
-            // Create a list of matches to the buffer
+            var _this = this;
+            // Create array to all string of all potential commands
+            var commandList = [];
+            // Populate the array of potential commands with command list from the shell
+            _OsShell.commandList.forEach(function (command) {
+                commandList.push(command.command);
+            });
+            // Create an array to hold potential command matches to the buffer
+            var potentialMatches = [];
             // Loop through all potenial commands and check for potential matches
+            // Will I get an array out of bounds error if I press tab on a very long string though?
+            commandList.forEach(function (command) {
+                // Command can only be a potential autocomplete match if the command is longer than the buffer
+                if (command.length > buffer.length) {
+                    // Get substring the length of the buffer of the command
+                    var commandSubString = command.substring(0, buffer.length);
+                    // Compare substring to the buffer, if they are the same then it is a potential match
+                    if (commandSubString === buffer) {
+                        potentialMatches.push(command);
+                    }
+                    // If not, do not need to do anything
+                }
+                // If the command in the buffer is longer then, or equal to the command, it is not a potential match
+                // We do not need to do anything with it
+            });
             // If there is one match, autocomplete
+            if (potentialMatches.length == 1) {
+                var missingCommandHalf = potentialMatches[0].substring(buffer.length);
+                this.putText(missingCommandHalf);
+                // Set the buffer to have the value of the autocompleted command
+                this.buffer = potentialMatches[0];
+            }
             // If there are more than one match, display the matches
+            else if (potentialMatches.length > 1) {
+                // Go to the next line to show potential options
+                this.advanceLine();
+                // Display the commands
+                potentialMatches.forEach(function (match) {
+                    _this.putText(match + " ");
+                });
+                this.advanceLine();
+                // Clear buffer to make sure suggestions are not in the buffer
+                this.buffer = "";
+                _OsShell.putPrompt();
+            }
+            // If no matches, nothing needs to be done
         };
         return Console;
     }());
