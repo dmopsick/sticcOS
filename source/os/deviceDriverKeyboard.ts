@@ -51,7 +51,7 @@ module TSOS {
             }
             // Issue #5 Handle digits and shifted digits
             else if ((keyCode >= 48) && (keyCode <= 57)) {
-                if (isShifted == true) {
+                if (isShifted) {
                     switch (keyCode) {
                         case 48:
                             chr = String.fromCharCode(41); // )
@@ -86,7 +86,89 @@ module TSOS {
                     }
                 }
                 else {
-                    chr = String.fromCharCode(keyCode); // Digits
+                    chr = String.fromCharCode(keyCode); // Digits 0-9
+                }
+                _KernelInputQueue.enqueue(chr);
+            }
+            // Issue #5 Handle punctuations and shifted punctuations 
+            // This is the same logic as above and could be all together in one giant switch and if statement
+            // But I wanted to make it more readable
+            else if ((keyCode >= 186) && (keyCode <= 192) ||
+                ((keyCode >= 219) && (keyCode <= 222))) {
+                if (isShifted) {
+                    switch (keyCode) {
+                        case 186:
+                            chr = String.fromCharCode(58); // :
+                            break;
+                        case 187:
+                            chr = String.fromCharCode(43); // +
+                            break;
+                        case 188:
+                            chr = String.fromCharCode(60); // <
+                            break;
+                        case 189:
+                            chr = String.fromCharCode(95); // _
+                            break;
+                        case 190:
+                            chr = String.fromCharCode(62); // >
+                            break;
+                        case 191:
+                            chr = String.fromCharCode(63); // ?
+                            break;
+                        case 192:
+                            chr = String.fromCharCode(126); // ~
+                            break;
+                        case 219:
+                            chr = String.fromCharCode(123); // {
+                            break;
+                        case 220:
+                            chr = String.fromCharCode(124); // |
+                            break;
+                        case 221:
+                            chr = String.fromCharCode(125); // }
+                            break;
+                        case 222:
+                            chr = String.fromCharCode(34); // "
+                            break;
+                    }
+                }
+                else {
+                    switch (keyCode) {
+                        case 186:
+                            chr = String.fromCharCode(59); // ;
+                            break;
+                        case 187:
+                            chr = String.fromCharCode(61); // =
+                            break;
+                        case 188:
+                            chr = String.fromCharCode(44); // ,
+                            break;
+                        case 189:
+                            chr = String.fromCharCode(45); // -
+                            break;
+                        case 190:
+                            chr = String.fromCharCode(46);  // .
+                            break;
+                        case 191:
+                            chr = String.fromCharCode(47); // /
+                            break;
+                        case 192:
+                            chr = String.fromCharCode(96); // `
+                            break;
+                        case 219:
+                            chr = String.fromCharCode(91); // [
+                            break;
+                        case 220:
+                            chr = String.fromCharCode(92); // \
+                            break;
+                        case 221:
+                            chr = String.fromCharCode(93); // ]
+                            break;
+                        case 222:
+                            chr = String.fromCharCode(39); // '
+                            break;
+                    }
+                    // chr = String.fromCharCode(keyCode); // Unshifted punctuation keys
                 }
                 _KernelInputQueue.enqueue(chr);
             }
