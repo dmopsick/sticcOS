@@ -44,6 +44,10 @@ var TSOS;
                     // The enter key marks the end of a console command, so ...
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
+                    // Save the executed command
+                    this.bufferHistory[this.bufferHistory.length] = this.buffer;
+                    // Reset the current buffer history index
+                    this.currentBufferIndex = this.bufferHistory.length;
                     // ... and reset our buffer.
                     this.buffer = "";
                 }
@@ -184,19 +188,35 @@ var TSOS;
         Console.prototype.handleUpArrow = function () {
             console.log("Up arrow pressed");
             // Check if there is any previous commands to recall
-            // Save current command in the buffer history
-            // Erase the current listed command on the canvas
-            // Decrement the currentBufferIndex, go back up in the history
-            // Display the new current command on the canvas
+            if (this.currentBufferIndex > 0) {
+                // Save current command in the buffer history
+                this.bufferHistory[this.currentBufferIndex] = this.buffer;
+                // Get the length of the current buffer to delete it
+                var deleteWidth = TSOS.CanvasTextFunctions.measure(this.currentFont, this.currentFontSize, this.buffer);
+                // Erase the current listed command on the canvas
+                _DrawingContext.clearRect((this.currentXPosition - deleteWidth), (this.currentYPosition - this.currentFontSize), deleteWidth, (this.currentFontSize + 5));
+                // Decrement the currentBufferIndex, go back up in the history
+                this.currentBufferIndex--;
+                // Assign the previous command to the buffer
+                this.buffer = this.bufferHistory[this.currentBufferIndex];
+                // Move the x index back to 0
+                this.currentXPosition = 0;
+                // Display the prompt
+                _OsShell.putPrompt();
+                // Display the new current command on the canvas
+                _StdOut.putText(this.buffer);
+            }
         };
         // Issue #5 Handles the down arrow for command recalling
         Console.prototype.handleDownArrow = function () {
             console.log("Down arrow pressed");
             // Check if there are any following commands in the buffer
-            // Save the current command in the buffer history 
-            // Erase the current listed command on the canvas
-            // Increment the currentBufferIndex, go down in the history
-            // Display the new current command on the canvas
+            if (this.currentBufferIndex < (this.bufferHistory.length - 1)) {
+                // Save the current command in the buffer history 
+                // Erase the current listed command on the canvas
+                // Increment the currentBufferIndex, go down in the history
+                // Display the new current command on the canvas
+            }
         };
         return Console;
     }());
