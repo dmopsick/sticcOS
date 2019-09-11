@@ -98,10 +98,20 @@ var TSOS;
                 // Calculate distance to move current X position
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 console.log("FLAG x width: " + this.currentXPosition);
-                console.log("FLAG 5: " + offset);
                 // Issue #8 Check if the command is too long and going off the screen
-                if (this.currentXPosition > (_Canvas.width - offset)) {
+                if (this.currentXPosition > (_Canvas.width - 15)) {
                     console.log("Advance the line down.");
+                    this.advanceLine();
+                    // Move the current X coordinate to the beginning of the line
+                    /* this.currentXPosition = 0;
+
+                    // Calculate amount to move the line down
+                    const lineIncrement = _DefaultFontSize +
+                        _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                        _FontHeightMargin;
+
+                    // Move the current Y coordinate down one line
+                    this.currentYPosition += lineIncrement; */
                 }
                 // The cursor does not need to be moved down a level
                 else {
