@@ -95,7 +95,7 @@ module TSOS {
             // status <string>
             sc = new ShellCommand(this.shellStatus,
                 "status",
-                "<string> - Sets the current status of the system.");
+                "<string> - Sets the current status of SticcOS.");
             this.commandList[this.commandList.length] = sc;
 
             // bsod

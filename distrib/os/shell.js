@@ -56,7 +56,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellEncouragement, "encouragement", "- Provides some much needed encouragement.");
             this.commandList[this.commandList.length] = sc;
             // status <string>
-            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Sets the current status of the system.");
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Sets the current status of SticcOS.");
             this.commandList[this.commandList.length] = sc;
             // bsod
             sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", "- Displays the SticcOS bluescreen of death");

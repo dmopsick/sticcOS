@@ -85,6 +85,7 @@ module TSOS {
         }
 
         public putText(text): void {
+            console.log(text);
             /*  My first inclination here was to write two functions: putChar() and putString().
                 Then I remembered that JavaScript is (sadly) untyped and it won't differentiate
                 between the two. (Although TypeScript would. But we're compiling to JavaScipt anyway.)
@@ -93,22 +94,24 @@ module TSOS {
                 decided to write one function and use the term "text" to connote string or char.
             */
             if (text !== "") {
-                // Draw the text at the current X and Y coordinates.
-                _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
+                // Draw the text at the current X and Y coordinates one character at a time
+                for (let i = 0; i < text.length; i++) {
+                    _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text[i]);
 
-                // Calculate distance to move current X position
-                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
+                    // Calculate distance to move current X position
+                    var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text[i]);
 
-                console.log("FLAG x width: " + this.currentXPosition);
+                    // console.log("FLAG x width: " + this.currentXPosition);
 
-                // Issue #8 Check if the command is too long and going off the screen
-                if (this.currentXPosition > (_Canvas.width - 20)) {
-                    this.previousLineXPosition = this.currentXPosition + offset;
-                    this.advanceLine();
-                }
-                // The cursor does not need to be moved down a level
-                else {
-                    this.currentXPosition = this.currentXPosition + offset;
+                    // Issue #8 Check if the command is too long and going off the screen
+                    if (this.currentXPosition > (_Canvas.width - 20)) {
+                        this.previousLineXPosition = this.currentXPosition + offset;
+                        this.advanceLine();
+                    }
+                    // The cursor does not need to be moved down a level
+                    else {
+                        this.currentXPosition = this.currentXPosition + offset;
+                    }
                 }
             }
         }
