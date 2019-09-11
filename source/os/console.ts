@@ -13,6 +13,7 @@ module TSOS {
             public currentFontSize = _DefaultFontSize,
             public currentXPosition = 0,
             public currentYPosition = _DefaultFontSize,
+            public previousLineXPosition = 0, // Issue #8 keeps track of where the previous line x positon was before wrapping, used to backspace
             public buffer = "",
             public bufferHistory = [], // Issue #5 records the history of the commands issued
             public currentBufferIndex = 0) { // Issue #5 keeps track of the current spot in the buffer history
@@ -101,21 +102,9 @@ module TSOS {
                 console.log("FLAG x width: " + this.currentXPosition);
 
                 // Issue #8 Check if the command is too long and going off the screen
-                if (this.currentXPosition > (_Canvas.width - 15)) {
-                    console.log("Advance the line down.");
+                if (this.currentXPosition > (_Canvas.width - 20)) {
+                    this.previousLineXPosition = this.currentXPosition + offset;
                     this.advanceLine();
-                    // Move the current X coordinate to the beginning of the line
-                    /* this.currentXPosition = 0;
-
-                    // Calculate amount to move the line down
-                    const lineIncrement = _DefaultFontSize +
-                        _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
-                        _FontHeightMargin;
-
-                    // Move the current Y coordinate down one line
-                    this.currentYPosition += lineIncrement; */
-
-
                 }
                 // The cursor does not need to be moved down a level
                 else {
@@ -141,7 +130,7 @@ module TSOS {
             this.currentYPosition += lineIncrement;
 
             // Check if the next line goes off the screen
-            if (this.currentYPosition >= 500) {
+            if (this.currentYPosition >= _Canvas.height) {
                 // Take a snapshot of the current canvas minus the top line, starting at postion (0, lineincrement)
                 let snapshot = _DrawingContext.getImageData(0, lineIncrement, _Canvas.width, (_Canvas.height - lineIncrement));
 
@@ -153,9 +142,25 @@ module TSOS {
 
                 // Have to set current y positon to bottom of the screen
                 // Setting the y position to be one line's increment away from the bottom
-                // The plus 5 is to prevent commands from bunching up
+                // The plus 10 is to prevent commands from bunching up
                 this.currentYPosition = (_Canvas.height - lineIncrement) + 10;
             }
+        }
+
+        // Issue #8 move the cursor back up
+        public moveLineUp(): void {
+            // Calculate how much to move the cursor up
+            const lineIncrement = _DefaultFontSize +
+                _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                _FontHeightMargin;
+
+            // This is the default code, just saved as a variable.
+            this.currentYPosition -= lineIncrement;
+
+            // Set the X position to the end of the line
+            // The previousLineXPosition keeps track of where the last character ends on wrap line down.
+            // Keeps the visual backspace on the canvas consistent with the buffer
+            this.currentXPosition = (this.previousLineXPosition);
         }
 
         // Issue #5 Handles the autocompletion of commands with the tab key
@@ -229,8 +234,16 @@ module TSOS {
             // Remove the last character from the canvas
             _DrawingContext.clearRect((this.currentXPosition - deleteWidth), (this.currentYPosition - this.currentFontSize), deleteWidth, (this.currentFontSize + 5));
 
-            // Move the cursor back so next character printed in proper location
-            this.currentXPosition -= deleteWidth;
+            // Issue #8 Check to see if the cursor needs to be moved back to the previous line
+            // The buffer needs to not be empty as well, don't want to backspace nothing to the previous line
+            if ((this.buffer != "") && (this.currentXPosition <= deleteWidth)) {
+                // Move the cursor up
+                this.moveLineUp();
+            }
+            else {
+                // Move the cursor back so next character printed in proper location
+                this.currentXPosition -= deleteWidth;
+            }
         }
 
         // Issue #5 Handles the up arrow for command recalling

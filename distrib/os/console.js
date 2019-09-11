@@ -7,12 +7,14 @@
 var TSOS;
 (function (TSOS) {
     var Console = /** @class */ (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, bufferHistory, // Issue #5 records the history of the commands issued
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, previousLineXPosition, // Issue #8 keeps track of where the previous line x positon was before wrapping, used to backspace
+        buffer, bufferHistory, // Issue #5 records the history of the commands issued
         currentBufferIndex) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
             if (currentYPosition === void 0) { currentYPosition = _DefaultFontSize; }
+            if (previousLineXPosition === void 0) { previousLineXPosition = 0; }
             if (buffer === void 0) { buffer = ""; }
             if (bufferHistory === void 0) { bufferHistory = []; }
             if (currentBufferIndex === void 0) { currentBufferIndex = 0; }
@@ -20,6 +22,7 @@ var TSOS;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
+            this.previousLineXPosition = previousLineXPosition;
             this.buffer = buffer;
             this.bufferHistory = bufferHistory;
             this.currentBufferIndex = currentBufferIndex;
@@ -99,19 +102,9 @@ var TSOS;
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 console.log("FLAG x width: " + this.currentXPosition);
                 // Issue #8 Check if the command is too long and going off the screen
-                if (this.currentXPosition > (_Canvas.width - 15)) {
-                    console.log("Advance the line down.");
+                if (this.currentXPosition > (_Canvas.width - 20)) {
+                    this.previousLineXPosition = this.currentXPosition + offset;
                     this.advanceLine();
-                    // Move the current X coordinate to the beginning of the line
-                    /* this.currentXPosition = 0;
-
-                    // Calculate amount to move the line down
-                    const lineIncrement = _DefaultFontSize +
-                        _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
-                        _FontHeightMargin;
-
-                    // Move the current Y coordinate down one line
-                    this.currentYPosition += lineIncrement; */
                 }
                 // The cursor does not need to be moved down a level
                 else {
@@ -133,7 +126,7 @@ var TSOS;
             // This is the default code, just saved as a variable.
             this.currentYPosition += lineIncrement;
             // Check if the next line goes off the screen
-            if (this.currentYPosition >= 500) {
+            if (this.currentYPosition >= _Canvas.height) {
                 // Take a snapshot of the current canvas minus the top line, starting at postion (0, lineincrement)
                 var snapshot = _DrawingContext.getImageData(0, lineIncrement, _Canvas.width, (_Canvas.height - lineIncrement));
                 // Clear screen
@@ -142,9 +135,22 @@ var TSOS;
                 _DrawingContext.putImageData(snapshot, 0, 0);
                 // Have to set current y positon to bottom of the screen
                 // Setting the y position to be one line's increment away from the bottom
-                // The plus 5 is to prevent commands from bunching up
+                // The plus 10 is to prevent commands from bunching up
                 this.currentYPosition = (_Canvas.height - lineIncrement) + 10;
             }
+        };
+        // Issue #8 move the cursor back up
+        Console.prototype.moveLineUp = function () {
+            // Calculate how much to move the cursor up
+            var lineIncrement = _DefaultFontSize +
+                _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                _FontHeightMargin;
+            // This is the default code, just saved as a variable.
+            this.currentYPosition -= lineIncrement;
+            // Set the X position to the end of the line
+            // The previousLineXPosition keeps track of where the last character ends on wrap line down.
+            // Keeps the visual backspace on the canvas consistent with the buffer
+            this.currentXPosition = (this.previousLineXPosition);
         };
         // Issue #5 Handles the autocompletion of commands with the tab key
         // Doing it in this file rather than shell.js so I can edit the buffer
@@ -206,8 +212,16 @@ var TSOS;
             var deleteWidth = TSOS.CanvasTextFunctions.measure(this.currentFont, this.currentFontSize, charToDelete);
             // Remove the last character from the canvas
             _DrawingContext.clearRect((this.currentXPosition - deleteWidth), (this.currentYPosition - this.currentFontSize), deleteWidth, (this.currentFontSize + 5));
-            // Move the cursor back so next character printed in proper location
-            this.currentXPosition -= deleteWidth;
+            // Issue #8 Check to see if the cursor needs to be moved back to the previous line
+            // The buffer needs to not be empty as well, don't want to backspace nothing to the previous line
+            if ((this.buffer != "") && (this.currentXPosition <= deleteWidth)) {
+                // Move the cursor up
+                this.moveLineUp();
+            }
+            else {
+                // Move the cursor back so next character printed in proper location
+                this.currentXPosition -= deleteWidth;
+            }
         };
         // Issue #5 Handles the up arrow for command recalling
         Console.prototype.handleUpArrow = function () {
