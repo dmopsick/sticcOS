@@ -453,7 +453,6 @@ module TSOS {
             // Verify that the user entered code only contains hex codes and spaces using a regular expression
             let regularExpression = new RegExp(/^[0-9a-fA-F\s]+$/);
             let valid = regularExpression.test(programInput);
-            console.log("FLAG 2 " + valid);
 
             // Let the user know whether or not they entered valid HEX code.
             if (valid) {

@@ -92,7 +92,7 @@ var TSOS;
             // Put more here.
         };
         Kernel.prototype.krnInterruptHandler = function (irq, params) {
-            console.log("FLAG 1: " + params);
+            // console.log("FLAG 1: " + params);
             // This is the Interrupt Handler Routine.  See pages 8 and 560.
             // Trace our entrance here so we can compute Interrupt Latency by analyzing the log file later on. Page 766.
             this.krnTrace("Handling IRQ~" + irq);

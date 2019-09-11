@@ -43,7 +43,7 @@ module TSOS {
                     _OsShell.handleInput(this.buffer);
 
                     // Issue #5 do not want to save empty commands in the buffer
-                    if (this.bufferHistory[this.bufferHistory.length-1] == "") {
+                    if (this.bufferHistory[this.bufferHistory.length - 1] == "") {
                         // Save the executed command
                         this.bufferHistory[this.bufferHistory.length - 1] = this.buffer;
                     }
@@ -94,9 +94,25 @@ module TSOS {
             if (text !== "") {
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
-                // Move the current X position.
+
+                // Calculate distance to move current X position
                 var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-                this.currentXPosition = this.currentXPosition + offset;
+
+                console.log("FLAG x width: " + this.currentXPosition);
+                console.log("FLAG 5: " + offset);
+
+                // Issue #8 Check if the command is too long and going off the screen
+                if (this.currentXPosition > (_Canvas.width - offset)) {
+                    console.log("Advance the line down.");
+                    // Move the current Y coordinate down one line
+
+                    
+                    // Move the current X coordinate to the beginning of the line
+                }
+                // The cursor does not need to be moved down a level
+                else {
+                    this.currentXPosition = this.currentXPosition + offset;
+                }
             }
         }
 
@@ -243,7 +259,6 @@ module TSOS {
         public handleDownArrow() {
             // Check if there are any following commands in the buffer
             if (this.currentBufferIndex < (this.bufferHistory.length - 1)) {
-                console.log("GO DOWN");
                 // Save the current command in the buffer history 
                 this.bufferHistory[this.currentBufferIndex] = this.buffer;
 

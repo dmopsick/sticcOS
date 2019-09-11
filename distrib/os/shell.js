@@ -386,7 +386,6 @@ var TSOS;
             // Verify that the user entered code only contains hex codes and spaces using a regular expression
             var regularExpression = new RegExp(/^[0-9a-fA-F\s]+$/);
             var valid = regularExpression.test(programInput);
-            console.log("FLAG 2 " + valid);
             // Let the user know whether or not they entered valid HEX code.
             if (valid) {
                 _StdOut.putText("That is some highquality hex code.");
