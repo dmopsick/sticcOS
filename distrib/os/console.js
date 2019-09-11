@@ -7,12 +7,14 @@
 var TSOS;
 (function (TSOS) {
     var Console = /** @class */ (function () {
-        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, buffer, bufferHistory, // Issue #5 records the history of the commands issued
+        function Console(currentFont, currentFontSize, currentXPosition, currentYPosition, previousLineXPosition, // Issue #8 keeps track of where the previous line x positon was before wrapping, used to backspace
+        buffer, bufferHistory, // Issue #5 records the history of the commands issued
         currentBufferIndex) {
             if (currentFont === void 0) { currentFont = _DefaultFontFamily; }
             if (currentFontSize === void 0) { currentFontSize = _DefaultFontSize; }
             if (currentXPosition === void 0) { currentXPosition = 0; }
             if (currentYPosition === void 0) { currentYPosition = _DefaultFontSize; }
+            if (previousLineXPosition === void 0) { previousLineXPosition = 0; }
             if (buffer === void 0) { buffer = ""; }
             if (bufferHistory === void 0) { bufferHistory = []; }
             if (currentBufferIndex === void 0) { currentBufferIndex = 0; }
@@ -20,6 +22,7 @@ var TSOS;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
             this.currentYPosition = currentYPosition;
+            this.previousLineXPosition = previousLineXPosition;
             this.buffer = buffer;
             this.bufferHistory = bufferHistory;
             this.currentBufferIndex = currentBufferIndex;
@@ -45,10 +48,7 @@ var TSOS;
                     // ... tell the shell ...
                     _OsShell.handleInput(this.buffer);
                     // Issue #5 do not want to save empty commands in the buffer
-                    console.log("FLAG 6");
-                    console.log(this.bufferHistory);
                     if (this.bufferHistory[this.bufferHistory.length - 1] == "") {
-                        console.log("FLAG 10");
                         // Save the executed command
                         this.bufferHistory[this.bufferHistory.length - 1] = this.buffer;
                     }
@@ -88,6 +88,7 @@ var TSOS;
             }
         };
         Console.prototype.putText = function (text) {
+            console.log(text);
             /*  My first inclination here was to write two functions: putChar() and putString().
                 Then I remembered that JavaScript is (sadly) untyped and it won't differentiate
                 between the two. (Although TypeScript would. But we're compiling to JavaScipt anyway.)
@@ -96,11 +97,22 @@ var TSOS;
                 decided to write one function and use the term "text" to connote string or char.
             */
             if (text !== "") {
-                // Draw the text at the current X and Y coordinates.
-                _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
-                // Move the current X position.
-                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
-                this.currentXPosition = this.currentXPosition + offset;
+                // Draw the text at the current X and Y coordinates one character at a time
+                for (var i = 0; i < text.length; i++) {
+                    _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text[i]);
+                    // Calculate distance to move current X position
+                    var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text[i]);
+                    // console.log("FLAG x width: " + this.currentXPosition);
+                    // Issue #8 Check if the command is too long and going off the screen
+                    if (this.currentXPosition > (_Canvas.width - 20)) {
+                        this.previousLineXPosition = this.currentXPosition + offset;
+                        this.advanceLine();
+                    }
+                    // The cursor does not need to be moved down a level
+                    else {
+                        this.currentXPosition = this.currentXPosition + offset;
+                    }
+                }
             }
         };
         Console.prototype.advanceLine = function () {
@@ -117,7 +129,7 @@ var TSOS;
             // This is the default code, just saved as a variable.
             this.currentYPosition += lineIncrement;
             // Check if the next line goes off the screen
-            if (this.currentYPosition >= 500) {
+            if (this.currentYPosition >= _Canvas.height) {
                 // Take a snapshot of the current canvas minus the top line, starting at postion (0, lineincrement)
                 var snapshot = _DrawingContext.getImageData(0, lineIncrement, _Canvas.width, (_Canvas.height - lineIncrement));
                 // Clear screen
@@ -126,9 +138,22 @@ var TSOS;
                 _DrawingContext.putImageData(snapshot, 0, 0);
                 // Have to set current y positon to bottom of the screen
                 // Setting the y position to be one line's increment away from the bottom
-                // The plus 5 is to prevent commands from bunching up
+                // The plus 10 is to prevent commands from bunching up
                 this.currentYPosition = (_Canvas.height - lineIncrement) + 10;
             }
+        };
+        // Issue #8 move the cursor back up
+        Console.prototype.moveLineUp = function () {
+            // Calculate how much to move the cursor up
+            var lineIncrement = _DefaultFontSize +
+                _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
+                _FontHeightMargin;
+            // This is the default code, just saved as a variable.
+            this.currentYPosition -= lineIncrement;
+            // Set the X position to the end of the line
+            // The previousLineXPosition keeps track of where the last character ends on wrap line down.
+            // Keeps the visual backspace on the canvas consistent with the buffer
+            this.currentXPosition = (this.previousLineXPosition);
         };
         // Issue #5 Handles the autocompletion of commands with the tab key
         // Doing it in this file rather than shell.js so I can edit the buffer
@@ -190,8 +215,16 @@ var TSOS;
             var deleteWidth = TSOS.CanvasTextFunctions.measure(this.currentFont, this.currentFontSize, charToDelete);
             // Remove the last character from the canvas
             _DrawingContext.clearRect((this.currentXPosition - deleteWidth), (this.currentYPosition - this.currentFontSize), deleteWidth, (this.currentFontSize + 5));
-            // Move the cursor back so next character printed in proper location
-            this.currentXPosition -= deleteWidth;
+            // Issue #8 Check to see if the cursor needs to be moved back to the previous line
+            // The buffer needs to not be empty as well, don't want to backspace nothing to the previous line
+            if ((this.buffer != "") && (this.currentXPosition <= deleteWidth)) {
+                // Move the cursor up
+                this.moveLineUp();
+            }
+            else {
+                // Move the cursor back so next character printed in proper location
+                this.currentXPosition -= deleteWidth;
+            }
         };
         // Issue #5 Handles the up arrow for command recalling
         Console.prototype.handleUpArrow = function () {
@@ -219,7 +252,6 @@ var TSOS;
         Console.prototype.handleDownArrow = function () {
             // Check if there are any following commands in the buffer
             if (this.currentBufferIndex < (this.bufferHistory.length - 1)) {
-                console.log("GO DOWN");
                 // Save the current command in the buffer history 
                 this.bufferHistory[this.currentBufferIndex] = this.buffer;
                 // Get the length of the current buffer to delete it

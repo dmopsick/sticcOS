@@ -56,7 +56,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellEncouragement, "encouragement", "- Provides some much needed encouragement.");
             this.commandList[this.commandList.length] = sc;
             // status <string>
-            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Sets the current status of the system.");
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Sets the current status of SticcOS.");
             this.commandList[this.commandList.length] = sc;
             // bsod
             sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", "- Displays the SticcOS bluescreen of death");
@@ -386,7 +386,6 @@ var TSOS;
             // Verify that the user entered code only contains hex codes and spaces using a regular expression
             var regularExpression = new RegExp(/^[0-9a-fA-F\s]+$/);
             var valid = regularExpression.test(programInput);
-            console.log("FLAG 2 " + valid);
             // Let the user know whether or not they entered valid HEX code.
             if (valid) {
                 _StdOut.putText("That is some highquality hex code.");

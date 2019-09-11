@@ -95,7 +95,7 @@ module TSOS {
             // status <string>
             sc = new ShellCommand(this.shellStatus,
                 "status",
-                "<string> - Sets the current status of the system.");
+                "<string> - Sets the current status of SticcOS.");
             this.commandList[this.commandList.length] = sc;
 
             // bsod
@@ -453,7 +453,6 @@ module TSOS {
             // Verify that the user entered code only contains hex codes and spaces using a regular expression
             let regularExpression = new RegExp(/^[0-9a-fA-F\s]+$/);
             let valid = regularExpression.test(programInput);
-            console.log("FLAG 2 " + valid);
 
             // Let the user know whether or not they entered valid HEX code.
             if (valid) {
