@@ -385,7 +385,7 @@ module TSOS {
                     encouragementText = "Start every day with a smile :D";
                     break;
                 case 4:
-                    encouragementText = "Even the longest joureny begins with the first step.";
+                    encouragementText = "Even the longest journey begins with the first step.";
                     break;
                 case 5:
                     encouragementText = "It does not cost anything to have a good attitude";
