@@ -64,6 +64,9 @@ var TSOS;
             // load 
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Validates the user entered code in the program input.");
             this.commandList[this.commandList.length] = sc;
+            // run <pid>
+            sc = new TSOS.ShellCommand(this.shellRun, "run", "<pid> - Executes the specified program loaded into SticcOS.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             // Display the initial prompt.
@@ -250,6 +253,9 @@ var TSOS;
                     case "load":
                         _StdOut.putText("Load is used to validate the user entered program code.");
                         break;
+                    case "run":
+                        _StdOut.putText("Run <pid> runs the process with the given PID loaded into SticcOS.");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -325,7 +331,7 @@ var TSOS;
                     encouragementText = "Start every day with a smile :D";
                     break;
                 case 4:
-                    encouragementText = "Even the longest joureny begins with the first step.";
+                    encouragementText = "Even the longest journey begins with the first step.";
                     break;
                 case 5:
                     encouragementText = "It does not cost anything to have a good attitude";
@@ -389,9 +395,20 @@ var TSOS;
             // Let the user know whether or not they entered valid HEX code.
             if (valid) {
                 _StdOut.putText("That is some highquality hex code.");
+                // Issue #17 need to save the entered Hex code in memory.
             }
             else {
                 _StdOut.putText("Error: Invalid hex code. Please double check.");
+            }
+        };
+        // Runs a specified user entered program Issue #18
+        Shell.prototype.shellRun = function (args) {
+            // The process ID must be specified in order for the program to be ran
+            if (args.length > 0) {
+                // Begin the execution of a program already storedi in memory
+            }
+            else {
+                _StdOut.putText("Error: Please specifcy which program to run.");
             }
         };
         return Shell;

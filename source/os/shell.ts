@@ -110,6 +110,12 @@ module TSOS {
                 "- Validates the user entered code in the program input.");
             this.commandList[this.commandList.length] = sc;
 
+            // run <pid>
+            sc = new ShellCommand(this.shellRun,
+                "run",
+                "<pid> - Executes the specified program loaded into SticcOS.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -309,6 +315,9 @@ module TSOS {
                     case "load":
                         _StdOut.putText("Load is used to validate the user entered program code.");
                         break;
+                    case "run":
+                        _StdOut.putText("Run <pid> runs the process with the given PID loaded into SticcOS.");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -457,9 +466,22 @@ module TSOS {
             // Let the user know whether or not they entered valid HEX code.
             if (valid) {
                 _StdOut.putText("That is some highquality hex code.");
+
+                // Issue #17 need to save the entered Hex code in memory.
             }
             else {
                 _StdOut.putText("Error: Invalid hex code. Please double check.");
+            }
+        }
+
+        // Runs a specified user entered program Issue #18
+        public shellRun(args: string[]) {
+            // The process ID must be specified in order for the program to be ran
+            if (args.length > 0) {
+                // Begin the execution of a program already storedi in memory
+            }
+            else {
+                _StdOut.putText("Error: Please specifcy which program to run.");
             }
         }
 
