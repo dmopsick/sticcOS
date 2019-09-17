@@ -54,6 +54,9 @@ var _StdOut: TSOS.Console = null;
 // Memory
 var _MemorySize: number = 256; // Issue #24 | Keeps track of the size of a single memory block in the system
 var _MemoryCoint: number = 3; // Issue #24 | Keeps track of the amount of memory blocks present in the system
+var _Memory = TSOS.Memory;
+// var _MemoryAccessor
+var _MemoryManager: any = null;
 
 // UI
 var _Console: TSOS.Console;

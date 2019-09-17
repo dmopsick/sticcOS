@@ -9,12 +9,18 @@ module TSOS {
 
         // Initializes the memory when the OS is started
         public init(): void {
+            // Initialize the block with all 00s
+            this.resetBlock();
+        }
+
+        // Resets the memory in the memory block to all 00s
+        public resetBlock(): void {
             // Use the constant for size of the memory block to intialize the array
-            for (let i = 0; i < _MemorySize; i ++) {
+            for (let i = 0; i < _MemorySize; i++) {
                 // Initialize the memory block with all 00
                 this.memoryArray[i] == "00";
             }
         }
-        
+
     }
 }
