@@ -20,8 +20,6 @@ var KEYBOARD_IRQ = 1;
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
-// Issue #3
-var _Status = "";
 var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
@@ -39,6 +37,9 @@ var _KernelBuffers = null;
 // Standard input and output
 var _StdIn = null;
 var _StdOut = null;
+// Memory
+var _MemorySize = 256; // Issue #24 | Keeps track of the size of a single memory block in the system
+var _MemoryCoint = 3; // Issue #24 | Keeps track of the amount of memory blocks present in the system
 // UI
 var _Console;
 var _OsShell;

@@ -26,8 +26,6 @@ const KEYBOARD_IRQ: number = 1;
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 
-// Issue #3
-var _Status = "";
 
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 
@@ -52,6 +50,10 @@ var _KernelBuffers = null;
 // Standard input and output
 var _StdIn:  TSOS.Console = null; 
 var _StdOut: TSOS.Console = null;
+
+// Memory
+var _MemorySize: number = 256; // Issue #24 | Keeps track of the size of a single memory block in the system
+var _MemoryCoint: number = 3; // Issue #24 | Keeps track of the amount of memory blocks present in the system
 
 // UI
 var _Console: TSOS.Console;
