@@ -8,16 +8,19 @@ var TSOS;
         function Memory(memoryArray) {
             if (memoryArray === void 0) { memoryArray = []; }
             this.memoryArray = memoryArray;
+            console.log("SAD 2");
         }
         // Initializes the memory when the OS is started
         Memory.prototype.init = function () {
+            this.memoryArray = [];
             // Initialize the block with all 00s
             this.resetBlock();
         };
         // Resets the memory in the memory block to all 00s
         Memory.prototype.resetBlock = function () {
             // Use the constant for size of the memory block to intialize the array
-            for (var i = 0; i < (_MemoryBlockSize * _MemoryBlockSize); i++) {
+            // for (let i = 0; i < (_MemoryBlockSize * _MemoryBlockSize); i++) {
+            for (var i = 0; i < (767); i++) {
                 // Initialize the memory block with all 00
                 this.memoryArray[i] == "00";
             }

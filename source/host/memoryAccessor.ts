@@ -2,9 +2,8 @@
 
 module TSOS {
     export class MemoryAccessor {
-        constructor(
 
-        ) { }
+        constructor() { }
 
         public init(): void {
 
@@ -12,7 +11,7 @@ module TSOS {
 
         // Issue #26 Need to be able to write program code into memory
         // Parameters: memAddr, data
-        public writeToMemory(memAddr, data): void {
+        public writeToMemory(memAddr, data): void { 
 
         }
 

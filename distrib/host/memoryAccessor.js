@@ -3,6 +3,7 @@ var TSOS;
 (function (TSOS) {
     var MemoryAccessor = /** @class */ (function () {
         function MemoryAccessor() {
+            console.log("Sad 3");
         }
         MemoryAccessor.prototype.init = function () {
         };

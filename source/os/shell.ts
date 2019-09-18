@@ -472,6 +472,9 @@ module TSOS {
                 // Need to assign a PID to the command
 
                 // Create a Process Control Block (PCB)
+
+                // Return the PID of the created process to the user
+                
             }
             else {
                 _StdOut.putText("Error: Invalid hex code. Please double check.");

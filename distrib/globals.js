@@ -37,12 +37,6 @@ var _KernelBuffers = null;
 // Standard input and output
 var _StdIn = null;
 var _StdOut = null;
-// Memory
-var _MemoryBlockSize = 256; // Issue #24 | Keeps track of the size of a single memory block in the system
-var _MemoryBlockCount = 3; // Issue #24 | Keeps track of the amount of memory blocks present in the system
-var _Memory;
-var _MemoryAccessor;
-var _MemoryManager = null;
 // UI
 var _Console;
 var _OsShell;
@@ -54,6 +48,12 @@ var _hardwareClockID = null;
 // For testing (and enrichment)...
 var Glados = null; // This is the function Glados() in glados-ip*.js http://alanclasses.github.io/TSOS/test/ .
 var _GLaDOS = null; // If the above is linked in, this is the instantiated instance of Glados.
+// Memory 
+var _MemoryBlockSize = 256; // Issue #24 | Keeps track of the size of a single memory block in the system
+var _MemoryBlockCount = 3; // Issue #24 | Keeps track of the amount of memory blocks present in the system
+var _Memory;
+var _MemoryAccessor;
+var _MemoryManager = null;
 var onDocumentLoad = function () {
     TSOS.Control.hostInit();
 };
