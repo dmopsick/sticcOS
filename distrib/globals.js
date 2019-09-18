@@ -38,8 +38,11 @@ var _KernelBuffers = null;
 var _StdIn = null;
 var _StdOut = null;
 // Memory
-var _MemorySize = 256; // Issue #24 | Keeps track of the size of a single memory block in the system
-var _MemoryCoint = 3; // Issue #24 | Keeps track of the amount of memory blocks present in the system
+var _MemoryBlockSize = 256; // Issue #24 | Keeps track of the size of a single memory block in the system
+var _MemoryBlockCount = 3; // Issue #24 | Keeps track of the amount of memory blocks present in the system
+var _Memory;
+var _MemoryAccessor;
+var _MemoryManager = null;
 // UI
 var _Console;
 var _OsShell;

@@ -51,15 +51,27 @@ h3 {
   flex-basis: 100%;
 }
 
+#cpuInfoDiv,
+#processInfoDiv,
+#memoryInfoDiv,
+  {
+  flex-basis: 100%;
+}
+
+#hostStatusDiv {
+  float: left;
+  width: 512px;
+  margin-right: 20px;
+}
+
 .normal_button {
   width: 100px;
 }
 
 .flex-box {
-  width: 512px;
   display: flex;
   flex-wrap: wrap;
-  float: left;
+  /* float: left; */
 }
 
 .footerText {

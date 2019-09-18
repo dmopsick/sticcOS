@@ -396,6 +396,8 @@ var TSOS;
             if (valid) {
                 _StdOut.putText("That is some highquality hex code.");
                 // Issue #17 need to save the entered Hex code in memory.
+                // Need to assign a PID to the command
+                // Create a Process Control Block (PCB)
             }
             else {
                 _StdOut.putText("Error: Invalid hex code. Please double check.");
@@ -405,7 +407,15 @@ var TSOS;
         Shell.prototype.shellRun = function (args) {
             // The process ID must be specified in order for the program to be ran
             if (args.length > 0) {
-                // Begin the execution of a program already storedi in memory
+                // Get the PID from the argument
+                var pid = args[0];
+                // Need to check if the PID given by the user refers to a valid process in memory
+                var pidFound = false;
+                if (pidFound) {
+                }
+                else {
+                    _StdOut.putText("Error: There is no valid process with the PID " + pid);
+                }
             }
             else {
                 _StdOut.putText("Error: Please specifcy which program to run.");

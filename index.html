@@ -51,7 +51,7 @@
                         <input type="button" id="btnReset" name="brnReset" class="normal_button" disabled="disabled" value="Reset" tabindex="2" onclick="TSOS.Control.hostBtnReset_click(this);">
                 </div>
 
-                <div class="flex-box">
+                <div class="flex-box" id="hostStatusDiv">
                         <div id="hostStatus">
                                 <span id="hostStatusVer"></span>
                                 <span id="hostStatusTime"></span>
@@ -66,21 +66,57 @@
                 </div>
 
 
-                <div id="divLog" style="margin-left:520px;">
-                        <label>
-                                Host Log
-                                <br>
-                                <textarea name="taHostLog" id="taHostLog" rows="26" cols="48"></textarea>
-                        </label>
+                <div class="flex-box">
+                        <div style="flex-basis: 35%; margin-right:25px;">
+                                <div id="divLog" class="flex-box">
+                                        <label>
+                                                Host Log
+                                                <br>
+                                                <textarea name="taHostLog" id="taHostLog" rows="26" cols="48"></textarea>
+                                        </label>
+                                </div>
+                                <div id="divUserProgramInput">
+                                        <label>
+                                                User Program Input
+                                                <br>
+                                                <textarea name="taProgramInput" id="taProgramInput" rows="8" cols="48"></textarea>
+                                        </label>
+                                </div>
+                        </div>
+                        <div style="flex-basis: 50%;">
+                                <div class="flex-box">
+                                        <!-- Issue #19 Displaying the CPU info -->
+                                        <div id="cpuInfoDiv">
+                                                <label for="taCpuInfo">
+                                                        CPU
+                                                </label>
+                                                <br>
+                                                <textarea name="taCpuInfo" id="taCpuInfo" rows="13" cols="48"></textarea>
+                                        </div>
+
+                                        <!-- Issue #19 Dispaly the processes -->
+                                        <div id="processInfoDiv">
+                                                <label for="taProcessInfo">
+                                                        Processes
+                                                </label>
+                                                <br>
+                                                <textarea name="taProcessInfo" id="taProcessInfo" rows="13" cols="48"></textarea>
+                                        </div>
+
+                                        <!-- Issue #19 Display the memory block -->
+                                        <div id="memoryInfoDiv">
+                                                <label for="taMemoryInfo">
+                                                        Memory
+                                                </label>
+                                                <br>
+                                                <textarea name="taMemoryInfo" id="taMemoryInfo" rows="13" cols="48">
+                                                                        
+                                                                </textarea>
+                                        </div>
+                                </div>
+                        </div>
                 </div>
 
-                <div id="divUserProgramInput" style="margin-left:520px;">
-                        <label>
-                                User Program Input
-                                <br>
-                                <textarea name="taProgramInput" id="taProgramInput" rows="8" cols="48"></textarea>
-                        </label>
-                </div>
         </div>
 
         <p class="footerText" style="clear:both;">
