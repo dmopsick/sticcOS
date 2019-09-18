@@ -35,6 +35,9 @@ module TSOS {
             _krnKeyboardDriver.driverEntry();                    // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
 
+            // Issue #25 Initialize Memory Manager
+            _MemoryManager = new MemoryManager();
+
             //
             // ... more?
             //
