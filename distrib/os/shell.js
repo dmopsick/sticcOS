@@ -393,7 +393,10 @@ var TSOS;
             var regularExpression = new RegExp(/^[0-9a-fA-F\s]+$/);
             var valid = regularExpression.test(programInput);
             // Let the user know whether or not they entered valid HEX code.
-            if (valid) {
+            if (programInput.trim() == "") {
+                _StdOut.putText("Error: An empty program is an invalid one.");
+            }
+            else if (valid) {
                 _StdOut.putText("That is some highquality hex code.");
                 // Issue #17 need to save the entered Hex code in memory.
                 // Need to assign a PID to the command

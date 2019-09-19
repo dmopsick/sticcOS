@@ -8,7 +8,6 @@ var TSOS;
         function Memory(memoryArray) {
             if (memoryArray === void 0) { memoryArray = []; }
             this.memoryArray = memoryArray;
-            console.log("SAD 2");
         }
         // Initializes the memory when the OS is started
         Memory.prototype.init = function () {
