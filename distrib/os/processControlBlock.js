@@ -5,7 +5,7 @@ var TSOS;
         function ProcessControlBlock(pid, // #21 Post increment so that when a PCB is created it increments the current PID 
         memAddrStart, PC, Acc, Xreg, YReg, ZFlag, isExecuted, // Records whether the PCB has been executed, if it has then
         state) {
-            if (pid === void 0) { pid = _CurrentPID++; }
+            if (pid === void 0) { pid = _CurrentPID; }
             if (memAddrStart === void 0) { memAddrStart = 0; }
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }

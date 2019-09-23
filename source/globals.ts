@@ -73,7 +73,7 @@ var _MemoryBlockSize: number = 256; // Issue #24 | Keeps track of the size of a 
 var _MemoryBlockCount: number = 3; // Issue #24 | Keeps track of the amount of memory blocks present in the system
 var _Memory: TSOS.Memory;
 var _MemoryAccessor: TSOS.MemoryAccessor;
-var _MemoryManager: any = null;
+var _MemoryManager: TSOS.MemoryManager = null;
 
 // Process Control Block
 var _PCBInstances = new Array<TSOS.ProcessControlBlock>();

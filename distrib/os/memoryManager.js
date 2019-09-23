@@ -35,6 +35,15 @@ var TSOS;
             // Or if there is a process already ran it should overwrite?
             return true;
         };
+        // Issue #25 Loads program into memory
+        // Takes in the PCB 
+        MemoryManager.prototype.loadProgramToMemory = function (pcb, programCode) {
+            // Save each Hex digit into memory
+            for (var i = 0; i < programCode.length; i++) {
+                _Memory.memoryArray[i] = programCode[i];
+            }
+            console.log("FLAG 15: " + _Memory.memoryArray);
+        };
         return MemoryManager;
     }());
     TSOS.MemoryManager = MemoryManager;

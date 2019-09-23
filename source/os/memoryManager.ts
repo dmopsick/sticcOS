@@ -38,5 +38,17 @@ module TSOS {
 
             return true;
         }
+
+        // Issue #25 Loads program into memory
+        // Takes in the PCB 
+        public loadProgramToMemory(pcb: TSOS.ProcessControlBlock, programCode: string[]): void {
+            // Save each Hex digit into memory
+            for(let i =0; i < programCode.length; i++) {
+                _Memory.memoryArray[i] = programCode[i];
+            }
+
+            console.log("FLAG 15: " + _Memory.memoryArray);
+        }
+
     }
 }

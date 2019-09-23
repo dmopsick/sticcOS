@@ -408,14 +408,19 @@ var TSOS;
                     // If there is a free memory block, continue the process
                     if (freeMemoryBlock) {
                         _StdOut.putText("Okay well gotta load this bitch");
-                        // Write the program into memory
                         // Create a Process Control Block (PCB)
-                        _PCBInstances.push(new TSOS.ProcessControlBlock());
-                        console.log(_PCBInstances);
+                        var newPCB = new TSOS.ProcessControlBlock();
+                        // Add new PCB to global instance array
+                        _PCBInstances.push(newPCB);
+                        // Write the program into memory
+                        _MemoryManager.loadProgramToMemory(newPCB, splitProgramInput);
+                        // console.log(_PCBInstances);
                         // Return the PID of the created process to the user
                         _StdOut.putText("Great job! You loaded the program into memory.");
                         _StdOut.advanceLine();
                         _StdOut.putText("Process ID:" + _CurrentPID);
+                        // Last but not least Increment the current PID
+                        _CurrentPID++;
                     }
                     // No free memory block so a process cannot be loaded
                     else {
