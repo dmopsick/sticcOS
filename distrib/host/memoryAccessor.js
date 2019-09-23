@@ -1,4 +1,5 @@
 // Issue #26 Creating Memory Accessor model
+// The memory accessor is in charge of converting logical address to physical address
 var TSOS;
 (function (TSOS) {
     var MemoryAccessor = /** @class */ (function () {

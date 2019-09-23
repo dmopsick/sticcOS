@@ -3,7 +3,7 @@
 module TSOS {
     export class ProcessControlBlock {
         constructor(
-            public pid: number = _CurrentPID++, // #21 Post increment so that when a PCB is created it increments the current PID 
+            public pid: number = _CurrentPID, // #21 Post increment so that when a PCB is created it increments the current PID 
             public memAddrStart: number = 0,
             public PC: number = 0,
             public Acc: number = 0,

@@ -397,12 +397,35 @@ var TSOS;
                 _StdOut.putText("Error: An empty program is an invalid one.");
             }
             else if (valid) {
-                _StdOut.putText("That is some highquality hex code.");
-                // Issue #17 need to save the entered Hex code in memory.
-                // Check to see the memory block is full (Project 2, will check only 1 by defauly)
-                // Need to assign a PID to the command
-                // Create a Process Control Block (PCB)
-                // Return the PID of the created process to the user
+                // Issue #17 checking the count of commands to see if there is an overflow
+                var splitProgramInput = programInput.split(" ");
+                console.log("FLAG 11: " + splitProgramInput.length);
+                // Verify the program code will not cause an overflow
+                if (splitProgramInput.length <= _MemoryBlockSize) {
+                    _StdOut.putText("That is some highquality hex code.");
+                    // Check to see the memory block is full (Project 2, will check only 1 by defauly)
+                    var freeMemoryBlock = _MemoryManager.memBlockIsFree();
+                    // If there is a free memory block, continue the process
+                    if (freeMemoryBlock) {
+                        _StdOut.putText("Okay well gotta load this bitch");
+                        // Write the program into memory
+                        // Create a Process Control Block (PCB)
+                        _PCBInstances.push(new TSOS.ProcessControlBlock());
+                        console.log(_PCBInstances);
+                        // Return the PID of the created process to the user
+                        _StdOut.putText("Great job! You loaded the program into memory.");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("Process ID:" + _CurrentPID);
+                    }
+                    // No free memory block so a process cannot be loaded
+                    else {
+                        _StdOut.putText("Error: There is no free memory block at this time. Process cannot be loaded");
+                    }
+                }
+                // The entered program code is too long
+                else {
+                    _StdOut.putText("Error: Program Code Overflow. The entered command is too long");
+                }
             }
             else {
                 _StdOut.putText("Error: Invalid hex code. Please double check.");

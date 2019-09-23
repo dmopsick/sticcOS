@@ -36,7 +36,7 @@ module TSOS {
             this.krnTrace(_krnKeyboardDriver.status);
 
             // Issue #25 Initialize Memory Manager
-            _MemoryManager = new MemoryManager();
+            _MemoryManager = new TSOS.MemoryManager();
             _MemoryManager.init();
 
             //
