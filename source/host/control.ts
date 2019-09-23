@@ -98,7 +98,7 @@ module TSOS {
 
             // Initialize the memory
             console.log("SAD");
-            _Memory = new TSOS.Memory();
+            _Memory = new TSOS.Memory([]);
             _Memory.init();
             _MemoryAccessor = new TSOS.MemoryAccessor();
 

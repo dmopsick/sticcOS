@@ -111,6 +111,18 @@ module TSOS {
                     // Tell user byte does not exist if not
                     break;
                 case "FF": // SYS | The call parameter is based on the X or Y register 
+                    // If there is an 01 in the X register then display the integer in the Y register
+                    if (this.Xreg == 1) {
+                        // Display the value in the Y register
+                    }
+
+                    else if (this.Xreg == 2) {
+
+                    }
+                    else {
+                        // Throw a software interrupt error, invalid system call in X register
+                    }
+
                     break;
                 default:
                     // If the op code does not match any of the valid ones for the system it is invalid

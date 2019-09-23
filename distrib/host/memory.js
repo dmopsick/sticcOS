@@ -18,11 +18,11 @@ var TSOS;
         // Resets the memory in the memory block to all 00s
         Memory.prototype.resetBlock = function () {
             // Use the constant for size of the memory block to intialize the array
-            // for (let i = 0; i < (_MemoryBlockSize * _MemoryBlockSize); i++) {
-            for (var i = 0; i < (767); i++) {
-                // Initialize the memory block with all 00
-                this.memoryArray[i] == "00";
+            for (var i = 0; i < (_MemoryBlockSize * _MemoryBlockCount); i++) {
+                // Initialize the memory block with 00 in each slot
+                this.memoryArray[i] = "00";
             }
+            console.log("FLAG 6 " + this.memoryArray);
         };
         return Memory;
     }());

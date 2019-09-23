@@ -18,10 +18,9 @@ module TSOS {
         // Resets the memory in the memory block to all 00s
         public resetBlock(): void {
             // Use the constant for size of the memory block to intialize the array
-            // for (let i = 0; i < (_MemoryBlockSize * _MemoryBlockSize); i++) {
-            for (let i = 0; i < (767); i++) {
-                // Initialize the memory block with all 00
-                this.memoryArray[i] == "00";
+            for (let i = 0; i < (_MemoryBlockSize * _MemoryBlockCount); i++) {
+                // Initialize the memory block with 00 in each slot
+                this.memoryArray[i] = "00";
             }
         }
 
