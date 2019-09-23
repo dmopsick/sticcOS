@@ -469,8 +469,10 @@ module TSOS {
             }
             else if (valid) {
                 _StdOut.putText("That is some highquality hex code.");
-
                 // Issue #17 need to save the entered Hex code in memory.
+
+                // Check to see the memory block is full (Project 2, will check only 1 by defauly)
+                
 
                 // Need to assign a PID to the command
 

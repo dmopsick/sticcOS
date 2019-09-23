@@ -37,6 +37,7 @@ module TSOS {
 
             // Issue #25 Initialize Memory Manager
             _MemoryManager = new MemoryManager();
+            _MemoryManager.init();
 
             //
             // ... more?

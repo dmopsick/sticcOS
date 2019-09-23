@@ -22,7 +22,6 @@ var TSOS;
                 // Initialize the memory block with 00 in each slot
                 this.memoryArray[i] = "00";
             }
-            console.log("FLAG 6 " + this.memoryArray);
         };
         return Memory;
     }());

@@ -52,7 +52,6 @@ var _StdIn:  TSOS.Console = null;
 var _StdOut: TSOS.Console = null;
 
 
-
 // UI
 var _Console: TSOS.Console;
 var _OsShell: TSOS.Shell;
@@ -75,6 +74,10 @@ var _MemoryBlockCount: number = 3; // Issue #24 | Keeps track of the amount of m
 var _Memory: TSOS.Memory;
 var _MemoryAccessor: TSOS.MemoryAccessor;
 var _MemoryManager: any = null;
+
+// Process Control Block
+var _PCBInstances = new Array<TSOS.ProcessControlBlock>();
+var _CurrentPID: number = 0; // Issue #21 keeps track of the current PID to assign to PIDs as they are created to prevent repeated numbers
 
 var onDocumentLoad = function() {
 	TSOS.Control.hostInit();
