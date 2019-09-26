@@ -482,9 +482,9 @@ module TSOS {
 
                         // Create a Process Control Block (PCB)
                         const newPCB = new TSOS.ProcessControlBlock(
-                            _CurrentPID, 
-                            0,
-                            256
+                            _CurrentPID, // Use next available PID
+                            0, // Memory Start
+                            256 // Memory Range
                         );
 
                         // Add new PCB to global instance array
@@ -493,7 +493,6 @@ module TSOS {
                         // Write the program into memory
                         _MemoryManager.loadProgramToMemory(newPCB, splitProgramInput);
 
-                        // console.log(_PCBInstances);
 
                         // Return the PID of the created process to the user
                         _StdOut.putText("Great job! You loaded the program into memory.");
@@ -526,17 +525,21 @@ module TSOS {
                 // Get the PID from the argument
                 const pid = args[0];
 
-                // Need to check if the PID given by the user refers to a valid process in memory
-                let pidFound = false;
-                if (pidFound) {
+                // Convert PID string to an int for comparison
+                const pidNum = +pid;
 
+                // Variable to hold whether the given PID was found in the list of instances
+                let pidFound = TSOS.ProcessControlBlock.processExists(pidNum);
+
+                if (pidFound) {
+                    _StdOut.putText("Time to implement running the user code!");
                 }
                 else {
                     _StdOut.putText("Error: There is no valid process with the PID " + pid);
                 }
             }
             else {
-                _StdOut.putText("Error: Please specifcy which program to run.");
+                _StdOut.putText("Error: Please specify a PID of a program to run.");
             }
         }
 

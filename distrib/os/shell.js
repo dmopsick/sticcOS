@@ -407,12 +407,14 @@ var TSOS;
                     // If there is a free memory block, continue the process
                     if (freeMemoryBlock) {
                         // Create a Process Control Block (PCB)
-                        var newPCB = new TSOS.ProcessControlBlock(_CurrentPID, 0, 256);
+                        var newPCB = new TSOS.ProcessControlBlock(_CurrentPID, // Use next available PID
+                        0, // Memory Start
+                        256 // Memory Range
+                        );
                         // Add new PCB to global instance array
                         _PCBInstances.push(newPCB);
                         // Write the program into memory
                         _MemoryManager.loadProgramToMemory(newPCB, splitProgramInput);
-                        // console.log(_PCBInstances);
                         // Return the PID of the created process to the user
                         _StdOut.putText("Great job! You loaded the program into memory.");
                         _StdOut.advanceLine();
@@ -440,16 +442,19 @@ var TSOS;
             if (args.length > 0) {
                 // Get the PID from the argument
                 var pid = args[0];
-                // Need to check if the PID given by the user refers to a valid process in memory
-                var pidFound = false;
+                // Convert PID string to an int for comparison
+                var pidNum = +pid;
+                // Variable to hold whether the given PID was found in the list of instances
+                var pidFound = TSOS.ProcessControlBlock.processExists(pidNum);
                 if (pidFound) {
+                    _StdOut.putText("Time to implement running the user code!");
                 }
                 else {
                     _StdOut.putText("Error: There is no valid process with the PID " + pid);
                 }
             }
             else {
-                _StdOut.putText("Error: Please specifcy which program to run.");
+                _StdOut.putText("Error: Please specify a PID of a program to run.");
             }
         };
         return Shell;

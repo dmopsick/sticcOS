@@ -42,7 +42,6 @@ var TSOS;
         // Issue #25 Loads program into memory
         // Takes in the PCB 
         MemoryManager.prototype.loadProgramToMemory = function (pcb, programCode) {
-            console.log("FLAG " + pcb.memAddrStart);
             // Save each Hex digit into memory
             for (var i = 0; i < programCode.length; i++) {
                 _Memory.memoryArray[i] = programCode[i];

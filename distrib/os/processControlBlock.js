@@ -2,8 +2,7 @@
 var TSOS;
 (function (TSOS) {
     var ProcessControlBlock = /** @class */ (function () {
-        function ProcessControlBlock(pid, // #21 Post increment so that when a PCB is created it increments the current PID 
-        memAddrStart, memRange, PC, Acc, Xreg, YReg, ZFlag, isExecuted, // Records whether the PCB has been executed, if it has then
+        function ProcessControlBlock(pid, memAddrStart, memRange, PC, Acc, Xreg, YReg, ZFlag, isExecuted, // Records whether the PCB has been executed, if it has then
         state) {
             if (pid === void 0) { pid = _CurrentPID; }
             if (memAddrStart === void 0) { memAddrStart = 0; }
@@ -27,6 +26,16 @@ var TSOS;
             this.state = state;
         }
         ProcessControlBlock.prototype.init = function () {
+        };
+        // #18 A Utilitiy function used to check the PCB instance list whether an instance with the specified PID exists
+        ProcessControlBlock.processExists = function (pidToCheck) {
+            // Loop through instances for a process with specified PID
+            for (var i = 0; i < _PCBInstances.length; i++) {
+                if (pidToCheck == _PCBInstances[i].pid) {
+                    return true;
+                }
+            }
+            return false;
         };
         return ProcessControlBlock;
     }());
