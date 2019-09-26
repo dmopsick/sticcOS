@@ -3,10 +3,11 @@ var TSOS;
 (function (TSOS) {
     var ProcessControlBlock = /** @class */ (function () {
         function ProcessControlBlock(pid, // #21 Post increment so that when a PCB is created it increments the current PID 
-        memAddrStart, PC, Acc, Xreg, YReg, ZFlag, isExecuted, // Records whether the PCB has been executed, if it has then
+        memAddrStart, memRange, PC, Acc, Xreg, YReg, ZFlag, isExecuted, // Records whether the PCB has been executed, if it has then
         state) {
             if (pid === void 0) { pid = _CurrentPID; }
             if (memAddrStart === void 0) { memAddrStart = 0; }
+            if (memRange === void 0) { memRange = 256; }
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
@@ -16,6 +17,7 @@ var TSOS;
             if (state === void 0) { state = "NEW"; }
             this.pid = pid;
             this.memAddrStart = memAddrStart;
+            this.memRange = memRange;
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;

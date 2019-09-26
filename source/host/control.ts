@@ -97,7 +97,6 @@ module TSOS {
             _CPU.init();       //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
 
             // Initialize the memory
-            console.log("SAD");
             _Memory = new TSOS.Memory([]);
             _Memory.init();
             _MemoryAccessor = new TSOS.MemoryAccessor();

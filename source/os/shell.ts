@@ -474,17 +474,18 @@ module TSOS {
 
                 // Verify the program code will not cause an overflow
                 if (splitProgramInput.length <= _MemoryBlockSize) {
-                    _StdOut.putText("That is some highquality hex code.");
-
                     // Check to see the memory block is full (Project 2, will check only 1 by defauly)
                     const freeMemoryBlock = _MemoryManager.memBlockIsFree();
 
                     // If there is a free memory block, continue the process
                     if (freeMemoryBlock) {
-                        _StdOut.putText("Okay well gotta load this bitch");
 
                         // Create a Process Control Block (PCB)
-                        const newPCB = new TSOS.ProcessControlBlock();
+                        const newPCB = new TSOS.ProcessControlBlock(
+                            _CurrentPID, 
+                            0,
+                            256
+                        );
 
                         // Add new PCB to global instance array
                         _PCBInstances.push(newPCB);
@@ -497,7 +498,7 @@ module TSOS {
                         // Return the PID of the created process to the user
                         _StdOut.putText("Great job! You loaded the program into memory.");
                         _StdOut.advanceLine();
-                        _StdOut.putText("Process ID:" + _CurrentPID);
+                        _StdOut.putText("Process ID: " + _CurrentPID);
 
                         // Last but not least Increment the current PID
                         _CurrentPID++;

@@ -402,14 +402,12 @@ var TSOS;
                 console.log("FLAG 11: " + splitProgramInput.length);
                 // Verify the program code will not cause an overflow
                 if (splitProgramInput.length <= _MemoryBlockSize) {
-                    _StdOut.putText("That is some highquality hex code.");
                     // Check to see the memory block is full (Project 2, will check only 1 by defauly)
                     var freeMemoryBlock = _MemoryManager.memBlockIsFree();
                     // If there is a free memory block, continue the process
                     if (freeMemoryBlock) {
-                        _StdOut.putText("Okay well gotta load this bitch");
                         // Create a Process Control Block (PCB)
-                        var newPCB = new TSOS.ProcessControlBlock();
+                        var newPCB = new TSOS.ProcessControlBlock(_CurrentPID, 0, 256);
                         // Add new PCB to global instance array
                         _PCBInstances.push(newPCB);
                         // Write the program into memory
