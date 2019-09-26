@@ -29,18 +29,33 @@ var TSOS;
             if (memBlockID === void 0) { memBlockID = 0; }
             // See if there is a process already saved in memory
             if (this.partitions[memBlockID].isFree) {
-                console.log("FLAG 2");
+                console.log("FLAG 2: MEMORY IS FREE!");
+                return true;
+            }
+            else {
+                console.log("FLAG 3: MEMORY IS NOT FREE!");
+                return false;
             }
             // If there is no process found in the chosen block
             // Or if there is a process already ran it should overwrite?
-            return true;
         };
         // Issue #25 Loads program into memory
         // Takes in the PCB 
         MemoryManager.prototype.loadProgramToMemory = function (pcb, programCode) {
+            console.log("FLAG " + pcb.memAddrStart);
             // Save each Hex digit into memory
             for (var i = 0; i < programCode.length; i++) {
                 _Memory.memoryArray[i] = programCode[i];
+            }
+            // Issue #17
+            if (pcb.memAddrStart < 256) {
+                this.partitions[0].isFree = false;
+            }
+            else if (pcb.memAddrStart < 512) {
+                this.partitions[1].isFree = false;
+            }
+            else {
+                this.partitions[2].isFree = false;
             }
             console.log("FLAG 15: " + _Memory.memoryArray);
         };

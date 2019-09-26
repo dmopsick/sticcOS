@@ -416,7 +416,7 @@ var TSOS;
                         // Return the PID of the created process to the user
                         _StdOut.putText("Great job! You loaded the program into memory.");
                         _StdOut.advanceLine();
-                        _StdOut.putText("Process ID:" + _CurrentPID);
+                        _StdOut.putText("Process ID: " + _CurrentPID);
                         // Last but not least Increment the current PID
                         _CurrentPID++;
                     }

@@ -14,10 +14,10 @@ module TSOS {
 
         // Issue #25 resets the partitions. Used to clear the memory and set it up when the OS is launched
         public resetBlocks(): void {
-            this.partitions = [ 
-                {memBlockID : 0, base: 0, limit: 255, isFree: true},
-                {memBlockID : 1, base: 256, limit: 511, isFree: true },
-                {memblockID : 2, base: 512, limit: 767, isFree: true }
+            this.partitions = [
+                { memBlockID: 0, base: 0, limit: 255, isFree: true },
+                { memBlockID: 1, base: 256, limit: 511, isFree: true },
+                { memblockID: 2, base: 512, limit: 767, isFree: true }
             ];
             console.log(this.partitions);
         }
@@ -28,23 +28,37 @@ module TSOS {
         public memBlockIsFree(memBlockID = 0): Boolean {
             // See if there is a process already saved in memory
             if (this.partitions[memBlockID].isFree) {
-                console.log("FLAG 2");
+                console.log("FLAG 2: MEMORY IS FREE!");
+                return true;
+            }
+            else {
+                console.log("FLAG 3: MEMORY IS NOT FREE!")
+                return false;
             }
 
             // If there is no process found in the chosen block
-            
+
             // Or if there is a process already ran it should overwrite?
 
-
-            return true;
         }
 
         // Issue #25 Loads program into memory
         // Takes in the PCB 
         public loadProgramToMemory(pcb: TSOS.ProcessControlBlock, programCode: string[]): void {
             // Save each Hex digit into memory
-            for(let i =0; i < programCode.length; i++) {
+            for (let i = 0; i < programCode.length; i++) {
                 _Memory.memoryArray[i] = programCode[i];
+            }
+
+            // Issue #17
+            if (pcb.memAddrStart < 256) {
+                this.partitions[0].isFree = false;
+            }
+            else if (pcb.memAddrStart < 512) {
+                this.partitions[1].isFree = false;
+            }
+            else {
+                this.partitions[2].isFree = false;
             }
 
             console.log("FLAG 15: " + _Memory.memoryArray);
