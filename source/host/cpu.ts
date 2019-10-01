@@ -51,16 +51,16 @@ module TSOS {
             // Issue #27
             switch (currentOpCode) { // Mneumonic Code | Description of code
                 case "A9":  // LDA <constant> | Load a constant into the accumulator
-                    console.log("FLAG A9 called");
-                    
                     // Get the address to load the constant from in memory
-                    const constantAddr = this.PC++;
+                    const constantAddr = ++this.PC;
 
                     // Read the constant value from memory
                     const constantStringValue = this.readMemory(constantAddr);
 
+                    console.log("FLAG 11 value from mem: " + constantStringValue);
+
                     // Convert the constant to a number
-                    const constantIntValue = parseInt(constantStringValue, 16);
+                    const constantIntValue = parseInt(constantStringValue);
 
                     // Load the retrieved value into the accumulator
                     this.Acc = constantIntValue;
@@ -68,6 +68,7 @@ module TSOS {
                     console.log("FLAG ACC=" + this.Acc);
 
                     // Update the CPU display
+                    TSOS.Control.updateCPUDisplay(_CPU);
 
                     break;
                 case "AD": // LDA <memoryAddress> | Load a value from memory into accumulator
@@ -163,5 +164,6 @@ module TSOS {
             console.log("READ MEMORY INDEX " + index)
             return _MemoryManager.readFromMemory(index);
         }
+
     }
 }

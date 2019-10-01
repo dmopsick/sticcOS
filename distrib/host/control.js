@@ -73,11 +73,15 @@ var TSOS;
             // .. enable the Halt and Reset buttons ...
             document.getElementById("btnHaltOS").disabled = false;
             document.getElementById("btnReset").disabled = false;
+            // Enable the user program input
+            document.getElementById("taProgramInput").disabled = false;
             // .. set focus on the OS console display ...
             document.getElementById("display").focus();
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new TSOS.Cpu(); // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
+            // Display the current CPU info on the OS console display
+            this.updateCPUDisplay(_CPU);
             // Initialize the memory
             _Memory = new TSOS.Memory([]);
             _Memory.init();
@@ -103,6 +107,15 @@ var TSOS;
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
+        };
+        // Issue #27 #19 Updates the HTML cpu info display with the most up to date info
+        Control.updateCPUDisplay = function (cpu) {
+            // Update the HTML table that displays CPU info
+            document.getElementById("cpuDisplayPC").innerHTML = "" + cpu.PC;
+            document.getElementById("cpuDisplayACC").innerHTML = "" + cpu.Acc;
+            document.getElementById("cpuDisplayX").innerHTML = "" + cpu.Xreg;
+            document.getElementById("cpuDisplayY").innerHTML = "" + cpu.Yreg;
+            document.getElementById("cpuDisplayZ").innerHTML = "" + cpu.Zflag;
         };
         return Control;
     }());

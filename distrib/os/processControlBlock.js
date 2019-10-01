@@ -2,7 +2,7 @@
 var TSOS;
 (function (TSOS) {
     var ProcessControlBlock = /** @class */ (function () {
-        function ProcessControlBlock(pid, memAddrStart, memRange, PC, Acc, Xreg, YReg, ZFlag, isExecuted, // Records whether the PCB has been executed, if it has then
+        function ProcessControlBlock(pid, memAddrStart, memRange, PC, Acc, Xreg, Yreg, ZFlag, isExecuted, // Records whether the PCB has been executed, if it has then
         state, executable // Issue #18.. For project 3 only the most recently loaded program that has not been run should be executable
         ) {
             if (pid === void 0) { pid = _CurrentPID; }
@@ -11,7 +11,7 @@ var TSOS;
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
-            if (YReg === void 0) { YReg = 0; }
+            if (Yreg === void 0) { Yreg = 0; }
             if (ZFlag === void 0) { ZFlag = 0; }
             if (isExecuted === void 0) { isExecuted = false; }
             if (state === void 0) { state = "Resident"; }
@@ -22,7 +22,7 @@ var TSOS;
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
-            this.YReg = YReg;
+            this.Yreg = Yreg;
             this.ZFlag = ZFlag;
             this.isExecuted = isExecuted;
             this.state = state;
@@ -42,7 +42,6 @@ var TSOS;
         };
         // #18 Static method to handle the execution of a program
         ProcessControlBlock.runProcess = function (pcb) {
-            // Need to pass the process onto the CPU and begin exectuion 
             // Change state of PCB to running, because it is
             pcb.state = "Running";
             // Reset the cpu before execution of new program

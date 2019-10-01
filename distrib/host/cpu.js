@@ -50,18 +50,18 @@ var TSOS;
             // Issue #27
             switch (currentOpCode) { // Mneumonic Code | Description of code
                 case "A9": // LDA <constant> | Load a constant into the accumulator
-                    console.log("FLAG A9 called");
                     // Get the address to load the constant from in memory
-                    var constantAddr = this.PC + 1;
+                    var constantAddr = ++this.PC;
                     // Read the constant value from memory
                     var constantStringValue = this.readMemory(constantAddr);
-                    console.log("FLAG: returned constant value = " + constantStringValue);
+                    console.log("FLAG 11 value from mem: " + constantStringValue);
                     // Convert the constant to a number
                     var constantIntValue = parseInt(constantStringValue);
                     // Load the retrieved value into the accumulator
                     this.Acc = constantIntValue;
                     console.log("FLAG ACC=" + this.Acc);
                     // Update the CPU display
+                    TSOS.Control.updateCPUDisplay(_CPU);
                     break;
                 case "AD": // LDA <memoryAddress> | Load a value from memory into accumulator
                     // Need to implement the functionality of loading the accumulator with a value from memory

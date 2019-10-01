@@ -40,11 +40,14 @@
         <!-- <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip0.js"></script> -->
         <!-- <script type="text/javascript" src="test/glados-ip1.js"></script> -->
 
+        <!-- Importing Bootstrap to use to improve the visuals of the components -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
 </head>
 
 <body onload="onDocumentLoad()">
 
-        <div id="divMain" style="width:100%;">
+        <div  id="divMain" style="width:100%;">
 
                 <div id="divButtonBar" style="margin:4px;">
                         <input type="button" id="btnStartOS" name="brnStartOS" class="normal_button" value="Start" tabindex="0" onclick="TSOS.Control.hostBtnStartOS_click(this);">
@@ -76,14 +79,14 @@
                                         <label>
                                                 Host Log
                                                 <br>
-                                                <textarea name="taHostLog" id="taHostLog" rows="26" cols="48" readonly></textarea>
+                                                <textarea class="form-control"  name="taHostLog" id="taHostLog" rows="26" cols="48" readonly></textarea>
                                         </label>
                                 </div>
                                 <div id="divUserProgramInput">
                                         <label>
                                                 User Program Input
                                                 <br>
-                                                <textarea name="taProgramInput" id="taProgramInput" rows="8" cols="48"></textarea>
+                                                <textarea class="form-control" name="taProgramInput" id="taProgramInput" rows="8" cols="48" disabled></textarea>
                                         </label>
                                 </div>
                         </div>
@@ -91,20 +94,36 @@
                                 <div class="flex-box">
                                         <!-- Issue #19 Displaying the CPU info -->
                                         <div id="cpuInfoDiv">
-                                                <label for="taCpuInfo">
-                                                        CPU
-                                                </label>
-                                                <br>
-                                                <textarea name="taCpuInfo" id="taCpuInfo" rows="13" cols="48" readonly></textarea>
+                                                <label for="cpuInfoTable">CPU Info</label>
+                                                <table id="cpuInfoTable" class="table table-dark">
+                                                        <thead>
+                                                                <tr>
+                                                                        <th scope="col">PC</th>
+                                                                        <th scope="col">ACC</th>
+                                                                        <th scope="col">X</th>
+                                                                        <th scope="col">Y</th>
+                                                                        <th scope="col">Z</th>
+                                                                </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                                <tr>
+                                                                        <th scope="row" id="cpuDisplayPC">--</th>       
+                                                                        <th id="cpuDisplayACC">--</th>       
+                                                                        <th id="cpuDisplayX">--</th>       
+                                                                        <th id="cpuDisplayY">--</th>       
+                                                                        <th id="cpuDisplayZ">--</th>       
+                                                                </tr>
+                                                        </tbody>
+                                                </table>
                                         </div>
 
                                         <!-- Issue #19 Dispaly the processes -->
                                         <div id="processInfoDiv">
-                                                <label for="taProcessInfo">
-                                                        Processes
+                                                <label for="processInfoTable">
+                                                        Process Display
                                                 </label>
-                                                <br>
-                                                <textarea name="taProcessInfo" id="taProcessInfo" rows="13" cols="48" readonly></textarea>
+                                                
+
                                         </div>
 
                                         <!-- Issue #19 Display the memory block -->

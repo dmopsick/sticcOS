@@ -9,7 +9,7 @@ module TSOS {
             public PC: number = 0,
             public Acc: number = 0,
             public Xreg: number = 0,
-            public YReg: number = 0,
+            public Yreg: number = 0,
             public ZFlag: number = 0,
             public isExecuted: boolean = false, // Records whether the PCB has been executed, if it has then
             public state: String = "Resident",
@@ -33,8 +33,6 @@ module TSOS {
 
         // #18 Static method to handle the execution of a program
         public static runProcess(pcb): void {
-            // Need to pass the process onto the CPU and begin exectuion 
-
             // Change state of PCB to running, because it is
             pcb.state = "Running";
 
