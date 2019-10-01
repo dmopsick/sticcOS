@@ -540,14 +540,23 @@ module TSOS {
                 let pidFound = TSOS.ProcessControlBlock.processExists(pidNum);
 
                 if (pidFound) {
-                    // Get the PCB to run based on the PID, that is confirmed to exist
-                    const pcbToRun = _PCBInstances[pidNum];
 
-                    // Begin the running of the process
-                    TSOS.ProcessControlBlock.runProcess(pcbToRun);
+                    // Ensure that the selected process is runnable
+                    const pcbRunnable = _PCBInstances[pidNum].executable;
+                    if (pcbRunnable) {
+                        // Get the PCB to run based on the PID, that is confirmed to exist
+                        const pcbToRun = _PCBInstances[pidNum];
 
-                    // Let the user know that the process is running
-                    _StdOut.putText("Process " + pid + " has begun execution :).");
+                        // Begin the running of the process
+                        TSOS.ProcessControlBlock.runProcess(pcbToRun);
+
+                        // Let the user know that the process is running
+                        _StdOut.putText("Process " + pid + " has begun execution :).");
+                    }
+                    // This means that yes the PID is found but the process no longer exists in memory
+                    else {
+                        _StdOut.putText("The process with the PID " + pid + " no longer exists in memory.");
+                    }
                 }
                 else {
                     _StdOut.putText("Error: There is no valid process with the PID " + pid);
