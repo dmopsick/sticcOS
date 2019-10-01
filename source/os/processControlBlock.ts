@@ -12,7 +12,8 @@ module TSOS {
             public YReg: number = 0,
             public ZFlag: number = 0,
             public isExecuted: boolean = false, // Records whether the PCB has been executed, if it has then
-            public state: String = "NEW"
+            public state: String = "Resident",
+            public executable: boolean = true // Issue #18.. For project 3 only the most recently loaded program that has not been run should be executable
         ) { }
 
         public init(): void {
@@ -28,6 +29,16 @@ module TSOS {
                 }
             }
             return false;
+        }
+
+        // #18 Static method to handle the execution of a program
+        public static runProcess(pcb): void {
+            // Need to pass the process onto the CPU and begin exectuion 
+            
+            // Change state of PCB to running, because it is
+            pcb.state = "Running";
+
+            
         }
     }
 }

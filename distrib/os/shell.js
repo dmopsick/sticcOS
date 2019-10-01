@@ -404,28 +404,34 @@ var TSOS;
                 if (splitProgramInput.length <= _MemoryBlockSize) {
                     // Check to see the memory block is full (Project 2, will check only 1 by defauly)
                     var freeMemoryBlock = _MemoryManager.memBlockIsFree();
-                    // If there is a free memory block, continue the process
-                    if (freeMemoryBlock) {
-                        // Create a Process Control Block (PCB)
-                        var newPCB = new TSOS.ProcessControlBlock(_CurrentPID, // Use next available PID
-                        0, // Memory Start
-                        256 // Memory Range
-                        );
-                        // Add new PCB to global instance array
-                        _PCBInstances.push(newPCB);
-                        // Write the program into memory
-                        _MemoryManager.loadProgramToMemory(newPCB, splitProgramInput);
-                        // Return the PID of the created process to the user
-                        _StdOut.putText("Great job! You loaded the program into memory.");
-                        _StdOut.advanceLine();
-                        _StdOut.putText("Process ID: " + _CurrentPID);
-                        // Last but not least Increment the current PID
-                        _CurrentPID++;
+                    // If the lone memory block is currently full... Erase the current code in memory to prepare for new code
+                    if (!freeMemoryBlock) {
+                        _MemoryManager.resetBlocks();
+                        // Have to make the previous process unrunnable by the run command
+                        // The previous program(s) cannot be ran because they are being removed from memory
                     }
-                    // No free memory block so a process cannot be loaded
-                    else {
-                        _StdOut.putText("Error: There is no free memory block at this time. Process cannot be loaded");
+                    // Continue saving the program now
+                    // Create a Process Control Block (PCB)
+                    var newPCB = new TSOS.ProcessControlBlock(_CurrentPID, // Use next available PID
+                    0, // Memory Start
+                    256 // Memory Range
+                    );
+                    // Add new PCB to global instance array
+                    _PCBInstances.push(newPCB);
+                    // Write the program into memory
+                    _MemoryManager.loadProgramToMemory(newPCB, splitProgramInput);
+                    // If this is not the first program in memory, make the most recent program unexecutable
+                    // This is only for project 2 where one program is being loaded at a time
+                    if (_CurrentPID > 0) {
+                        var previousPID = _CurrentPID - 1;
+                        _PCBInstances[previousPID].executable = false;
                     }
+                    // Return the PID of the created process to the user
+                    _StdOut.putText("Great job! You loaded the program into memory.");
+                    _StdOut.advanceLine();
+                    _StdOut.putText("Process ID: " + _CurrentPID);
+                    // Last but not least Increment the current PID
+                    _CurrentPID++;
                 }
                 // The entered program code is too long
                 else {
@@ -447,7 +453,12 @@ var TSOS;
                 // Variable to hold whether the given PID was found in the list of instances
                 var pidFound = TSOS.ProcessControlBlock.processExists(pidNum);
                 if (pidFound) {
-                    _StdOut.putText("Time to implement running the user code!");
+                    // Get the PCB to run based on the PID, that is confirmed to exist
+                    var pcbToRun = _PCBInstances[pidNum];
+                    // Begin the running of the process
+                    TSOS.ProcessControlBlock.runProcess(pcbToRun);
+                    // Let the user know that the process is running
+                    _StdOut.putText("Process " + pid + " has begun execution :).");
                 }
                 else {
                     _StdOut.putText("Error: There is no valid process with the PID " + pid);
