@@ -54,14 +54,12 @@ var TSOS;
                     var constantAddr = ++this.PC;
                     // Read the constant value from memory
                     var constantStringValue = this.readMemory(constantAddr);
-                    console.log("FLAG 11 value from mem: " + constantStringValue);
                     // Convert the constant to a number
-                    var constantIntValue = parseInt(constantStringValue);
+                    var constantIntValue = parseInt(constantStringValue, 16);
                     // Load the retrieved value into the accumulator
                     this.Acc = constantIntValue;
-                    console.log("FLAG ACC=" + this.Acc);
-                    // Update the CPU display
-                    TSOS.Control.updateCPUDisplay(_CPU);
+                    // Update the accumulator value of the current process
+                    _PCBInstances[_CurrentPID].Acc = this.Acc;
                     break;
                 case "AD": // LDA <memoryAddress> | Load a value from memory into accumulator
                     // Need to implement the functionality of loading the accumulator with a value from memory
@@ -95,7 +93,10 @@ var TSOS;
                     break;
                 case "00": // BRK | Break
                     // What to do here?
-                    // End execution?
+                    // Stop the CPU from continuing to cycle
+                    this.isExecuting = false;
+                    // Modify the state of the currently executed PCB to Completed
+                    _PCBInstances[_CurrentPID].state = "Completed";
                     break;
                 case "EC": // CPX <memoryAddress| Compare a byte in memory to the X register
                     // Get the memory address of the byte to compare
@@ -129,8 +130,12 @@ var TSOS;
             }
             // Increment the program counter when the cycle is completed
             this.PC++;
-            // Let's just load the first op code and see what happens 
-            this.isExecuting = false;
+            // Increment the PC for the current PCB
+            _PCBInstances[_CurrentPID].PC = this.PC;
+            // Update the CPU display
+            TSOS.Control.updateCPUDisplay(_CPU);
+            // Update the PCB display
+            TSOS.Control.updatePCBDisplay(_PCBInstances[_CurrentPID]);
         };
         // Function to use the memory manager to access the specified memory and return the op code
         Cpu.prototype.readMemory = function (index) {

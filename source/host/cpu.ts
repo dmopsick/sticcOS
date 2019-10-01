@@ -43,7 +43,7 @@ module TSOS {
 
             // Need to FETCH the current op code from memory
             // Get the current program counter location, originally set when program is loaded
-            const currentOpCode = this.readMemory(this.PC); 
+            const currentOpCode = this.readMemory(this.PC);
 
             console.log("FLAG 5 " + currentOpCode);
 
@@ -57,18 +57,14 @@ module TSOS {
                     // Read the constant value from memory
                     const constantStringValue = this.readMemory(constantAddr);
 
-                    console.log("FLAG 11 value from mem: " + constantStringValue);
-
                     // Convert the constant to a number
-                    const constantIntValue = parseInt(constantStringValue);
+                    const constantIntValue = parseInt(constantStringValue, 16);
 
                     // Load the retrieved value into the accumulator
                     this.Acc = constantIntValue;
-                    
-                    console.log("FLAG ACC=" + this.Acc);
 
-                    // Update the CPU display
-                    TSOS.Control.updateCPUDisplay(_CPU);
+                    // Update the accumulator value of the current process
+                    _PCBInstances[_CurrentPID].Acc = this.Acc
 
                     break;
                 case "AD": // LDA <memoryAddress> | Load a value from memory into accumulator
@@ -110,7 +106,12 @@ module TSOS {
                 case "00": // BRK | Break
                     // What to do here?
 
-                    // End execution?
+                    // Stop the CPU from continuing to cycle
+                    this.isExecuting = false;
+
+                    // Modify the state of the currently executed PCB to Completed
+                    _PCBInstances[_CurrentPID].state = "Completed"
+
                     break;
                 case "EC": // CPX <memoryAddress| Compare a byte in memory to the X register
                     // Get the memory address of the byte to compare
@@ -153,10 +154,16 @@ module TSOS {
             }
 
             // Increment the program counter when the cycle is completed
-            this.PC ++;
+            this.PC++;
 
-            // Let's just load the first op code and see what happens 
-            this.isExecuting = false;
+            // Increment the PC for the current PCB
+            _PCBInstances[_CurrentPID].PC = this.PC;
+
+            // Update the CPU display
+            TSOS.Control.updateCPUDisplay(_CPU);
+
+            // Update the PCB display
+            TSOS.Control.updatePCBDisplay(_PCBInstances[_CurrentPID]);
         }
 
         // Function to use the memory manager to access the specified memory and return the op code
