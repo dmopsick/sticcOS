@@ -28,6 +28,7 @@ var TSOS;
             this.Zflag = Zflag;
             this.isExecuting = isExecuting;
         }
+        // Resets the cpu
         Cpu.prototype.init = function () {
             this.PC = 0;
             this.Acc = 0;
@@ -37,16 +38,30 @@ var TSOS;
             this.isExecuting = false;
         };
         Cpu.prototype.cycle = function () {
+            console.log("Hello world! This is a CPU CYCLE");
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             // Need to FETCH the current op code from memory
-            var currentOpCode = "A6"; // Not exactly sure how to get opcode yet from memory so putting in placeholder
+            // Get the current program counter location, originally set when program is loaded
+            var currentOpCode = this.readMemory(this.PC);
+            console.log("FLAG 5 " + currentOpCode);
             // Make switch that DECODES the current OP CODE, so we can EXECUTE proper functionality
             // Issue #27
             switch (currentOpCode) { // Mneumonic Code | Description of code
                 case "A9": // LDA <constant> | Load a constant into the accumulator
-                    // Need to implement the functionality of loading the accumulator with a constant value
+                    console.log("FLAG A9 called");
+                    // Get the address to load the constant from in memory
+                    var constantAddr = this.PC + 1;
+                    // Read the constant value from memory
+                    var constantStringValue = this.readMemory(constantAddr);
+                    console.log("FLAG: returned constant value = " + constantStringValue);
+                    // Convert the constant to a number
+                    var constantIntValue = parseInt(constantStringValue);
+                    // Load the retrieved value into the accumulator
+                    this.Acc = constantIntValue;
+                    console.log("FLAG ACC=" + this.Acc);
+                    // Update the CPU display
                     break;
                 case "AD": // LDA <memoryAddress> | Load a value from memory into accumulator
                     // Need to implement the functionality of loading the accumulator with a value from memory
@@ -112,6 +127,15 @@ var TSOS;
                     // If the op code does not match any of the valid ones for the system it is invalid
                     break;
             }
+            // Increment the program counter when the cycle is completed
+            this.PC++;
+            // Let's just load the first op code and see what happens 
+            this.isExecuting = false;
+        };
+        // Function to use the memory manager to access the specified memory and return the op code
+        Cpu.prototype.readMemory = function (index) {
+            console.log("READ MEMORY INDEX " + index);
+            return _MemoryManager.readFromMemory(index);
         };
         return Cpu;
     }());

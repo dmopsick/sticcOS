@@ -34,11 +34,22 @@ module TSOS {
         // #18 Static method to handle the execution of a program
         public static runProcess(pcb): void {
             // Need to pass the process onto the CPU and begin exectuion 
-            
+
             // Change state of PCB to running, because it is
             pcb.state = "Running";
 
-            
+            // Reset the cpu before execution of new program
+            _CPU.init();
+
+            // Populate the CPU with values from the process we want to run
+            _CPU.Acc = pcb.Acc;
+            _CPU.PC = pcb.PC;
+            _CPU.Xreg = pcb.Xreg;
+            _CPU.Yreg = pcb.Yreg;
+            _CPU.Zflag = pcb.ZFlag
+
+            // Set the CPU to running 
+            _CPU.isExecuting = true;
         }
     }
 }

@@ -64,5 +64,12 @@ module TSOS {
             console.log("FLAG 15: " + _Memory.memoryArray);
         }
 
+        // Issue #25 Read code from memory 
+        // Issue #18 Need to be able to read from memory to run program
+        public readFromMemory(addressToRead: number): string {
+            // Return the specified memory address
+            return _Memory.memoryArray[addressToRead];
+        }
+
     }
 }
