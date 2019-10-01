@@ -5,7 +5,7 @@ var TSOS;
         function ProcessControlBlock(pid, memAddrStart, memRange, PC, Acc, Xreg, Yreg, ZFlag, isExecuted, // Records whether the PCB has been executed, if it has then
         state, executable // Issue #18.. For project 3 only the most recently loaded program that has not been run should be executable
         ) {
-            if (pid === void 0) { pid = _CurrentPID; }
+            if (pid === void 0) { pid = _NextPID; }
             if (memAddrStart === void 0) { memAddrStart = 0; }
             if (memRange === void 0) { memRange = 256; }
             if (PC === void 0) { PC = 0; }

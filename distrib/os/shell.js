@@ -412,7 +412,7 @@ var TSOS;
                     }
                     // Continue saving the program now
                     // Create a Process Control Block (PCB)
-                    var newPCB = new TSOS.ProcessControlBlock(_CurrentPID, // Use next available PID
+                    var newPCB = new TSOS.ProcessControlBlock(_NextPID, // Use next available PID
                     0, // Memory Start
                     256 // Memory Range
                     );
@@ -422,18 +422,18 @@ var TSOS;
                     _MemoryManager.loadProgramToMemory(newPCB, splitProgramInput);
                     // If this is not the first program in memory, make the most recent program unexecutable
                     // This is only for project 2 where one program is being loaded at a time
-                    if (_CurrentPID > 0) {
-                        var previousPID = _CurrentPID - 1;
-                        _PCBInstances[previousPID].executable = false;
+                    if (_NextPID > 0) {
+                        _PCBInstances[_CurrentPID].executable = false;
                     }
                     // #21 Update the PCB Info Table on the HTML os display
                     TSOS.Control.updatePCBDisplay(newPCB);
                     // Return the PID of the created process to the user
                     _StdOut.putText("Great job! You loaded the program into memory.");
                     _StdOut.advanceLine();
-                    _StdOut.putText("Process ID: " + _CurrentPID);
+                    _StdOut.putText("Process ID: " + _NextPID);
                     // Last but not least Increment the current PID
-                    _CurrentPID++;
+                    _CurrentPID = _NextPID;
+                    _NextPID++;
                 }
                 // The entered program code is too long
                 else {

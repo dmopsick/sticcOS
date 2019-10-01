@@ -3,7 +3,7 @@
 module TSOS {
     export class ProcessControlBlock {
         constructor(
-            public pid: number = _CurrentPID,
+            public pid: number = _NextPID,
             public memAddrStart: number = 0,
             public memRange: number = 256,
             public PC: number = 0,

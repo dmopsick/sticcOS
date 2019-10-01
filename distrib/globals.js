@@ -56,7 +56,8 @@ var _MemoryAccessor;
 var _MemoryManager = null;
 // Process Control Block
 var _PCBInstances = new Array();
-var _CurrentPID = 0; // Issue #21 keeps track of the current PID to assign to PIDs as they are created to prevent repeated numbers
+var _CurrentPID = 0; // Issue #21 keeps track of the current PID that is loaded/ being executed
+var _NextPID = 0; // Issue #21 keeps track of the next PID to assign to PIDs as they are created to prevent repeated numbers
 var onDocumentLoad = function () {
     TSOS.Control.hostInit();
 };
