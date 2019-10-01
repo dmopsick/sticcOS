@@ -426,6 +426,8 @@ var TSOS;
                         var previousPID = _CurrentPID - 1;
                         _PCBInstances[previousPID].executable = false;
                     }
+                    // #21 Update the PCB Info Table on the HTML os display
+                    TSOS.Control.updatePCBDisplay(newPCB);
                     // Return the PID of the created process to the user
                     _StdOut.putText("Great job! You loaded the program into memory.");
                     _StdOut.advanceLine();

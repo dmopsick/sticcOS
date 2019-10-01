@@ -136,10 +136,23 @@ module TSOS {
         public static updateCPUDisplay(cpu: TSOS.Cpu): void {
             // Update the HTML table that displays CPU info
             (<HTMLElement>document.getElementById("cpuDisplayPC")).innerHTML = "" + cpu.PC;
-            (<HTMLElement>document.getElementById("cpuDisplayACC")).innerHTML = "" + cpu.Acc;
+            (<HTMLElement>document.getElementById("cpuDisplayAcc")).innerHTML = "" + cpu.Acc;
             (<HTMLElement>document.getElementById("cpuDisplayX")).innerHTML = "" + cpu.Xreg;
             (<HTMLElement>document.getElementById("cpuDisplayY")).innerHTML = "" + cpu.Yreg;
             (<HTMLElement>document.getElementById("cpuDisplayZ")).innerHTML = "" + cpu.Zflag;
+        }
+
+        // Issue #21 #27 Update the HTML PCB display with the most recent PCB info
+        public static updatePCBDisplay(pcb: TSOS.ProcessControlBlock): void {
+            // Update the HTML table that displays PCB info
+            // For project 1 only going to record information on one proccess because only saving one at a time
+            (<HTMLElement>document.getElementById("processDisplayPID")).innerHTML = "" + pcb.pid;
+            (<HTMLElement>document.getElementById("processDisplayState")).innerHTML = "" + pcb.state;
+            (<HTMLElement>document.getElementById("processDisplayPC")).innerHTML = "" + pcb.PC;
+            (<HTMLElement>document.getElementById("processDisplayAcc")).innerHTML = "" + pcb.Acc;
+            (<HTMLElement>document.getElementById("processDisplayX")).innerHTML = "" + pcb.Xreg;
+            (<HTMLElement>document.getElementById("processDisplayY")).innerHTML = "" + pcb.Yreg;
+            (<HTMLElement>document.getElementById("processDisplayZ")).innerHTML = "" + pcb.ZFlag;
         }
     }
 }

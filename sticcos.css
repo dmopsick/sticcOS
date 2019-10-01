@@ -74,6 +74,10 @@ h3 {
   /* float: left; */
 }
 
+.form-control {
+  font-size: 12px !important;
+}
+
 .footerText {
   color: black;
   font-family: Arial, Helvetica, sans-serif;

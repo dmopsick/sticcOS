@@ -112,10 +112,22 @@ var TSOS;
         Control.updateCPUDisplay = function (cpu) {
             // Update the HTML table that displays CPU info
             document.getElementById("cpuDisplayPC").innerHTML = "" + cpu.PC;
-            document.getElementById("cpuDisplayACC").innerHTML = "" + cpu.Acc;
+            document.getElementById("cpuDisplayAcc").innerHTML = "" + cpu.Acc;
             document.getElementById("cpuDisplayX").innerHTML = "" + cpu.Xreg;
             document.getElementById("cpuDisplayY").innerHTML = "" + cpu.Yreg;
             document.getElementById("cpuDisplayZ").innerHTML = "" + cpu.Zflag;
+        };
+        // Issue #21 #27 Update the HTML PCB display with the most recent PCB info
+        Control.updatePCBDisplay = function (pcb) {
+            // Update the HTML table that displays PCB info
+            // For project 1 only going to record information on one proccess because only saving one at a time
+            document.getElementById("processDisplayPID").innerHTML = "" + pcb.pid;
+            document.getElementById("processDisplayState").innerHTML = "" + pcb.state;
+            document.getElementById("processDisplayPC").innerHTML = "" + pcb.PC;
+            document.getElementById("processDisplayAcc").innerHTML = "" + pcb.Acc;
+            document.getElementById("processDisplayX").innerHTML = "" + pcb.Xreg;
+            document.getElementById("processDisplayY").innerHTML = "" + pcb.Yreg;
+            document.getElementById("processDisplayZ").innerHTML = "" + pcb.ZFlag;
         };
         return Control;
     }());
