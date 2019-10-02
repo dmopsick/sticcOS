@@ -86,6 +86,8 @@ var TSOS;
             _Memory = new TSOS.Memory([]);
             _Memory.init();
             _MemoryAccessor = new TSOS.MemoryAccessor();
+            // Issue #19 Display the current memory info on the OS console display
+            this.updateMemoryDisplay();
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
@@ -117,7 +119,7 @@ var TSOS;
             document.getElementById("cpuDisplayY").innerHTML = "" + cpu.Yreg;
             document.getElementById("cpuDisplayZ").innerHTML = "" + cpu.Zflag;
         };
-        // Issue #21 #27 Update the HTML PCB display with the most recent PCB info
+        // Issue #27 #21 Update the HTML PCB display with the most recent PCB info
         Control.updatePCBDisplay = function (pcb) {
             // Update the HTML table that displays PCB info
             // For project 1 only going to record information on one proccess because only saving one at a time
@@ -128,6 +130,35 @@ var TSOS;
             document.getElementById("processDisplayX").innerHTML = "" + pcb.Xreg;
             document.getElementById("processDisplayY").innerHTML = "" + pcb.Yreg;
             document.getElementById("processDisplayZ").innerHTML = "" + pcb.ZFlag;
+        };
+        // Issue #27 #19 Update the HTML Memory display with the most recent memory info
+        Control.updateMemoryDisplay = function (memSegment) {
+            // Update the HTML table that displays Memory info
+            // For project 2 only record information for 1 memory segment. For project 3 will have three segments
+            if (memSegment === void 0) { memSegment = 1; }
+            // Initialize a string containing the HTML of the memory table
+            var memoryTableHTML = "";
+            // Will need to change this logic to make it dynamic for project 3
+            // Will need to change the starting point and bound
+            // Want to make rows of 8. So will use modulus to make new rows.
+            for (var i = 0; i < _MemoryBlockSize; i++) {
+                var hex = i.toString(16);
+                // Add 0's to the front of the hex number if need be to make it three significant digits
+                if (hex.length == 1) {
+                    hex = "00" + hex;
+                }
+                else if (hex.length == 2) {
+                    hex = "0" + hex;
+                }
+                if (i == 0) {
+                    memoryTableHTML += "<tr>";
+                }
+                if (i % 8 == 0) {
+                    memoryTableHTML += "</tr><tr><th>0x" + hex + "</th>";
+                }
+                memoryTableHTML += "<th id='mem-block-" + i + "'> " + _Memory.memoryArray[i] + " </th>";
+            }
+            document.getElementById("memoryInfoTableBody").innerHTML = memoryTableHTML;
         };
         return Control;
     }());

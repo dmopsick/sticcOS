@@ -61,6 +61,9 @@ module TSOS {
                 this.partitions[2].isFree = false;
             }
 
+            // Issue #19 Display the updated memory on the HTML OS display
+            TSOS.Control.updateMemoryDisplay();
+
             console.log("FLAG 15: " + _Memory.memoryArray);
         }
 

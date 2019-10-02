@@ -1,7 +1,7 @@
 /* SticcOS.css adapted from default TSOS.css */
 
 body {
-  background: #909193 url(distrib/images/linen.png) repeat;
+  background-color: skyblue !important;
   font-family: Helvetica, Verdana, Arial, sans-serif;
   font-size: 12pt;
   font-weight: normal;
@@ -76,6 +76,23 @@ h3 {
 
 .form-control {
   font-size: 12px !important;
+}
+
+tr, th, td {
+  font-size: 12px;
+}
+
+#memoryInfoTable {
+  font-size: 10px !important;
+}
+
+#memoryInfoDiv {
+  height: 200px;
+  overflow: scroll;
+}
+
+#cpuInfoDiv, #processInfoDiv {
+  flex-basis:  60%;
 }
 
 .footerText {
