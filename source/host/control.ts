@@ -138,24 +138,24 @@ module TSOS {
         // Issue #27 #19 Updates the HTML cpu info display with the most up to date info
         public static updateCPUDisplay(cpu: TSOS.Cpu): void {
             // Update the HTML table that displays CPU info
-            (<HTMLElement>document.getElementById("cpuDisplayPC")).innerHTML = "" + this.displayHex(cpu.PC);
-            (<HTMLElement>document.getElementById("cpuDisplayAcc")).innerHTML = "" + this.displayHex(cpu.Acc);
-            (<HTMLElement>document.getElementById("cpuDisplayX")).innerHTML = "" + this.displayHex(cpu.Xreg);
-            (<HTMLElement>document.getElementById("cpuDisplayY")).innerHTML = "" + this.displayHex(cpu.Yreg);
-            (<HTMLElement>document.getElementById("cpuDisplayZ")).innerHTML = "" + this.displayHex(cpu.Zflag);
+            (<HTMLElement>document.getElementById("cpuDisplayPC")).innerHTML = "" + TSOS.Utils.displayHex(cpu.PC);
+            (<HTMLElement>document.getElementById("cpuDisplayAcc")).innerHTML = "" + TSOS.Utils.displayHex(cpu.Acc);
+            (<HTMLElement>document.getElementById("cpuDisplayX")).innerHTML = "" + TSOS.Utils.displayHex(cpu.Xreg);
+            (<HTMLElement>document.getElementById("cpuDisplayY")).innerHTML = "" + TSOS.Utils.displayHex(cpu.Yreg);
+            (<HTMLElement>document.getElementById("cpuDisplayZ")).innerHTML = "" + TSOS.Utils.displayHex(cpu.Zflag);
         }
 
         // Issue #27 #21 Update the HTML PCB display with the most recent PCB info
         public static updatePCBDisplay(pcb: TSOS.ProcessControlBlock): void {
             // Update the HTML table that displays PCB info
             // For project 1 only going to record information on one proccess because only saving one at a time
-            (<HTMLElement>document.getElementById("processDisplayPID")).innerHTML = "" + this.displayHex(pcb.pid);
+            (<HTMLElement>document.getElementById("processDisplayPID")).innerHTML = "" + TSOS.Utils.displayHex(pcb.pid);
             (<HTMLElement>document.getElementById("processDisplayState")).innerHTML = "" + pcb.state;
-            (<HTMLElement>document.getElementById("processDisplayPC")).innerHTML = "" + this.displayHex(pcb.PC);
-            (<HTMLElement>document.getElementById("processDisplayAcc")).innerHTML = "" + this.displayHex(pcb.Acc);
-            (<HTMLElement>document.getElementById("processDisplayX")).innerHTML = "" + this.displayHex(pcb.Xreg);
-            (<HTMLElement>document.getElementById("processDisplayY")).innerHTML = "" + this.displayHex(pcb.Yreg);
-            (<HTMLElement>document.getElementById("processDisplayZ")).innerHTML = "" + this.displayHex(pcb.ZFlag);
+            (<HTMLElement>document.getElementById("processDisplayPC")).innerHTML = "" + TSOS.Utils.displayHex(pcb.PC);
+            (<HTMLElement>document.getElementById("processDisplayAcc")).innerHTML = "" + TSOS.Utils.displayHex(pcb.Acc);
+            (<HTMLElement>document.getElementById("processDisplayX")).innerHTML = "" + TSOS.Utils.displayHex(pcb.Xreg);
+            (<HTMLElement>document.getElementById("processDisplayY")).innerHTML = "" + TSOS.Utils.displayHex(pcb.Yreg);
+            (<HTMLElement>document.getElementById("processDisplayZ")).innerHTML = "" + TSOS.Utils.displayHex(pcb.ZFlag);
         }
 
         // Issue #27 #19 Update the HTML Memory display with the most recent memory info
@@ -187,14 +187,9 @@ module TSOS {
                 if (i % 8 == 0) {
                     memoryTableHTML += "</tr><tr><th>0x" + hex + "</th>";
                 }
-                memoryTableHTML += "<th id='mem-block-" + i + "'> " +  this.displayHex(_Memory.memoryArray[i]) + " </th>";
+                memoryTableHTML += "<th id='mem-block-" + i + "'> " +  TSOS.Utils.displayHex(_Memory.memoryArray[i]) + " </th>";
             }
             (<HTMLElement>document.getElementById("memoryInfoTableBody")).innerHTML = memoryTableHTML
-        }
-
-        // Issue #27 Helper class to format values into hex for displaying on the HTML dashboard
-        public static displayHex(numToDisplay: number): string {
-            return numToDisplay.toString(16).toUpperCase();
         }
     }
 }

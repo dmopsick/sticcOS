@@ -44,6 +44,11 @@ var TSOS;
             }
             return retVal;
         };
+        // Issue #27 Helper class to format values into hex for displaying on the HTML dashboard
+        // Moved this class to Utils rather than Control because accessed it from CPU as well
+        Utils.displayHex = function (numToDisplay) {
+            return numToDisplay.toString(16).toUpperCase();
+        };
         return Utils;
     }());
     TSOS.Utils = Utils;

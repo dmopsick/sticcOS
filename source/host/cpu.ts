@@ -190,7 +190,7 @@ module TSOS {
         // not sure if in future I will have to modify the steps to writing, so abstracting it out here
         public writeToMemory(addr: number, valueToWrite: number): void {
             // Ensure value written in HEX into memory
-            const hexToWrite = TSOS.Control.displayHex(valueToWrite);
+            const hexToWrite = TSOS.Utils.displayHex(valueToWrite);
 
             // Pass the arguments on to the memory manager
             _MemoryManager.writeToMemory(addr, hexToWrite);

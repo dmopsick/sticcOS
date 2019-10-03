@@ -113,23 +113,23 @@ var TSOS;
         // Issue #27 #19 Updates the HTML cpu info display with the most up to date info
         Control.updateCPUDisplay = function (cpu) {
             // Update the HTML table that displays CPU info
-            document.getElementById("cpuDisplayPC").innerHTML = "" + this.displayHex(cpu.PC);
-            document.getElementById("cpuDisplayAcc").innerHTML = "" + this.displayHex(cpu.Acc);
-            document.getElementById("cpuDisplayX").innerHTML = "" + this.displayHex(cpu.Xreg);
-            document.getElementById("cpuDisplayY").innerHTML = "" + this.displayHex(cpu.Yreg);
-            document.getElementById("cpuDisplayZ").innerHTML = "" + this.displayHex(cpu.Zflag);
+            document.getElementById("cpuDisplayPC").innerHTML = "" + TSOS.Utils.displayHex(cpu.PC);
+            document.getElementById("cpuDisplayAcc").innerHTML = "" + TSOS.Utils.displayHex(cpu.Acc);
+            document.getElementById("cpuDisplayX").innerHTML = "" + TSOS.Utils.displayHex(cpu.Xreg);
+            document.getElementById("cpuDisplayY").innerHTML = "" + TSOS.Utils.displayHex(cpu.Yreg);
+            document.getElementById("cpuDisplayZ").innerHTML = "" + TSOS.Utils.displayHex(cpu.Zflag);
         };
         // Issue #27 #21 Update the HTML PCB display with the most recent PCB info
         Control.updatePCBDisplay = function (pcb) {
             // Update the HTML table that displays PCB info
             // For project 1 only going to record information on one proccess because only saving one at a time
-            document.getElementById("processDisplayPID").innerHTML = "" + this.displayHex(pcb.pid);
+            document.getElementById("processDisplayPID").innerHTML = "" + TSOS.Utils.displayHex(pcb.pid);
             document.getElementById("processDisplayState").innerHTML = "" + pcb.state;
-            document.getElementById("processDisplayPC").innerHTML = "" + this.displayHex(pcb.PC);
-            document.getElementById("processDisplayAcc").innerHTML = "" + this.displayHex(pcb.Acc);
-            document.getElementById("processDisplayX").innerHTML = "" + this.displayHex(pcb.Xreg);
-            document.getElementById("processDisplayY").innerHTML = "" + this.displayHex(pcb.Yreg);
-            document.getElementById("processDisplayZ").innerHTML = "" + this.displayHex(pcb.ZFlag);
+            document.getElementById("processDisplayPC").innerHTML = "" + TSOS.Utils.displayHex(pcb.PC);
+            document.getElementById("processDisplayAcc").innerHTML = "" + TSOS.Utils.displayHex(pcb.Acc);
+            document.getElementById("processDisplayX").innerHTML = "" + TSOS.Utils.displayHex(pcb.Xreg);
+            document.getElementById("processDisplayY").innerHTML = "" + TSOS.Utils.displayHex(pcb.Yreg);
+            document.getElementById("processDisplayZ").innerHTML = "" + TSOS.Utils.displayHex(pcb.ZFlag);
         };
         // Issue #27 #19 Update the HTML Memory display with the most recent memory info
         Control.updateMemoryDisplay = function (memSegment) {
@@ -156,13 +156,9 @@ var TSOS;
                 if (i % 8 == 0) {
                     memoryTableHTML += "</tr><tr><th>0x" + hex + "</th>";
                 }
-                memoryTableHTML += "<th id='mem-block-" + i + "'> " + this.displayHex(_Memory.memoryArray[i]) + " </th>";
+                memoryTableHTML += "<th id='mem-block-" + i + "'> " + TSOS.Utils.displayHex(_Memory.memoryArray[i]) + " </th>";
             }
             document.getElementById("memoryInfoTableBody").innerHTML = memoryTableHTML;
-        };
-        // Issue #27 Helper class to format values into hex for displaying on the HTML dashboard
-        Control.displayHex = function (numToDisplay) {
-            return numToDisplay.toString(16).toUpperCase();
         };
         return Control;
     }());

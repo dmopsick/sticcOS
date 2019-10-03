@@ -156,7 +156,7 @@ var TSOS;
         // not sure if in future I will have to modify the steps to writing, so abstracting it out here
         Cpu.prototype.writeToMemory = function (addr, valueToWrite) {
             // Ensure value written in HEX into memory
-            var hexToWrite = TSOS.Control.displayHex(valueToWrite);
+            var hexToWrite = TSOS.Utils.displayHex(valueToWrite);
             // Pass the arguments on to the memory manager
             _MemoryManager.writeToMemory(addr, hexToWrite);
         };
