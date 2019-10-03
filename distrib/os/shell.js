@@ -385,10 +385,12 @@ var TSOS;
             // Should the BSOD lock the keyboard and require a reset?
             _Kernel.krnShutdown();
         };
-        // Validates the program code entered by the user in the HTML5 text field Issue #7
+        // Validates the program code entered by the user in the HTML5 text field Issue #7 #17
         Shell.prototype.shellLoad = function (args) {
             // Get the user entered program code
-            var programInput = document.getElementById("taProgramInput").value;
+            var untrimmedProgramInput = document.getElementById("taProgramInput").value;
+            // Issue #29 Trim white space from the program input to prevent blank empty entries in memory array
+            var programInput = TSOS.Utils.trim(untrimmedProgramInput);
             // Verify that the user entered code only contains hex codes and spaces using a regular expression
             var regularExpression = new RegExp(/^[0-9a-fA-F\s]+$/);
             var valid = regularExpression.test(programInput);
@@ -467,7 +469,7 @@ var TSOS;
                     }
                     // This means that yes the PID is found but the process no longer exists in memory
                     else {
-                        _StdOut.putText("The process with the PID " + pid + " no longer exists in memory.");
+                        _StdOut.putText("The process with the PID " + pid + " no longer exists in memory or is no longer runnable.");
                     }
                 }
                 else {
