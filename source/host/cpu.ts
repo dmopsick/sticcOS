@@ -65,21 +65,19 @@ module TSOS {
                     // Use helper function to get the following address in memory as a int
                     let memoryAddrIndex = this.getFollowingMemIndexInMemory();
 
-                    // Read the value from the memory address 
-                    const loadedStringValue = this.readMemory(memoryAddrIndex);
-
                     // Convert the value to a numner
-                    const loadedIntValue = parseInt(loadedStringValue, 16);
+                    let loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
 
                     // Load the retrieved value into the accumulator
                     this.Acc = loadedIntValue;
 
                     // Update the accumulator value of the current process
                     _PCBInstances[_CurrentPID].Acc = this.Acc;
+                    
                     break;
                 case "8D": // STA <memoryAddress> | Store the accumulator in memory
                     // Use the helper function to get the following address as an int
-                     memoryAddrIndex = this.getFollowingMemIndexInMemory();
+                    memoryAddrIndex = this.getFollowingMemIndexInMemory();
 
                     console.log("WRITE TO THIS ADDR: " + memoryAddrIndex);
 
@@ -88,13 +86,18 @@ module TSOS {
 
                     break;
                 case "6D": // ADC <memoryAddress> | Adds content of address in memory to accumulator, stores sum in accumulator
-                    // Get the memory address specified in the command
+                    // Use helper function to get the memory address load from the following slot in memory
+                    memoryAddrIndex = this.getFollowingMemIndexInMemory();
 
-                    // Retrieve the constant
+                    // Load the value from memory 
+                    loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
 
                     // Add the constant to the accumulator value
+                    this.Acc += loadedIntValue;
 
-                    // Save sum in the accumulator (This may be one step with the above comment)
+                    // Update the Accumulator in the PCB
+                    _PCBInstances[_CurrentPID].Acc = this.Acc    
+                    
                     break;
                 case "A2": // LDX <constant> | Load the X register with a constant
                     // Must implmement this
@@ -208,5 +211,13 @@ module TSOS {
             return parseInt(constantStringValue, 16);
         }
 
+        // Helper function to load a constant number value from memory
+        public loadConstantFromMemory(addr: number): number {
+            // Load the constant value from memory
+            const loadedStringValue = this.readMemory(addr);
+            // Convert the loaded value to an int
+            return parseInt(loadedStringValue, 16);
+        }
     }
+
 }

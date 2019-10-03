@@ -60,10 +60,8 @@ var TSOS;
                 case "AD": // LDA <memoryAddress> | Load a value from memory into accumulator
                     // Use helper function to get the following address in memory as a int
                     var memoryAddrIndex = this.getFollowingMemIndexInMemory();
-                    // Read the value from the memory address 
-                    var loadedStringValue = this.readMemory(memoryAddrIndex);
                     // Convert the value to a numner
-                    var loadedIntValue = parseInt(loadedStringValue, 16);
+                    var loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
                     // Load the retrieved value into the accumulator
                     this.Acc = loadedIntValue;
                     // Update the accumulator value of the current process
@@ -77,10 +75,14 @@ var TSOS;
                     this.writeToMemory(memoryAddrIndex, this.Acc);
                     break;
                 case "6D": // ADC <memoryAddress> | Adds content of address in memory to accumulator, stores sum in accumulator
-                    // Get the memory address specified in the command
-                    // Retrieve the constant
+                    // Use helper function to get the memory address load from the following slot in memory
+                    memoryAddrIndex = this.getFollowingMemIndexInMemory();
+                    // Load the value from memory 
+                    loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
                     // Add the constant to the accumulator value
-                    // Save sum in the accumulator (This may be one step with the above comment)
+                    this.Acc += loadedIntValue;
+                    // Update the Accumulator in the PCB
+                    _PCBInstances[_CurrentPID].Acc = this.Acc;
                     break;
                 case "A2": // LDX <constant> | Load the X register with a constant
                     // Must implmement this
@@ -168,6 +170,13 @@ var TSOS;
             var constantStringValue = this.readMemory(constantAddr);
             // Convert the constant to a number
             return parseInt(constantStringValue, 16);
+        };
+        // Helper function to load a constant number value from memory
+        Cpu.prototype.loadConstantFromMemory = function (addr) {
+            // Load the constant value from memory
+            var loadedStringValue = this.readMemory(addr);
+            // Convert the loaded value to an int
+            return parseInt(loadedStringValue, 16);
         };
         return Cpu;
     }());
