@@ -73,13 +73,11 @@ module TSOS {
 
                     // Update the accumulator value of the current process
                     _PCBInstances[_CurrentPID].Acc = this.Acc;
-                    
+
                     break;
                 case "8D": // STA <memoryAddress> | Store the accumulator in memory
                     // Use the helper function to get the following address as an int
                     memoryAddrIndex = this.getFollowingMemIndexInMemory();
-
-                    console.log("WRITE TO THIS ADDR: " + memoryAddrIndex);
 
                     // Write the accumulator to the specifieid memory address
                     this.writeToMemory(memoryAddrIndex, this.Acc);
@@ -100,10 +98,29 @@ module TSOS {
                     
                     break;
                 case "A2": // LDX <constant> | Load the X register with a constant
-                    // Must implmement this
+                    // Use the faithful helper to load the constant from the following memory address 
+                    constantIntValue = this.getFollowingMemIndexInMemory();
+
+                    // Assign the X register the constant value loaded from memory
+                    this.Xreg = constantIntValue;
+
+                    // Update the X Register in the current PCB
+                    _PCBInstances[_CurrentPID].Xreg = this.Xreg;
+
                     break;
                 case "AE": // LDX <memoryAddress> | Load the X register with a value from memory
-                    // Yes, I must implement this, and all them. I am just laying out the framework of this switch for now
+                    // Use helper to get the constant from the following memory address to use to load the value from the memory
+                    memoryAddrIndex = this.getFollowingMemIndexInMemory();
+                    
+                    // Load the value from the memory 
+                    loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
+
+                    // Load the X register with the loaded value
+                    this.Xreg = loadedIntValue;
+
+                    // Update the X register in the current PCB
+                    _PCBInstances[_CurrentPID].Xreg = this.Xreg;
+
                     break;
                 case "AO": // LDY <constant> | Load the Y register with a constant
                     // Get the constant from the following op code
