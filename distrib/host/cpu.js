@@ -51,7 +51,7 @@ var TSOS;
             switch (currentOpCode) { // Mneumonic Code | Description of code
                 case "A9": // LDA <constant> | Load a constant into the accumulator
                     // Use helper function to get the following value in memory as a int
-                    var constantIntValue = this.getFollowingValueFromMemory();
+                    var constantIntValue = this.getFollowingConstantFromMemory();
                     // Load the retrieved value into the accumulator
                     this.Acc = constantIntValue;
                     // Update the accumulator value of the current process
@@ -59,7 +59,7 @@ var TSOS;
                     break;
                 case "AD": // LDA <memoryAddress> | Load a value from memory into accumulator
                     // Use helper function to get the following address in memory as a int
-                    var memoryAddrIndex = this.getFollowingValueFromMemory();
+                    var memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
                     // Convert the value to a numner
                     var loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
                     // Load the retrieved value into the accumulator
@@ -69,13 +69,13 @@ var TSOS;
                     break;
                 case "8D": // STA <memoryAddress> | Store the accumulator in memory
                     // Use the helper function to get the following address as an int
-                    memoryAddrIndex = this.getFollowingValueFromMemory();
+                    memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
                     // Write the accumulator to the specifieid memory address
                     this.writeToMemory(memoryAddrIndex, this.Acc.toString(16));
                     break;
                 case "6D": // ADC <memoryAddress> | Adds content of address in memory to accumulator, stores sum in accumulator
                     // Use helper function to get the memory address load from the following slot in memory
-                    memoryAddrIndex = this.getFollowingValueFromMemory();
+                    memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
                     // Load the value from memory 
                     loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
                     // Add the constant to the accumulator value
@@ -85,7 +85,7 @@ var TSOS;
                     break;
                 case "A2": // LDX <constant> | Load the X register with a constant
                     // Use the faithful helper to load the constant from the following memory address 
-                    constantIntValue = this.getFollowingValueFromMemory();
+                    constantIntValue = this.getFollowingConstantFromMemory();
                     // Assign the X register the constant value loaded from memory
                     this.Xreg = constantIntValue;
                     // Update the X Register in the current PCB
@@ -93,7 +93,7 @@ var TSOS;
                     break;
                 case "AE": // LDX <memoryAddress> | Load the X register with a value from memory
                     // Use helper to get the constant from the following memory address to use to load the value from the memory
-                    memoryAddrIndex = this.getFollowingValueFromMemory();
+                    memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
                     // Load the value from the memory 
                     loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
                     // Load the X register with the loaded value
@@ -103,7 +103,7 @@ var TSOS;
                     break;
                 case "A0": // LDY <constant> | Load the Y register with a constant
                     // Get the constant from the following op code with the helper function
-                    constantIntValue = this.getFollowingValueFromMemory();
+                    constantIntValue = this.getFollowingConstantFromMemory();
                     // Load the Y register with the constant
                     this.Yreg = constantIntValue;
                     // Update the Y register in the PCB
@@ -111,7 +111,7 @@ var TSOS;
                     break;
                 case "AC": // LDY <memoryAddress | Load the Y register with a value from memory
                     // Get the memory address from the following op code
-                    memoryAddrIndex = this.getFollowingValueFromMemory();
+                    memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
                     // Get the value to load from the memory address
                     loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
                     // Load the Y register
@@ -132,7 +132,7 @@ var TSOS;
                     break;
                 case "EC": // CPX <memoryAddress| Compare a byte in memory to the X register
                     // Get the memory address of the byte to 
-                    memoryAddrIndex = this.getFollowingValueFromMemory();
+                    memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
                     // Get the byte to compare to the X register
                     constantIntValue = this.loadConstantFromMemory(memoryAddrIndex);
                     // Compare the retrieved byte to the X register
@@ -151,7 +151,7 @@ var TSOS;
                     // Determine if the program should go to the line break
                     if (this.Zflag == 0) {
                         // Get the line to break to from the next value in memory
-                        var lineToBreakTo = this.getFollowingValueFromMemory();
+                        var lineToBreakTo = this.getFollowingConstantFromMemory();
                         // Set the retrieved value as the program counter
                         this.PC = lineToBreakTo;
                         // Update the PC in the PCB
@@ -166,7 +166,7 @@ var TSOS;
                 case "EE": // INC <byteToIncrement> | Increment the value of a byte
                     // Verify byteToIncrement exists 
                     // Get the memory address for the byte to increment
-                    memoryAddrIndex = this.getFollowingValueFromMemory();
+                    memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
                     // Get the value of the specified memory address 
                     loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
                     // Increment the value by one
@@ -178,10 +178,26 @@ var TSOS;
                     // If there is an 01 in the X register then display the integer in the Y register
                     if (this.Xreg == 1) {
                         // Display the value in the Y register
-                        _StdOut.putText(this.Yreg);
+                        _StdOut.putText(this.Yreg.toString());
                     }
                     // Print 00 teriminated string starting at address sepcified in the Y register 
                     else if (this.Xreg == 2) {
+                        console.log("PREPARE TO PRINT!");
+                        // Get the first location of the string to print
+                        var memoryAddrToPrint = this.Yreg;
+                        // Get value at the first location in memory
+                        var opCodeToPrint = this.loadConstantFromMemory(memoryAddrToPrint);
+                        // Set the program counter to the new value in memory
+                        this.PC = this.Yreg;
+                        // Loop through Print the characters until the breakpoint is reached 
+                        while (opCodeToPrint.toString() != "00") {
+                            console.log("STRING PRINT TIME!");
+                            // Convert non 00 op code to the corresponding char based on ASCII
+                            var charToPrint = String.fromCharCode(opCodeToPrint);
+                            _StdOut.putText(charToPrint);
+                            // Get the next op code
+                            opCodeToPrint = this.getFollowingConstantFromMemory();
+                        }
                     }
                     else {
                         // Throw a software interrupt error, invalid system call in X register
@@ -216,8 +232,8 @@ var TSOS;
             // Pass the arguments on to the memory manager
             _MemoryManager.writeToMemory(addr, hexToWrite);
         };
-        // Helper function to get the following value in memory in int form
-        Cpu.prototype.getFollowingValueFromMemory = function () {
+        // Helper function to get the following constant in memory in int form
+        Cpu.prototype.getFollowingConstantFromMemory = function () {
             // Get the following address to load the constant from in memory | Increment the program counter
             var constantAddr = ++this.PC;
             // Read the constant value from memory
@@ -231,6 +247,18 @@ var TSOS;
             var loadedStringValue = this.readMemory(addr);
             // Convert the loaded value to an int
             return parseInt(loadedStringValue, 16);
+        };
+        // Helper function to get following memory location which consists of two blocks of memory
+        Cpu.prototype.getFollowingMemoryLocationFromMemory = function () {
+            // Get the following memory address as a string, second half of memory address 
+            var secondHalfMemAddr = this.getFollowingConstantFromMemory().toString();
+            // Get the memory address as a string after that, front half of memory address
+            var firstHalfMemAddr = this.getFollowingConstantFromMemory().toString();
+            // Combine memory addresses
+            var fullMemAddrString = firstHalfMemAddr + secondHalfMemAddr;
+            console.log("FULL MEM ADDR " + fullMemAddrString);
+            // Return them the full memory address
+            return parseInt(fullMemAddrString);
         };
         return Cpu;
     }());

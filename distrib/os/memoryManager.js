@@ -29,11 +29,9 @@ var TSOS;
             if (memBlockID === void 0) { memBlockID = 0; }
             // See if there is a process already saved in memory
             if (this.partitions[memBlockID].isFree) {
-                console.log("FLAG 2: MEMORY IS FREE!");
                 return true;
             }
             else {
-                console.log("FLAG 3: MEMORY IS NOT FREE!");
                 return false;
             }
             // If there is no process found in the chosen block
@@ -58,7 +56,6 @@ var TSOS;
             }
             // Issue #19 Display the updated memory on the HTML OS display
             TSOS.Control.updateMemoryDisplay();
-            console.log("FLAG 15: " + _Memory.memoryArray);
         };
         // Issue #25 Read code from memory 
         // Issue #18 Need to be able to read from memory to run program
@@ -74,8 +71,6 @@ var TSOS;
             }
             // Save the value to the specified location in memory
             _Memory.memoryArray[addr] = valueToWrite;
-            console.log("FLAG 20");
-            console.log(_Memory.memoryArray);
             // Update the memoery display to reflect changes
             TSOS.Control.updateMemoryDisplay();
         };
