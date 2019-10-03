@@ -51,14 +51,14 @@ module TSOS {
             // Issue #27
             switch (currentOpCode) { // Mneumonic Code | Description of code
                 case "A9":  // LDA <constant> | Load a constant into the accumulator
-                    // Get the address to load the constant from in memory
+                    // Get the following address to load the constant from in memory | Increment the program counter
                     const constantAddr = ++this.PC;
 
                     // Read the constant value from memory
                     const constantStringValue = this.readMemory(constantAddr);
 
                     // Convert the constant to a number
-                    const constantIntValue = parseInt(constantStringValue, 16);
+                    let constantIntValue = parseInt(constantStringValue, 16);
 
                     // Load the retrieved value into the accumulator
                     this.Acc = constantIntValue;
@@ -68,7 +68,23 @@ module TSOS {
 
                     break;
                 case "AD": // LDA <memoryAddress> | Load a value from memory into accumulator
-                    // Need to implement the functionality of loading the accumulator with a value from memory
+                    // Get the following address to get the memory address to load | Increment the program counter
+                    const memoryAddrString = this.readMemory(++this.PC);
+
+                    // Convert memory address to int so it can be used as an index
+                    const memoryAddrIndex = parseInt(memoryAddrString);
+
+                    // Read the value from the memory address 
+                    const loadedStringValue = this.readMemory(memoryAddrIndex);
+
+                    // Convert the value to a numner
+                    const loadedIntValue = parseInt(loadedStringValue, 16);
+
+                    // Load the retrieved value into the accumulator
+                    this.Acc = loadedIntValue;
+
+                    // Update the accumulator value of the current process
+                    _PCBInstances[_CurrentPID].Acc = this.Acc;
                     break;
                 case "8D": // STA <memoryAddress> | Store the accumulator in memory
                     // Need to implement the functionality of storing the accumulator in a specific memory addrtess

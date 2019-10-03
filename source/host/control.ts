@@ -138,24 +138,24 @@ module TSOS {
         // Issue #27 #19 Updates the HTML cpu info display with the most up to date info
         public static updateCPUDisplay(cpu: TSOS.Cpu): void {
             // Update the HTML table that displays CPU info
-            (<HTMLElement>document.getElementById("cpuDisplayPC")).innerHTML = "" + cpu.PC;
-            (<HTMLElement>document.getElementById("cpuDisplayAcc")).innerHTML = "" + cpu.Acc;
-            (<HTMLElement>document.getElementById("cpuDisplayX")).innerHTML = "" + cpu.Xreg;
-            (<HTMLElement>document.getElementById("cpuDisplayY")).innerHTML = "" + cpu.Yreg;
-            (<HTMLElement>document.getElementById("cpuDisplayZ")).innerHTML = "" + cpu.Zflag;
+            (<HTMLElement>document.getElementById("cpuDisplayPC")).innerHTML = "" + this.displayHex(cpu.PC);
+            (<HTMLElement>document.getElementById("cpuDisplayAcc")).innerHTML = "" + this.displayHex(cpu.Acc);
+            (<HTMLElement>document.getElementById("cpuDisplayX")).innerHTML = "" + this.displayHex(cpu.Xreg);
+            (<HTMLElement>document.getElementById("cpuDisplayY")).innerHTML = "" + this.displayHex(cpu.Yreg);
+            (<HTMLElement>document.getElementById("cpuDisplayZ")).innerHTML = "" + this.displayHex(cpu.Zflag);
         }
 
         // Issue #27 #21 Update the HTML PCB display with the most recent PCB info
         public static updatePCBDisplay(pcb: TSOS.ProcessControlBlock): void {
             // Update the HTML table that displays PCB info
             // For project 1 only going to record information on one proccess because only saving one at a time
-            (<HTMLElement>document.getElementById("processDisplayPID")).innerHTML = "" + pcb.pid;
+            (<HTMLElement>document.getElementById("processDisplayPID")).innerHTML = "" + this.displayHex(pcb.pid);
             (<HTMLElement>document.getElementById("processDisplayState")).innerHTML = "" + pcb.state;
-            (<HTMLElement>document.getElementById("processDisplayPC")).innerHTML = "" + pcb.PC;
-            (<HTMLElement>document.getElementById("processDisplayAcc")).innerHTML = "" + pcb.Acc;
-            (<HTMLElement>document.getElementById("processDisplayX")).innerHTML = "" + pcb.Xreg;
-            (<HTMLElement>document.getElementById("processDisplayY")).innerHTML = "" + pcb.Yreg;
-            (<HTMLElement>document.getElementById("processDisplayZ")).innerHTML = "" + pcb.ZFlag;
+            (<HTMLElement>document.getElementById("processDisplayPC")).innerHTML = "" + this.displayHex(pcb.PC);
+            (<HTMLElement>document.getElementById("processDisplayAcc")).innerHTML = "" + this.displayHex(pcb.Acc);
+            (<HTMLElement>document.getElementById("processDisplayX")).innerHTML = "" + this.displayHex(pcb.Xreg);
+            (<HTMLElement>document.getElementById("processDisplayY")).innerHTML = "" + this.displayHex(pcb.Yreg);
+            (<HTMLElement>document.getElementById("processDisplayZ")).innerHTML = "" + this.displayHex(pcb.ZFlag);
         }
 
         // Issue #27 #19 Update the HTML Memory display with the most recent memory info
@@ -191,6 +191,11 @@ module TSOS {
                 memoryTableHTML += "<th id='mem-block-" + i + "'> " +  _Memory.memoryArray[i] + " </th>";
             }
             (<HTMLElement>document.getElementById("memoryInfoTableBody")).innerHTML = memoryTableHTML
+        }
+
+        // Issue #27 Helper class to format values into hex for displaying on the HTML dashboard
+        public static displayHex(numToDisplay: number): string {
+            return numToDisplay.toString(16).toUpperCase();
         }
     }
 }
