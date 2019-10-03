@@ -101,14 +101,23 @@ var TSOS;
                     // Update the X register in the current PCB
                     _PCBInstances[_CurrentPID].Xreg = this.Xreg;
                     break;
-                case "AO": // LDY <constant> | Load the Y register with a constant
-                    // Get the constant from the following op code
+                case "A0": // LDY <constant> | Load the Y register with a constant
+                    // Get the constant from the following op code with the helper function
+                    constantIntValue = this.getFollowingMemIndexInMemory();
                     // Load the Y register with the constant
+                    this.Yreg = constantIntValue;
+                    // Update the Y register in the PCB
+                    _PCBInstances[_CurrentPID].Yreg = this.Yreg;
                     break;
                 case "AC": // LDY <memoryAddress | Load the Y register with a value from memory
                     // Get the memory address from the following op code
+                    memoryAddrIndex = this.getFollowingMemIndexInMemory();
                     // Get the value to load from the memory address
+                    loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
                     // Load the Y register
+                    this.Yreg = loadedIntValue;
+                    // Update the Y register in the PCB
+                    _PCBInstances[_CurrentPID].Yreg = this.Yreg;
                     break;
                 case "EA": // NOP | No operation
                     // Do nothing?
