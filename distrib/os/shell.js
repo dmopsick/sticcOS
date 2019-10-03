@@ -390,7 +390,8 @@ var TSOS;
             // Get the user entered program code
             var untrimmedProgramInput = document.getElementById("taProgramInput").value;
             // Issue #29 Trim white space from the program input to prevent blank empty entries in memory array
-            var programInput = TSOS.Utils.trim(untrimmedProgramInput);
+            var programInput = untrimmedProgramInput.trim();
+            console.log("FLAG 69 _" + programInput + "_");
             // Verify that the user entered code only contains hex codes and spaces using a regular expression
             var regularExpression = new RegExp(/^[0-9a-fA-F\s]+$/);
             var valid = regularExpression.test(programInput);
@@ -401,7 +402,6 @@ var TSOS;
             else if (valid) {
                 // Issue #17 checking the count of commands to see if there is an overflow
                 var splitProgramInput = programInput.split(" ");
-                console.log("FLAG 11: " + splitProgramInput.length);
                 // Verify the program code will not cause an overflow
                 if (splitProgramInput.length <= _MemoryBlockSize) {
                     // Check to see the memory block is full (Project 2, will check only 1 by defauly)

@@ -80,7 +80,7 @@ module TSOS {
                     memoryAddrIndex = this.getFollowingValueFromMemory();
 
                     // Write the accumulator to the specifieid memory address
-                    this.writeToMemory(memoryAddrIndex, this.Acc);
+                    this.writeToMemory(memoryAddrIndex, this.Acc.toString(16));
 
                     break;
                 case "6D": // ADC <memoryAddress> | Adds content of address in memory to accumulator, stores sum in accumulator
@@ -201,18 +201,32 @@ module TSOS {
                     // Move program counter to the specified line to break to
                     break;
                 case "EE": // INC <byteToIncrement> | Increment the value of a byte
-                    // Verify byteToIncrement exists
+                    // Verify byteToIncrement exists 
+                    
+                    // Get the memory address for the byte to increment
+                    memoryAddrIndex = this.getFollowingValueFromMemory();
 
-                    // Increment the byte if yes
+                    // Get the value of the specified memory address 
+                    loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
 
-                    // Tell user byte does not exist if not
+                    // Increment the value by one
+                    const incrementedValue = loadedIntValue++;
+
+                    // Write the new, incremented value into memory
+                    this.writeToMemory(memoryAddrIndex, incrementedValue.toString(16));
+
                     break;
                 case "FF": // SYS | The call parameter is based on the X or Y register 
                     // If there is an 01 in the X register then display the integer in the Y register
                     if (this.Xreg == 1) {
-                        // Display the value in the Y register
-                    }
+                    
 
+
+                        // Display the value in the Y register
+                        _StdOut.putText(this.Yreg);
+
+                    }
+                    // Print 00 teriminated string starting at address sepcified in the Y register 
                     else if (this.Xreg == 2) {
 
                     }
@@ -246,9 +260,15 @@ module TSOS {
 
         // Helper function to use the memory manager to write to memory
         // not sure if in future I will have to modify the steps to writing, so abstracting it out here
-        public writeToMemory(addr: number, valueToWrite: number): void {
+        public writeToMemory(addr: number, valueToWrite: string): void {
+            // Trim the white space from the value to write
+            const trimmedValueToWriteString = valueToWrite.trim();
+
+            // Parse trimmed value as an int
+            const trimmedValueToWriteInt = parseInt(trimmedValueToWriteString, 16);
+
             // Ensure value written in HEX into memory
-            const hexToWrite = TSOS.Utils.displayHex(valueToWrite);
+            const hexToWrite = TSOS.Utils.displayHex(trimmedValueToWriteInt);
 
             // Pass the arguments on to the memory manager
             _MemoryManager.writeToMemory(addr, hexToWrite);
