@@ -156,7 +156,7 @@ var TSOS;
                 if (i % 8 == 0) {
                     memoryTableHTML += "</tr><tr><th>0x" + hex + "</th>";
                 }
-                memoryTableHTML += "<th id='mem-block-" + i + "'> " + _Memory.memoryArray[i] + " </th>";
+                memoryTableHTML += "<th id='mem-block-" + i + "'> " + this.displayHex(_Memory.memoryArray[i]) + " </th>";
             }
             document.getElementById("memoryInfoTableBody").innerHTML = memoryTableHTML;
         };

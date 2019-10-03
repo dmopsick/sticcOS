@@ -51,14 +51,8 @@ module TSOS {
             // Issue #27
             switch (currentOpCode) { // Mneumonic Code | Description of code
                 case "A9":  // LDA <constant> | Load a constant into the accumulator
-                    // Get the following address to load the constant from in memory | Increment the program counter
-                    const constantAddr = ++this.PC;
-
-                    // Read the constant value from memory
-                    const constantStringValue = this.readMemory(constantAddr);
-
-                    // Convert the constant to a number
-                    let constantIntValue = parseInt(constantStringValue, 16);
+                    // Use helper function to get the following value in memory as a int
+                    let constantIntValue = this.getFollowingMemIndexInMemory();
 
                     // Load the retrieved value into the accumulator
                     this.Acc = constantIntValue;
@@ -68,11 +62,8 @@ module TSOS {
 
                     break;
                 case "AD": // LDA <memoryAddress> | Load a value from memory into accumulator
-                    // Get the following address to get the memory address to load | Increment the program counter
-                    const memoryAddrString = this.readMemory(++this.PC);
-
-                    // Convert memory address to int so it can be used as an index
-                    const memoryAddrIndex = parseInt(memoryAddrString);
+                    // Use helper function to get the following address in memory as a int
+                    let memoryAddrIndex = this.getFollowingMemIndexInMemory();
 
                     // Read the value from the memory address 
                     const loadedStringValue = this.readMemory(memoryAddrIndex);
@@ -87,7 +78,14 @@ module TSOS {
                     _PCBInstances[_CurrentPID].Acc = this.Acc;
                     break;
                 case "8D": // STA <memoryAddress> | Store the accumulator in memory
-                    // Need to implement the functionality of storing the accumulator in a specific memory addrtess
+                    // Use the helper function to get the following address as an int
+                     memoryAddrIndex = this.getFollowingMemIndexInMemory();
+
+                    console.log("WRITE TO THIS ADDR: " + memoryAddrIndex);
+
+                    // Write the accumulator to the specifieid memory address
+                    this.writeToMemory(memoryAddrIndex, this.Acc);
+
                     break;
                 case "6D": // ADC <memoryAddress> | Adds content of address in memory to accumulator, stores sum in accumulator
                     // Get the memory address specified in the command
@@ -127,7 +125,8 @@ module TSOS {
 
                     // Modify the state of the currently executed PCB to Completed
                     _PCBInstances[_CurrentPID].state = "Completed"
-
+                    // SticcOs lets you only execute a program once? I do not know how I feel about that
+                    _PCBInstances[_CurrentPID].executable = false;
                     break;
                 case "EC": // CPX <memoryAddress| Compare a byte in memory to the X register
                     // Get the memory address of the byte to compare
@@ -182,10 +181,31 @@ module TSOS {
             TSOS.Control.updatePCBDisplay(_PCBInstances[_CurrentPID]);
         }
 
-        // Function to use the memory manager to access the specified memory and return the op code
-        public readMemory(index): string {
-            console.log("READ MEMORY INDEX " + index)
-            return _MemoryManager.readFromMemory(index);
+        // Helper Function to use the memory manager to access the specified memory and return the op code
+        public readMemory(addr: number): string {
+            return _MemoryManager.readFromMemory(addr);
+        }
+
+        // Helper function to use the memory manager to write to memory
+        // not sure if in future I will have to modify the steps to writing, so abstracting it out here
+        public writeToMemory(addr: number, valueToWrite: number): void {
+            // Ensure value written in HEX into memory
+            const hexToWrite = TSOS.Control.displayHex(valueToWrite);
+
+            // Pass the arguments on to the memory manager
+            _MemoryManager.writeToMemory(addr, hexToWrite);
+        }
+
+        // Helper function to get the following value in memory in int form
+        public getFollowingMemIndexInMemory(): number {
+            // Get the following address to load the constant from in memory | Increment the program counter
+            const constantAddr = ++this.PC;
+
+            // Read the constant value from memory
+            const constantStringValue = this.readMemory(constantAddr);
+
+            // Convert the constant to a number
+            return parseInt(constantStringValue, 16);
         }
 
     }

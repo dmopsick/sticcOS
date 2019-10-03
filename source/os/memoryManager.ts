@@ -74,5 +74,20 @@ module TSOS {
             return _Memory.memoryArray[addressToRead];
         }
 
+        // Issue #27 #17 This method writes a value to a memory address. This may be combinable with loadProgramToMemory. 
+        public writeToMemory(addr: number, valueToWrite: string) {
+            // If the value to write is a lone hex digit, add a zero in front so it looks consistent
+            if (valueToWrite.length == 1) {
+                valueToWrite = 0 + valueToWrite;
+            }
+            // Save the value to the specified location in memory
+            _Memory.memoryArray[addr] = valueToWrite;
+            console.log("FLAG 20");
+            console.log(_Memory.memoryArray);
+
+            // Update the memoery display to reflect changes
+            TSOS.Control.updateMemoryDisplay();
+        }
+
     }
 }

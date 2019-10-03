@@ -50,22 +50,16 @@ var TSOS;
             // Issue #27
             switch (currentOpCode) { // Mneumonic Code | Description of code
                 case "A9": // LDA <constant> | Load a constant into the accumulator
-                    // Get the following address to load the constant from in memory | Increment the program counter
-                    var constantAddr = ++this.PC;
-                    // Read the constant value from memory
-                    var constantStringValue = this.readMemory(constantAddr);
-                    // Convert the constant to a number
-                    var constantIntValue = parseInt(constantStringValue, 16);
+                    // Use helper function to get the following value in memory as a int
+                    var constantIntValue = this.getFollowingMemIndexInMemory();
                     // Load the retrieved value into the accumulator
                     this.Acc = constantIntValue;
                     // Update the accumulator value of the current process
                     _PCBInstances[_CurrentPID].Acc = this.Acc;
                     break;
                 case "AD": // LDA <memoryAddress> | Load a value from memory into accumulator
-                    // Get the following address to get the memory address to load | Increment the program counter
-                    var memoryAddrString = this.readMemory(++this.PC);
-                    // Convert memory address to int so it can be used as an index
-                    var memoryAddrIndex = parseInt(memoryAddrString);
+                    // Use helper function to get the following address in memory as a int
+                    var memoryAddrIndex = this.getFollowingMemIndexInMemory();
                     // Read the value from the memory address 
                     var loadedStringValue = this.readMemory(memoryAddrIndex);
                     // Convert the value to a numner
@@ -76,7 +70,11 @@ var TSOS;
                     _PCBInstances[_CurrentPID].Acc = this.Acc;
                     break;
                 case "8D": // STA <memoryAddress> | Store the accumulator in memory
-                    // Need to implement the functionality of storing the accumulator in a specific memory addrtess
+                    // Use the helper function to get the following address as an int
+                    memoryAddrIndex = this.getFollowingMemIndexInMemory();
+                    console.log("WRITE TO THIS ADDR: " + memoryAddrIndex);
+                    // Write the accumulator to the specifieid memory address
+                    this.writeToMemory(memoryAddrIndex, this.Acc);
                     break;
                 case "6D": // ADC <memoryAddress> | Adds content of address in memory to accumulator, stores sum in accumulator
                     // Get the memory address specified in the command
@@ -108,6 +106,8 @@ var TSOS;
                     this.isExecuting = false;
                     // Modify the state of the currently executed PCB to Completed
                     _PCBInstances[_CurrentPID].state = "Completed";
+                    // SticcOs lets you only execute a program once? I do not know how I feel about that
+                    _PCBInstances[_CurrentPID].executable = false;
                     break;
                 case "EC": // CPX <memoryAddress| Compare a byte in memory to the X register
                     // Get the memory address of the byte to compare
@@ -148,10 +148,26 @@ var TSOS;
             // Update the PCB display
             TSOS.Control.updatePCBDisplay(_PCBInstances[_CurrentPID]);
         };
-        // Function to use the memory manager to access the specified memory and return the op code
-        Cpu.prototype.readMemory = function (index) {
-            console.log("READ MEMORY INDEX " + index);
-            return _MemoryManager.readFromMemory(index);
+        // Helper Function to use the memory manager to access the specified memory and return the op code
+        Cpu.prototype.readMemory = function (addr) {
+            return _MemoryManager.readFromMemory(addr);
+        };
+        // Helper function to use the memory manager to write to memory
+        // not sure if in future I will have to modify the steps to writing, so abstracting it out here
+        Cpu.prototype.writeToMemory = function (addr, valueToWrite) {
+            // Ensure value written in HEX into memory
+            var hexToWrite = TSOS.Control.displayHex(valueToWrite);
+            // Pass the arguments on to the memory manager
+            _MemoryManager.writeToMemory(addr, hexToWrite);
+        };
+        // Helper function to get the following value in memory in int form
+        Cpu.prototype.getFollowingMemIndexInMemory = function () {
+            // Get the following address to load the constant from in memory | Increment the program counter
+            var constantAddr = ++this.PC;
+            // Read the constant value from memory
+            var constantStringValue = this.readMemory(constantAddr);
+            // Convert the constant to a number
+            return parseInt(constantStringValue, 16);
         };
         return Cpu;
     }());

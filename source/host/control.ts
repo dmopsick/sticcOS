@@ -181,14 +181,13 @@ module TSOS {
                     hex = "0" + hex;
                 }
 
-
                 if(i == 0) {
                     memoryTableHTML += "<tr>";
                 }
                 if (i % 8 == 0) {
                     memoryTableHTML += "</tr><tr><th>0x" + hex + "</th>";
                 }
-                memoryTableHTML += "<th id='mem-block-" + i + "'> " +  _Memory.memoryArray[i] + " </th>";
+                memoryTableHTML += "<th id='mem-block-" + i + "'> " +  this.displayHex(_Memory.memoryArray[i]) + " </th>";
             }
             (<HTMLElement>document.getElementById("memoryInfoTableBody")).innerHTML = memoryTableHTML
         }
