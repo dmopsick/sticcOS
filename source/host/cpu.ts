@@ -52,7 +52,7 @@ module TSOS {
             switch (currentOpCode) { // Mneumonic Code | Description of code
                 case "A9":  // LDA <constant> | Load a constant into the accumulator
                     // Use helper function to get the following value in memory as a int
-                    let constantIntValue = this.getFollowingMemIndexInMemory();
+                    let constantIntValue = this.getFollowingValueFromMemory();
 
                     // Load the retrieved value into the accumulator
                     this.Acc = constantIntValue;
@@ -63,7 +63,7 @@ module TSOS {
                     break;
                 case "AD": // LDA <memoryAddress> | Load a value from memory into accumulator
                     // Use helper function to get the following address in memory as a int
-                    let memoryAddrIndex = this.getFollowingMemIndexInMemory();
+                    let memoryAddrIndex = this.getFollowingValueFromMemory();
 
                     // Convert the value to a numner
                     let loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
@@ -77,7 +77,7 @@ module TSOS {
                     break;
                 case "8D": // STA <memoryAddress> | Store the accumulator in memory
                     // Use the helper function to get the following address as an int
-                    memoryAddrIndex = this.getFollowingMemIndexInMemory();
+                    memoryAddrIndex = this.getFollowingValueFromMemory();
 
                     // Write the accumulator to the specifieid memory address
                     this.writeToMemory(memoryAddrIndex, this.Acc);
@@ -85,7 +85,7 @@ module TSOS {
                     break;
                 case "6D": // ADC <memoryAddress> | Adds content of address in memory to accumulator, stores sum in accumulator
                     // Use helper function to get the memory address load from the following slot in memory
-                    memoryAddrIndex = this.getFollowingMemIndexInMemory();
+                    memoryAddrIndex = this.getFollowingValueFromMemory();
 
                     // Load the value from memory 
                     loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
@@ -94,12 +94,12 @@ module TSOS {
                     this.Acc += loadedIntValue;
 
                     // Update the Accumulator in the PCB
-                    _PCBInstances[_CurrentPID].Acc = this.Acc    
-                    
+                    _PCBInstances[_CurrentPID].Acc = this.Acc
+
                     break;
                 case "A2": // LDX <constant> | Load the X register with a constant
                     // Use the faithful helper to load the constant from the following memory address 
-                    constantIntValue = this.getFollowingMemIndexInMemory();
+                    constantIntValue = this.getFollowingValueFromMemory();
 
                     // Assign the X register the constant value loaded from memory
                     this.Xreg = constantIntValue;
@@ -110,8 +110,8 @@ module TSOS {
                     break;
                 case "AE": // LDX <memoryAddress> | Load the X register with a value from memory
                     // Use helper to get the constant from the following memory address to use to load the value from the memory
-                    memoryAddrIndex = this.getFollowingMemIndexInMemory();
-                    
+                    memoryAddrIndex = this.getFollowingValueFromMemory();
+
                     // Load the value from the memory 
                     loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
 
@@ -124,7 +124,7 @@ module TSOS {
                     break;
                 case "A0": // LDY <constant> | Load the Y register with a constant
                     // Get the constant from the following op code with the helper function
-                    constantIntValue = this.getFollowingMemIndexInMemory();
+                    constantIntValue = this.getFollowingValueFromMemory();
 
                     // Load the Y register with the constant
                     this.Yreg = constantIntValue
@@ -135,7 +135,7 @@ module TSOS {
                     break;
                 case "AC": // LDY <memoryAddress | Load the Y register with a value from memory
                     // Get the memory address from the following op code
-                    memoryAddrIndex = this.getFollowingMemIndexInMemory();
+                    memoryAddrIndex = this.getFollowingValueFromMemory();
 
                     // Get the value to load from the memory address
                     loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
@@ -148,11 +148,9 @@ module TSOS {
 
                     break;
                 case "EA": // NOP | No operation
-                    // Do nothing?
+                    // Do nothing? The program counter is incremented down below
                     break;
                 case "00": // BRK | Break
-                    // What to do here?
-
                     // Stop the CPU from continuing to cycle
                     this.isExecuting = false;
 
@@ -162,16 +160,43 @@ module TSOS {
                     _PCBInstances[_CurrentPID].executable = false;
                     break;
                 case "EC": // CPX <memoryAddress| Compare a byte in memory to the X register
-                    // Get the memory address of the byte to compare
+                    // Get the memory address of the byte to 
+                    memoryAddrIndex = this.getFollowingValueFromMemory();
 
-                    // Get the byte to compaer
+                    // Get the byte to compare to the X register
+                    constantIntValue = this.loadConstantFromMemory(memoryAddrIndex);
 
                     // Compare the retrieved byte to the X register
+                    if (this.Xreg == constantIntValue) {
+                        // Set Z flag to 0 if equal
+                        this.Zflag = 0;
+                    }
+                    else {
+                        // Set Z flag to 1 if not equal
+                        this.Zflag = 1
+                    }
+
+                    // Update the Z flag in the PCB 
+                    _PCBInstances[_CurrentPID].ZFlag = this.Zflag;
+
                     break;
                 case "D0": // BNE <lineToBreakTo> | Branch n bytes if Z flag is 0
                     // Determine if the program should go to the line break
+                    if (this.Zflag == 0) {
+                        // Get the line to break to from the next value in memory
+                        let lineToBreakTo = this.getFollowingValueFromMemory();
 
-                    // Get the line in the program code that the program should break to
+                        // Set the retrieved value as the program counter
+                        this.PC = lineToBreakTo;
+
+                        // Update the PC in the PCB
+                        _PCBInstances[_CurrentPID].PC = this.PC;
+                    }
+                    else {
+                        // If the Z Flag is not zero, just continue execution, but skip the argument that otherwise tell where to move to
+                        this.PC++;
+                    }
+
 
                     // Move program counter to the specified line to break to
                     break;
@@ -230,7 +255,7 @@ module TSOS {
         }
 
         // Helper function to get the following value in memory in int form
-        public getFollowingMemIndexInMemory(): number {
+        public getFollowingValueFromMemory(): number {
             // Get the following address to load the constant from in memory | Increment the program counter
             const constantAddr = ++this.PC;
 

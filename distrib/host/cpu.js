@@ -51,7 +51,7 @@ var TSOS;
             switch (currentOpCode) { // Mneumonic Code | Description of code
                 case "A9": // LDA <constant> | Load a constant into the accumulator
                     // Use helper function to get the following value in memory as a int
-                    var constantIntValue = this.getFollowingMemIndexInMemory();
+                    var constantIntValue = this.getFollowingValueFromMemory();
                     // Load the retrieved value into the accumulator
                     this.Acc = constantIntValue;
                     // Update the accumulator value of the current process
@@ -59,7 +59,7 @@ var TSOS;
                     break;
                 case "AD": // LDA <memoryAddress> | Load a value from memory into accumulator
                     // Use helper function to get the following address in memory as a int
-                    var memoryAddrIndex = this.getFollowingMemIndexInMemory();
+                    var memoryAddrIndex = this.getFollowingValueFromMemory();
                     // Convert the value to a numner
                     var loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
                     // Load the retrieved value into the accumulator
@@ -69,13 +69,13 @@ var TSOS;
                     break;
                 case "8D": // STA <memoryAddress> | Store the accumulator in memory
                     // Use the helper function to get the following address as an int
-                    memoryAddrIndex = this.getFollowingMemIndexInMemory();
+                    memoryAddrIndex = this.getFollowingValueFromMemory();
                     // Write the accumulator to the specifieid memory address
                     this.writeToMemory(memoryAddrIndex, this.Acc);
                     break;
                 case "6D": // ADC <memoryAddress> | Adds content of address in memory to accumulator, stores sum in accumulator
                     // Use helper function to get the memory address load from the following slot in memory
-                    memoryAddrIndex = this.getFollowingMemIndexInMemory();
+                    memoryAddrIndex = this.getFollowingValueFromMemory();
                     // Load the value from memory 
                     loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
                     // Add the constant to the accumulator value
@@ -85,7 +85,7 @@ var TSOS;
                     break;
                 case "A2": // LDX <constant> | Load the X register with a constant
                     // Use the faithful helper to load the constant from the following memory address 
-                    constantIntValue = this.getFollowingMemIndexInMemory();
+                    constantIntValue = this.getFollowingValueFromMemory();
                     // Assign the X register the constant value loaded from memory
                     this.Xreg = constantIntValue;
                     // Update the X Register in the current PCB
@@ -93,7 +93,7 @@ var TSOS;
                     break;
                 case "AE": // LDX <memoryAddress> | Load the X register with a value from memory
                     // Use helper to get the constant from the following memory address to use to load the value from the memory
-                    memoryAddrIndex = this.getFollowingMemIndexInMemory();
+                    memoryAddrIndex = this.getFollowingValueFromMemory();
                     // Load the value from the memory 
                     loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
                     // Load the X register with the loaded value
@@ -103,7 +103,7 @@ var TSOS;
                     break;
                 case "A0": // LDY <constant> | Load the Y register with a constant
                     // Get the constant from the following op code with the helper function
-                    constantIntValue = this.getFollowingMemIndexInMemory();
+                    constantIntValue = this.getFollowingValueFromMemory();
                     // Load the Y register with the constant
                     this.Yreg = constantIntValue;
                     // Update the Y register in the PCB
@@ -111,7 +111,7 @@ var TSOS;
                     break;
                 case "AC": // LDY <memoryAddress | Load the Y register with a value from memory
                     // Get the memory address from the following op code
-                    memoryAddrIndex = this.getFollowingMemIndexInMemory();
+                    memoryAddrIndex = this.getFollowingValueFromMemory();
                     // Get the value to load from the memory address
                     loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
                     // Load the Y register
@@ -120,10 +120,9 @@ var TSOS;
                     _PCBInstances[_CurrentPID].Yreg = this.Yreg;
                     break;
                 case "EA": // NOP | No operation
-                    // Do nothing?
+                    // Do nothing? The program counter is incremented down below
                     break;
                 case "00": // BRK | Break
-                    // What to do here?
                     // Stop the CPU from continuing to cycle
                     this.isExecuting = false;
                     // Modify the state of the currently executed PCB to Completed
@@ -132,13 +131,36 @@ var TSOS;
                     _PCBInstances[_CurrentPID].executable = false;
                     break;
                 case "EC": // CPX <memoryAddress| Compare a byte in memory to the X register
-                    // Get the memory address of the byte to compare
-                    // Get the byte to compaer
+                    // Get the memory address of the byte to 
+                    memoryAddrIndex = this.getFollowingValueFromMemory();
+                    // Get the byte to compare to the X register
+                    constantIntValue = this.loadConstantFromMemory(memoryAddrIndex);
                     // Compare the retrieved byte to the X register
+                    if (this.Xreg == constantIntValue) {
+                        // Set Z flag to 0 if equal
+                        this.Zflag = 0;
+                    }
+                    else {
+                        // Set Z flag to 1 if not equal
+                        this.Zflag = 1;
+                    }
+                    // Update the Z flag in the PCB 
+                    _PCBInstances[_CurrentPID].ZFlag = this.Zflag;
                     break;
                 case "D0": // BNE <lineToBreakTo> | Branch n bytes if Z flag is 0
                     // Determine if the program should go to the line break
-                    // Get the line in the program code that the program should break to
+                    if (this.Zflag == 0) {
+                        // Get the line to break to from the next value in memory
+                        var lineToBreakTo = this.getFollowingValueFromMemory();
+                        // Set the retrieved value as the program counter
+                        this.PC = lineToBreakTo;
+                        // Update the PC in the PCB
+                        _PCBInstances[_CurrentPID].PC = this.PC;
+                    }
+                    else {
+                        // If the Z Flag is not zero, just continue execution, but skip the argument that otherwise tell where to move to
+                        this.PC++;
+                    }
                     // Move program counter to the specified line to break to
                     break;
                 case "EE": // INC <byteToIncrement> | Increment the value of a byte
@@ -183,7 +205,7 @@ var TSOS;
             _MemoryManager.writeToMemory(addr, hexToWrite);
         };
         // Helper function to get the following value in memory in int form
-        Cpu.prototype.getFollowingMemIndexInMemory = function () {
+        Cpu.prototype.getFollowingValueFromMemory = function () {
             // Get the following address to load the constant from in memory | Increment the program counter
             var constantAddr = ++this.PC;
             // Read the constant value from memory
