@@ -391,7 +391,6 @@ var TSOS;
             var untrimmedProgramInput = document.getElementById("taProgramInput").value;
             // Issue #29 Trim white space from the program input to prevent blank empty entries in memory array
             var programInput = untrimmedProgramInput.trim();
-            console.log("FLAG 69 _" + programInput + "_");
             // Verify that the user entered code only contains hex codes and spaces using a regular expression
             var regularExpression = new RegExp(/^[0-9a-fA-F\s]+$/);
             var valid = regularExpression.test(programInput);

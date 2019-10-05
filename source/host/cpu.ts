@@ -36,7 +36,6 @@ module TSOS {
         }
 
         public cycle(): void {
-            console.log("Hello world! This is a CPU CYCLE");
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
@@ -166,6 +165,7 @@ module TSOS {
                     // Get the byte to compare to the X register
                     constantIntValue = this.loadConstantFromMemory(memoryAddrIndex);
 
+                    console.log("COMPARING " + constantIntValue + " to " + this.Xreg);
                     // Compare the retrieved byte to the X register
                     if (this.Xreg == constantIntValue) {
                         // Set Z flag to 0 if equal
@@ -181,8 +181,10 @@ module TSOS {
 
                     break;
                 case "D0": // BNE <lineToBreakTo> | Branch n bytes if Z flag is 0
+                    console.log("CHECKING FOR BREAK with Z of " + this.Zflag);
                     // Determine if the program should go to the line break
                     if (this.Zflag == 0) {
+                        console.log("Time to break!");
                         // Get the line to break to from the next value in memory
                         let lineToBreakTo = this.getFollowingConstantFromMemory();
 
@@ -226,26 +228,28 @@ module TSOS {
                     }
                     // Print 00 teriminated string starting at address sepcified in the Y register 
                     else if (this.Xreg == 2) {
-                        console.log("PREPARE TO PRINT!");
                         // Get the first location of the string to print
                         let memoryAddrToPrint = this.Yreg;
 
                         // Get value at the first location in memory
                         let opCodeToPrint = this.loadConstantFromMemory(memoryAddrToPrint);
 
+                        console.log("FLAG 89 " + opCodeToPrint);
+
                         // Set the program counter to the new value in memory
                         this.PC = this.Yreg;
 
                         // Loop through Print the characters until the breakpoint is reached 
-                        while (opCodeToPrint.toString() != "00") {
-                            console.log("STRING PRINT TIME!");
+                        while (opCodeToPrint != 0) {
                             // Convert non 00 op code to the corresponding char based on ASCII
                             let charToPrint = String.fromCharCode(opCodeToPrint);
                             _StdOut.putText(charToPrint);
 
                             // Get the next op code
                             opCodeToPrint = this.getFollowingConstantFromMemory();
-                        }
+                            console.log(opCodeToPrint);
+  
+                        } 
 
                     }
                     else {

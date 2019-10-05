@@ -85,7 +85,6 @@ module TSOS {
         }
 
         public putText(text): void {
-            console.log(text);
             /*  My first inclination here was to write two functions: putChar() and putString().
                 Then I remembered that JavaScript is (sadly) untyped and it won't differentiate
                 between the two. (Although TypeScript would. But we're compiling to JavaScipt anyway.)
@@ -100,8 +99,6 @@ module TSOS {
 
                     // Calculate distance to move current X position
                     var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text[i]);
-
-                    // console.log("FLAG x width: " + this.currentXPosition);
 
                     // Issue #8 Check if the command is too long and going off the screen
                     if (this.currentXPosition > (_Canvas.width - 20)) {

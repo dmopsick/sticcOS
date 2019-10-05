@@ -460,8 +460,6 @@ module TSOS {
             
             // Issue #29 Trim white space from the program input to prevent blank empty entries in memory array
             const programInput = untrimmedProgramInput.trim();
-            
-            console.log("FLAG 69 _" + programInput + "_");
 
             // Verify that the user entered code only contains hex codes and spaces using a regular expression
             let regularExpression = new RegExp(/^[0-9a-fA-F\s]+$/);
