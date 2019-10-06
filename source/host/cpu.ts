@@ -161,6 +161,7 @@ module TSOS {
                 case "EC": // CPX <memoryAddress| Compare a byte in memory to the X register
                     // Get the memory address of the byte to 
                     memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
+                    console.log("MEMORY ADDRESS TO COMPARE " + memoryAddrIndex);
 
                     // Get the byte to compare to the X register
                     constantIntValue = this.loadConstantFromMemory(memoryAddrIndex);
