@@ -39,11 +39,11 @@ var TSOS;
         };
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
-            // TODO: Accumulate CPU usage and profiling statistics here.
-            // Do the real work here. Be sure to set this.isExecuting appropriately.
+            // Before the op code is retrieved, must ensure reading from correct place in memory
+            var logicalAddress = this.convertLogicalToPhysicalMemoryAddress(this.PC);
             // Need to FETCH the current op code from memory
             // Get the current program counter location, originally set when program is loaded
-            var currentOpCode = this.readMemory(this.PC);
+            var currentOpCode = this.readMemory(logicalAddress);
             console.log("FLAG 5 " + currentOpCode);
             // Make switch that DECODES the current OP CODE, so we can EXECUTE proper functionality
             // Issue #27
@@ -132,10 +132,8 @@ var TSOS;
                 case "EC": // CPX <memoryAddress| Compare a byte in memory to the X register
                     // Get the memory address of the byte to 
                     memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
-                    console.log("MEMORY ADDRESS TO COMPARE " + memoryAddrIndex);
                     // Get the byte to compare to the X register
                     constantIntValue = this.loadConstantFromMemory(memoryAddrIndex);
-                    console.log("COMPARING " + constantIntValue + " to " + this.Xreg);
                     // Compare the retrieved byte to the X register
                     if (this.Xreg == constantIntValue) {
                         // Set Z flag to 1 if equal
@@ -149,24 +147,19 @@ var TSOS;
                     _PCBInstances[_CurrentPID].ZFlag = this.Zflag;
                     break;
                 case "D0": // BNE <lineToBreakTo> | Branch n bytes if Z flag is 0
-                    console.log("CHECKING FOR BREAK with Z of " + this.Zflag);
                     // Determine if the program should go to the line break
                     if (this.Zflag == 0) {
-                        console.log("Time to break!");
                         // Get the amount of lines to break
                         var amountToBreak = this.getFollowingConstantFromMemory();
-                        console.log("BREAK THIS MANY SLOTS: " + amountToBreak);
                         // Increment the PC based on the input
                         this.PC += amountToBreak;
                         // Check if wraparound is required
                         if (this.PC > _MemoryBlockSize) {
-                            console.log("WRAP AROUND ACTIVATED");
                             // If the program counter is bigger than the memory block size, set the PC to the amount it goes over
                             var wraparound = this.PC % _MemoryBlockSize;
                             // Assign the wrapound value as the Program Coutner
                             this.PC = wraparound;
                         }
-                        console.log("AFTER BREAK THE PROGRAM COUNTER IS " + this.PC);
                         // Update the PC in the PCB
                         _PCBInstances[_CurrentPID].PC = this.PC;
                     }
@@ -177,24 +170,19 @@ var TSOS;
                     // Move program counter to the specified line to break to
                     break;
                 case "EE": // INC <byteToIncrement> | Increment the value of a byte
-                    // Verify byteToIncrement exists 
+                    // Verify byteToIncrement exists | Does this need to be done for all memory calls?
                     // Get the memory address for the byte to increment
                     memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
                     // Get the value of the specified memory address 
                     loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
                     // Increment the value by one
                     var incrementedValue = loadedIntValue + 1;
-                    console.log("INCREMENT TIME");
-                    console.log("MEMORY ADDDRESS: " + memoryAddrIndex + " OLD VALUE: " + loadedIntValue +
-                        "NEW VALUE: " + incrementedValue);
                     // Write the new, incremented value into memory
                     this.writeToMemory(memoryAddrIndex, incrementedValue.toString(16));
                     break;
                 case "FF": // SYS | The call parameter is based on the X or Y register 
-                    console.log("SYSTEM CALL! X REG IS " + this.Xreg);
                     // If there is an 01 in the X register then display the integer in the Y register
                     if (this.Xreg == 1) {
-                        console.log("WE PRITING Y REG" + this.Yreg);
                         // Display the value in the Y register
                         _StdOut.putText(this.Yreg.toString());
                     }
@@ -233,34 +221,42 @@ var TSOS;
             TSOS.Control.updatePCBDisplay(_PCBInstances[_CurrentPID]);
         };
         // Helper Function to use the memory manager to access the specified memory and return the op code
-        Cpu.prototype.readMemory = function (addr) {
-            return _MemoryManager.readFromMemory(addr);
+        Cpu.prototype.readMemory = function (logicalMemAddr) {
+            // Convert from logical to physical memory address
+            var physicalAddress = this.convertLogicalToPhysicalMemoryAddress(logicalMemAddr);
+            return _MemoryManager.readFromMemory(physicalAddress);
         };
         // Helper function to use the memory manager to write to memory
         // not sure if in future I will have to modify the steps to writing, so abstracting it out here
-        Cpu.prototype.writeToMemory = function (addr, valueToWrite) {
+        Cpu.prototype.writeToMemory = function (logicalMemAddr, valueToWrite) {
             // Trim the white space from the value to write
             var trimmedValueToWriteString = valueToWrite.trim();
             // Parse trimmed value as an int
             var trimmedValueToWriteInt = parseInt(trimmedValueToWriteString, 16);
             // Ensure value written in HEX into memory
             var hexToWrite = TSOS.Utils.displayHex(trimmedValueToWriteInt);
+            // Convert from logical to physical address
+            var physicalAddress = this.convertLogicalToPhysicalMemoryAddress(logicalMemAddr);
             // Pass the arguments on to the memory manager
-            _MemoryManager.writeToMemory(addr, hexToWrite);
+            _MemoryManager.writeToMemory(physicalAddress, hexToWrite);
         };
         // Helper function to get the following constant in memory in int form
         Cpu.prototype.getFollowingConstantFromMemory = function () {
             // Get the following address to load the constant from in memory | Increment the program counter
-            var constantAddr = ++this.PC;
+            var logicalConstantAddr = ++this.PC;
+            // Convert to physical address
+            var physicalConstantAddr = this.convertLogicalToPhysicalMemoryAddress(logicalConstantAddr);
             // Read the constant value from memory
-            var constantStringValue = this.readMemory(constantAddr);
+            var constantStringValue = this.readMemory(physicalConstantAddr);
             // Convert the constant to a number
             return parseInt(constantStringValue, 16);
         };
         // Helper function to load a constant number value from memory
-        Cpu.prototype.loadConstantFromMemory = function (addr) {
+        Cpu.prototype.loadConstantFromMemory = function (logicalMemAddr) {
+            // Get the physical address from the logical address
+            var physicalAddress = this.convertLogicalToPhysicalMemoryAddress(logicalMemAddr);
             // Load the constant value from memory
-            var loadedStringValue = this.readMemory(addr);
+            var loadedStringValue = this.readMemory(physicalAddress);
             // Convert the loaded value to an int
             return parseInt(loadedStringValue, 16);
         };
@@ -272,9 +268,21 @@ var TSOS;
             var firstHalfMemAddr = this.getFollowingConstantFromMemory().toString();
             // Combine memory addresses
             var fullMemAddrString = firstHalfMemAddr + secondHalfMemAddr;
-            console.log("FULL MEM ADDR " + fullMemAddrString);
+            // Convert memory address to int
+            var memAddrInt = parseInt(fullMemAddrString);
+            // Before the op code is retrieved, must ensure reading from correct place in memory
+            var physicalAddress = this.convertLogicalToPhysicalMemoryAddress(memAddrInt);
             // Return them the full memory address
-            return parseInt(fullMemAddrString);
+            return physicalAddress;
+        };
+        // Issue #26 Implementing the memory accessor functionality
+        // Helper function to convert the logical address from the program to the physical address in the system
+        Cpu.prototype.convertLogicalToPhysicalMemoryAddress = function (logicalMemAddr) {
+            // Get current mem segment the PCB is working in
+            var memSegment = _PCBInstances[_CurrentPID].memSegment;
+            // Before the op code is retrieved, must ensure reading from correct place in memory
+            var logicalAddress = _MemoryAccessor.convertLogicalToPhysicalAddress(logicalMemAddr, memSegment);
+            return logicalAddress;
         };
         return Cpu;
     }());

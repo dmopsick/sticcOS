@@ -2,8 +2,9 @@
 var TSOS;
 (function (TSOS) {
     var ProcessControlBlock = /** @class */ (function () {
-        function ProcessControlBlock(pid, memAddrStart, memRange, PC, Acc, Xreg, Yreg, ZFlag, isExecuted, // Records whether the PCB has been executed, if it has then
-        state, executable // Issue #18.. For project 3 only the most recently loaded program that has not been run should be executable
+        function ProcessControlBlock(pid, memAddrStart, memRange, PC, Acc, Xreg, Yreg, ZFlag, isExecuted, // Records whether the PCB has been executed
+        state, executable, // Issue #18.. For project 3 only the most recently loaded program that has not been run should be executable
+        memSegment // Records which memory segment the PCB is saved in. Can be determined from memAddrStart
         ) {
             if (pid === void 0) { pid = _NextPID; }
             if (memAddrStart === void 0) { memAddrStart = 0; }
@@ -16,6 +17,7 @@ var TSOS;
             if (isExecuted === void 0) { isExecuted = false; }
             if (state === void 0) { state = "Resident"; }
             if (executable === void 0) { executable = true; }
+            if (memSegment === void 0) { memSegment = 0; }
             this.pid = pid;
             this.memAddrStart = memAddrStart;
             this.memRange = memRange;
@@ -27,6 +29,18 @@ var TSOS;
             this.isExecuted = isExecuted;
             this.state = state;
             this.executable = executable;
+            this.memSegment = memSegment;
+            switch (memAddrStart) {
+                case 0:
+                    memSegment = 0;
+                    break;
+                case 256:
+                    memSegment = 1;
+                    break;
+                case 512:
+                    memSegment = 2;
+                    break;
+            }
         }
         ProcessControlBlock.prototype.init = function () {
         };

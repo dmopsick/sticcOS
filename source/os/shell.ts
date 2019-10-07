@@ -187,11 +187,30 @@ module TSOS {
             // 1. Remove leading and trailing spaces.
             buffer = Utils.trim(buffer);
 
-            // 2. Lower-case it.
-            buffer = buffer.toLowerCase();
+            // Issue #28, do not make the entire command lowercase if the status is being set
+            const argumentList = buffer.split(" ");
+            // Get the first word to check if it is status or prompt
+            const firstArgument = argumentList[0].toLowerCase();
 
-            // 3. Separate on spaces so we can determine the command and command-line args, if any.
-            var tempList = buffer.split(" ");
+            var tempList;
+
+            if ((firstArgument == "status") || (firstArgument == "prompt")) {
+
+                // Do not lowercase the entire status string, but make the first command lowercase
+                argumentList[0] = firstArgument;
+
+                // Assign the already split stream to the tempList so the functionality continues
+                tempList = argumentList;
+            }
+            else {
+
+                // 2. Lower-case it.
+                buffer = buffer.toLowerCase();
+
+                // 3. Split the stream
+                tempList = buffer.split(" ");
+            }
+
 
             // 4. Take the first (zeroth) element and use that as the command.
             var cmd = tempList.shift();  // Yes, you can do that to an array in JavaScript. See the Queue class.
@@ -457,7 +476,7 @@ module TSOS {
         public shellLoad(args: string[]) {
             // Get the user entered program code
             const untrimmedProgramInput = (<HTMLTextAreaElement>document.getElementById("taProgramInput")).value;
-            
+
             // Issue #29 Trim white space from the program input to prevent blank empty entries in memory array
             const programInput = untrimmedProgramInput.trim();
 

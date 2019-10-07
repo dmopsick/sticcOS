@@ -20,7 +20,6 @@ var TSOS;
                 { memBlockID: 1, base: 256, limit: 511, isFree: true },
                 { memblockID: 2, base: 512, limit: 767, isFree: true }
             ];
-            console.log(this.partitions);
         };
         // Issue #25 determine if the one (for project 2) is free or ued
         // Free = no program loaded, or a program that has been loaded and ran already
