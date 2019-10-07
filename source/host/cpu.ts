@@ -161,6 +161,7 @@ module TSOS {
                 case "EC": // CPX <memoryAddress| Compare a byte in memory to the X register
                     // Get the memory address of the byte to 
                     memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
+                    
                     console.log("MEMORY ADDRESS TO COMPARE " + memoryAddrIndex);
 
                     // Get the byte to compare to the X register
@@ -169,12 +170,12 @@ module TSOS {
                     console.log("COMPARING " + constantIntValue + " to " + this.Xreg);
                     // Compare the retrieved byte to the X register
                     if (this.Xreg == constantIntValue) {
-                        // Set Z flag to 0 if equal
-                        this.Zflag = 0;
+                        // Set Z flag to 1 if equal
+                        this.Zflag = 1
                     }
                     else {
-                        // Set Z flag to 1 if not equal
-                        this.Zflag = 1
+                        // Set Z flag to 0 if not equal
+                        this.Zflag = 0
                     }
 
                     // Update the Z flag in the PCB 
@@ -186,11 +187,25 @@ module TSOS {
                     // Determine if the program should go to the line break
                     if (this.Zflag == 0) {
                         console.log("Time to break!");
-                        // Get the line to break to from the next value in memory
-                        let lineToBreakTo = this.getFollowingConstantFromMemory();
+                        // Get the amount of lines to break
+                        let amountToBreak = this.getFollowingConstantFromMemory();
 
-                        // Set the retrieved value as the program counter
-                        this.PC = lineToBreakTo;
+                        console.log("BREAK THIS MANY SLOTS: " + amountToBreak);
+
+                        // Increment the PC based on the input
+                        this.PC += amountToBreak;
+
+                        // Check if wraparound is required
+                        if (this.PC > _MemoryBlockSize) {
+                            console.log("WRAP AROUND ACTIVATED");
+                            // If the program counter is bigger than the memory block size, set the PC to the amount it goes over
+                            let wraparound = this.PC % _MemoryBlockSize;
+
+                            // Assign the wrapound value as the Program Coutner
+                            this.PC = wraparound;
+                        }
+                        console.log("AFTER BREAK THE PROGRAM COUNTER IS " + this.PC);
+
 
                         // Update the PC in the PCB
                         _PCBInstances[_CurrentPID].PC = this.PC;
@@ -213,16 +228,21 @@ module TSOS {
                     loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
 
                     // Increment the value by one
-                    const incrementedValue = loadedIntValue++;
+                    const incrementedValue = loadedIntValue + 1;
+
+                    console.log("INCREMENT TIME");
+                    console.log("MEMORY ADDDRESS: " + memoryAddrIndex + " OLD VALUE: " + loadedIntValue +
+                        "NEW VALUE: " + incrementedValue);
 
                     // Write the new, incremented value into memory
                     this.writeToMemory(memoryAddrIndex, incrementedValue.toString(16));
 
                     break;
                 case "FF": // SYS | The call parameter is based on the X or Y register 
+                    console.log("SYSTEM CALL! X REG IS " + this.Xreg);
                     // If there is an 01 in the X register then display the integer in the Y register
                     if (this.Xreg == 1) {
-                
+                        console.log("WE PRITING Y REG" + this.Yreg);
                         // Display the value in the Y register
                         _StdOut.putText(this.Yreg.toString());
 
@@ -235,8 +255,6 @@ module TSOS {
                         // Get value at the first location in memory
                         let opCodeToPrint = this.loadConstantFromMemory(memoryAddrToPrint);
 
-                        console.log("FLAG 89 " + opCodeToPrint);
-
                         // Set the program counter to the new value in memory
                         this.PC = this.Yreg;
 
@@ -248,8 +266,6 @@ module TSOS {
 
                             // Get the next op code
                             opCodeToPrint = this.getFollowingConstantFromMemory();
-                            console.log(opCodeToPrint);
-  
                         } 
 
                     }
