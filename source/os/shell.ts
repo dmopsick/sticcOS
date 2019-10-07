@@ -110,6 +110,12 @@ module TSOS {
                 "- Validates the user entered code in the program input.");
             this.commandList[this.commandList.length] = sc;
 
+            // run <pid>
+            sc = new ShellCommand(this.shellRun,
+                "run",
+                "<pid> - Executes the specified program loaded into SticcOS.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -309,6 +315,9 @@ module TSOS {
                     case "load":
                         _StdOut.putText("Load is used to validate the user entered program code.");
                         break;
+                    case "run":
+                        _StdOut.putText("Run <pid> runs the process with the given PID loaded into SticcOS.");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }
@@ -442,24 +451,123 @@ module TSOS {
 
             // Should the BSOD lock the keyboard and require a reset?
             _Kernel.krnShutdown();
-
         }
 
-        // Validates the program code entered by the user in the HTML5 text field Issue #7
+        // Validates the program code entered by the user in the HTML5 text field Issue #7 #17
         public shellLoad(args: string[]) {
             // Get the user entered program code
-            const programInput = (<HTMLTextAreaElement>document.getElementById("taProgramInput")).value;
+            const untrimmedProgramInput = (<HTMLTextAreaElement>document.getElementById("taProgramInput")).value;
+            
+            // Issue #29 Trim white space from the program input to prevent blank empty entries in memory array
+            const programInput = untrimmedProgramInput.trim();
 
             // Verify that the user entered code only contains hex codes and spaces using a regular expression
             let regularExpression = new RegExp(/^[0-9a-fA-F\s]+$/);
             let valid = regularExpression.test(programInput);
 
             // Let the user know whether or not they entered valid HEX code.
-            if (valid) {
-                _StdOut.putText("That is some highquality hex code.");
+            if (programInput.trim() == "") {
+                _StdOut.putText("Error: An empty program is an invalid one.");
+            }
+            else if (valid) {
+                // Issue #17 checking the count of commands to see if there is an overflow
+                const splitProgramInput = programInput.split(" ");
+
+                // Verify the program code will not cause an overflow
+                if (splitProgramInput.length <= _MemoryBlockSize) {
+                    // Check to see the memory block is full (Project 2, will check only 1 by defauly)
+                    const freeMemoryBlock = _MemoryManager.memBlockIsFree();
+
+                    // If the lone memory block is currently full... Erase the current code in memory to prepare for new code
+                    if (!freeMemoryBlock) {
+                        _MemoryManager.resetBlocks();
+
+                        // Have to make the previous process unrunnable by the run command
+                        // The previous program(s) cannot be ran because they are being removed from memory
+                    }
+                    // Continue saving the program now
+
+                    // Create a Process Control Block (PCB)
+                    const newPCB = new TSOS.ProcessControlBlock(
+                        _NextPID, // Use next available PID
+                        0, // Memory Start
+                        256 // Memory Range
+                    );
+
+                    // Add new PCB to global instance array
+                    _PCBInstances.push(newPCB);
+
+                    // Write the program into memory
+                    _MemoryManager.loadProgramToMemory(newPCB, splitProgramInput);
+
+
+                    // If this is not the first program in memory, make the most recent program unexecutable
+                    // This is only for project 2 where one program is being loaded at a time
+                    if (_NextPID > 0) {
+                        _PCBInstances[_CurrentPID].executable = false;
+                    }
+
+                    // #21 Update the PCB Info Table on the HTML os display
+                    TSOS.Control.updatePCBDisplay(newPCB);
+
+                    // Return the PID of the created process to the user
+                    _StdOut.putText("Great job! You loaded the program into memory.");
+                    _StdOut.advanceLine();
+                    _StdOut.putText("Process ID: " + _NextPID);
+
+                    // Last but not least Increment the current PID
+                    _CurrentPID = _NextPID;
+                    _NextPID++;
+
+                }
+                // The entered program code is too long
+                else {
+                    _StdOut.putText("Error: Program Code Overflow. The entered command is too long");
+                }
             }
             else {
                 _StdOut.putText("Error: Invalid hex code. Please double check.");
+            }
+        }
+
+        // Runs a specified user entered program Issue #18
+        public shellRun(args: string[]) {
+            // The process ID must be specified in order for the program to be ran
+            if (args.length > 0) {
+                // Get the PID from the argument
+                const pid = args[0];
+
+                // Convert PID string to an int for comparison
+                const pidNum = +pid;
+
+                // Variable to hold whether the given PID was found in the list of instances
+                let pidFound = TSOS.ProcessControlBlock.processExists(pidNum);
+
+                if (pidFound) {
+
+                    // Ensure that the selected process is runnable
+                    const pcbRunnable = _PCBInstances[pidNum].executable;
+                    if (pcbRunnable) {
+                        // Get the PCB to run based on the PID, that is confirmed to exist
+                        const pcbToRun = _PCBInstances[pidNum];
+
+                        // Begin the running of the process
+                        TSOS.ProcessControlBlock.runProcess(pcbToRun);
+
+                        // Let the user know that the process is running
+                        _StdOut.putText("Process " + pid + " has begun execution :).");
+                    }
+                    // This means that yes the PID is found but the process no longer exists in memory
+                    else {
+                        _StdOut.putText("The process with the PID " + pid + " no longer exists in memory or is no longer runnable.");
+                    }
+                }
+                else {
+                    _StdOut.putText("Error: There is no valid process with the PID " + pid);
+                }
+            }
+            else {
+                _StdOut.putText("Error: Please specify a PID of a program to run.");
             }
         }
 

@@ -31,6 +31,9 @@ var TSOS;
             _krnKeyboardDriver = new TSOS.DeviceDriverKeyboard(); // Construct it.
             _krnKeyboardDriver.driverEntry(); // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
+            // Issue #25 Initialize Memory Manager
+            _MemoryManager = new TSOS.MemoryManager();
+            _MemoryManager.init();
             //
             // ... more?
             //
@@ -92,7 +95,6 @@ var TSOS;
             // Put more here.
         };
         Kernel.prototype.krnInterruptHandler = function (irq, params) {
-            // console.log("FLAG 1: " + params);
             // This is the Interrupt Handler Routine.  See pages 8 and 560.
             // Trace our entrance here so we can compute Interrupt Latency by analyzing the log file later on. Page 766.
             this.krnTrace("Handling IRQ~" + irq);

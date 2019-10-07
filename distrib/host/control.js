@@ -73,11 +73,21 @@ var TSOS;
             // .. enable the Halt and Reset buttons ...
             document.getElementById("btnHaltOS").disabled = false;
             document.getElementById("btnReset").disabled = false;
+            // Enable the user program input
+            document.getElementById("taProgramInput").disabled = false;
             // .. set focus on the OS console display ...
             document.getElementById("display").focus();
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new TSOS.Cpu(); // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
+            // Display the current CPU info on the OS console display
+            this.updateCPUDisplay(_CPU);
+            // Initialize the memory
+            _Memory = new TSOS.Memory([]);
+            _Memory.init();
+            _MemoryAccessor = new TSOS.MemoryAccessor();
+            // Issue #19 Display the current memory info on the OS console display
+            this.updateMemoryDisplay();
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
@@ -99,6 +109,56 @@ var TSOS;
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
+        };
+        // Issue #27 #19 Updates the HTML cpu info display with the most up to date info
+        Control.updateCPUDisplay = function (cpu) {
+            // Update the HTML table that displays CPU info
+            document.getElementById("cpuDisplayPC").innerHTML = "" + TSOS.Utils.displayHex(cpu.PC);
+            document.getElementById("cpuDisplayAcc").innerHTML = "" + TSOS.Utils.displayHex(cpu.Acc);
+            document.getElementById("cpuDisplayX").innerHTML = "" + TSOS.Utils.displayHex(cpu.Xreg);
+            document.getElementById("cpuDisplayY").innerHTML = "" + TSOS.Utils.displayHex(cpu.Yreg);
+            document.getElementById("cpuDisplayZ").innerHTML = "" + TSOS.Utils.displayHex(cpu.Zflag);
+        };
+        // Issue #27 #21 Update the HTML PCB display with the most recent PCB info
+        Control.updatePCBDisplay = function (pcb) {
+            // Update the HTML table that displays PCB info
+            // For project 1 only going to record information on one proccess because only saving one at a time
+            document.getElementById("processDisplayPID").innerHTML = "" + TSOS.Utils.displayHex(pcb.pid);
+            document.getElementById("processDisplayState").innerHTML = "" + pcb.state;
+            document.getElementById("processDisplayPC").innerHTML = "" + TSOS.Utils.displayHex(pcb.PC);
+            document.getElementById("processDisplayAcc").innerHTML = "" + TSOS.Utils.displayHex(pcb.Acc);
+            document.getElementById("processDisplayX").innerHTML = "" + TSOS.Utils.displayHex(pcb.Xreg);
+            document.getElementById("processDisplayY").innerHTML = "" + TSOS.Utils.displayHex(pcb.Yreg);
+            document.getElementById("processDisplayZ").innerHTML = "" + TSOS.Utils.displayHex(pcb.ZFlag);
+        };
+        // Issue #27 #19 Update the HTML Memory display with the most recent memory info
+        Control.updateMemoryDisplay = function (memSegment) {
+            // Update the HTML table that displays Memory info
+            // For project 2 only record information for 1 memory segment. For project 3 will have three segments
+            if (memSegment === void 0) { memSegment = 1; }
+            // Initialize a string containing the HTML of the memory table
+            var memoryTableHTML = "";
+            // Will need to change this logic to make it dynamic for project 3
+            // Will need to change the starting point and bound
+            // Want to make rows of 8. So will use modulus to make new rows.
+            for (var i = 0; i < _MemoryBlockSize; i++) {
+                var hex = i.toString(16);
+                // Add 0's to the front of the hex number if need be to make it three significant digits
+                if (hex.length == 1) {
+                    hex = "00" + hex;
+                }
+                else if (hex.length == 2) {
+                    hex = "0" + hex;
+                }
+                if (i == 0) {
+                    memoryTableHTML += "<tr>";
+                }
+                if (i % 8 == 0) {
+                    memoryTableHTML += "</tr><tr><th>0x" + hex + "</th>";
+                }
+                memoryTableHTML += "<th id='mem-block-" + i + "'> " + TSOS.Utils.displayHex(_Memory.memoryArray[i]) + " </th>";
+            }
+            document.getElementById("memoryInfoTableBody").innerHTML = memoryTableHTML;
         };
         return Control;
     }());

@@ -26,8 +26,6 @@ const KEYBOARD_IRQ: number = 1;
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 
-// Issue #3
-var _Status = "";
 
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 
@@ -53,6 +51,7 @@ var _KernelBuffers = null;
 var _StdIn:  TSOS.Console = null; 
 var _StdOut: TSOS.Console = null;
 
+
 // UI
 var _Console: TSOS.Console;
 var _OsShell: TSOS.Shell;
@@ -68,6 +67,18 @@ var _hardwareClockID: number = null;
 // For testing (and enrichment)...
 var Glados: any = null;  // This is the function Glados() in glados-ip*.js http://alanclasses.github.io/TSOS/test/ .
 var _GLaDOS: any = null; // If the above is linked in, this is the instantiated instance of Glados.
+
+// Memory 
+var _MemoryBlockSize: number = 256; // Issue #24 | Keeps track of the size of a single memory block in the system
+var _MemoryBlockCount: number = 3; // Issue #24 | Keeps track of the amount of memory blocks present in the system
+var _Memory: TSOS.Memory;
+var _MemoryAccessor: TSOS.MemoryAccessor;
+var _MemoryManager: TSOS.MemoryManager = null;
+
+// Process Control Block
+var _PCBInstances = new Array<TSOS.ProcessControlBlock>();
+var _CurrentPID: number = 0; // Issue #21 keeps track of the current PID that is loaded/ being executed
+var _NextPID: number = 0; // Issue #21 keeps track of the next PID to assign to PIDs as they are created to prevent repeated numbers
 
 var onDocumentLoad = function() {
 	TSOS.Control.hostInit();

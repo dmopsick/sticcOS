@@ -17,6 +17,8 @@
         <script type="text/javascript" src="distrib/host/control.js"></script>
         <script type="text/javascript" src="distrib/host/devices.js"></script>
         <script type="text/javascript" src="distrib/host/cpu.js"></script>
+        <script type="text/javascript" src="distrib/host/memory.js"></script>
+        <script type="text/javascript" src="distrib/host/memoryAccessor.js"></script>
 
         <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
         <script type="text/javascript" src="distrib/os/interrupt.js"></script>
@@ -29,12 +31,18 @@
         <script type="text/javascript" src="distrib/os/shellCommand.js"></script>
         <script type="text/javascript" src="distrib/os/userCommand.js"></script>
         <script type="text/javascript" src="distrib/os/kernel.js"></script>
+        <script type="text/javascript" src="distrib/os/memoryManager.js"></script>
+        <script type="text/javascript" src="distrib/os/processControlBlock.js"></script>
 
         <!-- Other Routines -->
         <script type="text/javascript" src="distrib/utils.js"></script>
         <!-- Uncomment the line below to enable GLaDOS testing. -->
         <!-- <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip0.js"></script> -->
-        <script type="text/javascript" src="test/glados-ip1.js"></script>
+        <!-- <script type="text/javascript" src="test/glados-ip1.js"></script> -->
+
+        <!-- Importing Bootstrap to use to improve the visuals of the components -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+                crossorigin="anonymous">
 
 </head>
 
@@ -51,7 +59,7 @@
                         <input type="button" id="btnReset" name="brnReset" class="normal_button" disabled="disabled" value="Reset" tabindex="2" onclick="TSOS.Control.hostBtnReset_click(this);">
                 </div>
 
-                <div class="flex-box">
+                <div class="flex-box" id="hostStatusDiv">
                         <div id="hostStatus">
                                 <span id="hostStatusVer"></span>
                                 <span id="hostStatusTime"></span>
@@ -66,21 +74,104 @@
                 </div>
 
 
-                <div id="divLog" style="margin-left:520px;">
-                        <label>
-                                Host Log
-                                <br>
-                                <textarea name="taHostLog" id="taHostLog" rows="26" cols="48"></textarea>
-                        </label>
+                <div class="flex-box">
+                        <div style="flex-basis: 35%; margin-right:25px;">
+                                <div id="divLog" class="flex-box">
+                                        <label>
+                                                Host Log
+                                                <br>
+                                                <textarea class="form-control" name="taHostLog" id="taHostLog" rows="26" cols="48" readonly></textarea>
+                                        </label>
+                                </div>
+                                <div id="divUserProgramInput">
+                                        <label>
+                                                User Program Input
+                                                <br>
+                                                <textarea class="form-control" name="taProgramInput" id="taProgramInput" rows="8" cols="48" disabled></textarea>
+                                        </label>
+                                </div>
+                        </div>
+                        <div style="flex-basis: 50%;">
+                                <div class="flex-box">
+                                        <!-- Issue #19 Displaying the CPU info -->
+                                        <div id="cpuInfoDiv">
+                                                <label for="cpuInfoTable">CPU Info</label>
+                                                <table id="cpuInfoTable" class="table table-dark">
+                                                        <thead>
+                                                                <tr>
+                                                                        <th scope="col">PC</th>
+                                                                        <th scope="col">ACC</th>
+                                                                        <th scope="col">X</th>
+                                                                        <th scope="col">Y</th>
+                                                                        <th scope="col">Z</th>
+                                                                </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                                <tr>
+                                                                        <td scope="row" id="cpuDisplayPC">--</td>
+                                                                        <td id="cpuDisplayAcc">--</td>
+                                                                        <td id="cpuDisplayX">--</td>
+                                                                        <td id="cpuDisplayY">--</td>
+                                                                        <td id="cpuDisplayZ">--</td>
+                                                                </tr>
+                                                        </tbody>
+                                                </table>
+                                        </div>
+
+                                        <!-- Issue #19 Dispaly the processes -->
+                                        <div id="processInfoDiv">
+                                                <label for="processInfoTable">
+                                                        Process Display
+                                                </label>
+                                                <table class="table table-dark" id="processInfoTable">
+                                                        <thead>
+                                                                <tr>
+                                                                        <th scope="col">PID</th>
+                                                                        <th scope="col">State</th>
+                                                                        <th scope="col">PC</th>
+                                                                        <th scope="col">Acc</th>
+                                                                        <th scope="col">X</th>
+                                                                        <th scope="col">Y</th>
+                                                                        <th scope="col">Z</th>
+                                                                </tr>
+                                                        </thead>
+                                                        <tbody id="processDisplayTableBody">
+                                                                <tr scope="row" id="processDisplayPlaceholder">
+                                                                        <td id="processDisplayPID">--</td>
+                                                                        <td id="processDisplayState">--</td>
+                                                                        <td id="processDisplayPC">--</td>
+                                                                        <td id="processDisplayAcc">--</td>
+                                                                        <td id="processDisplayX">--</td>
+                                                                        <td id="processDisplayY">--</td>
+                                                                        <td id="processDisplayZ">--</td>
+                                                                </tr>
+                                                        </tbody>
+                                                </table>
+
+                                        </div>
+
+                                        <!-- Issue #19 Display the memory block -->
+
+                                        <div style="flex-basis:80%;">
+                                                <label for="memoryInfoDiv">
+                                                        Memory
+                                                </label>
+                                                <div id="memoryInfoDiv">
+
+                                                        <table class="table table-dark" id="memoryInfoTable">
+                                                                <tbody id="memoryInfoTableBody">
+                                                                        <tr>
+                                                                                <td>No memory loaded</td>
+                                                                        </tr>
+                                                                </tbody>
+                                                        </table>
+                                                </div>
+
+                                        </div>
+                                </div>
+                        </div>
                 </div>
 
-                <div id="divUserProgramInput" style="margin-left:520px;">
-                        <label>
-                                User Program Input
-                                <br>
-                                <textarea name="taProgramInput" id="taProgramInput" rows="8" cols="48"></textarea>
-                        </label>
-                </div>
         </div>
 
         <p class="footerText" style="clear:both;">

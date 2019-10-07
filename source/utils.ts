@@ -43,5 +43,11 @@ module TSOS {
             }
             return retVal;
         }
+
+        // Issue #27 Helper class to format values into hex for displaying on the HTML dashboard
+        // Moved this class to Utils rather than Control because accessed it from CPU as well
+        public static displayHex(numToDisplay: number): string {
+            return numToDisplay.toString(16).toUpperCase();
+        }
     }
 }

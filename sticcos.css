@@ -1,7 +1,7 @@
 /* SticcOS.css adapted from default TSOS.css */
 
 body {
-  background: #909193 url(distrib/images/linen.png) repeat;
+  background-color: skyblue !important;
   font-family: Helvetica, Verdana, Arial, sans-serif;
   font-size: 12pt;
   font-weight: normal;
@@ -51,15 +51,48 @@ h3 {
   flex-basis: 100%;
 }
 
+#cpuInfoDiv,
+#processInfoDiv,
+#memoryInfoDiv,
+  {
+  flex-basis: 100%;
+}
+
+#hostStatusDiv {
+  float: left;
+  width: 512px;
+  margin-right: 20px;
+}
+
 .normal_button {
   width: 100px;
 }
 
 .flex-box {
-  width: 512px;
   display: flex;
   flex-wrap: wrap;
-  float: left;
+  /* float: left; */
+}
+
+.form-control {
+  font-size: 12px !important;
+}
+
+tr, th, td {
+  font-size: 12px;
+}
+
+#memoryInfoTable {
+  font-size: 10px !important;
+}
+
+#memoryInfoDiv {
+  height: 200px;
+  overflow: scroll;
+}
+
+#cpuInfoDiv, #processInfoDiv {
+  flex-basis:  60%;
 }
 
 .footerText {
