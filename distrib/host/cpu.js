@@ -39,11 +39,11 @@ var TSOS;
         };
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
-            // TODO: Accumulate CPU usage and profiling statistics here.
-            // Do the real work here. Be sure to set this.isExecuting appropriately.
+            // Before the op code is retrieved, must ensure reading from correct place in memory
+            var logicalAddress = this.convertLogicalToPhysicalMemoryAddress(this.PC);
             // Need to FETCH the current op code from memory
             // Get the current program counter location, originally set when program is loaded
-            var currentOpCode = this.readMemory(this.PC);
+            var currentOpCode = this.readMemory(logicalAddress);
             console.log("FLAG 5 " + currentOpCode);
             // Make switch that DECODES the current OP CODE, so we can EXECUTE proper functionality
             // Issue #27
@@ -233,34 +233,42 @@ var TSOS;
             TSOS.Control.updatePCBDisplay(_PCBInstances[_CurrentPID]);
         };
         // Helper Function to use the memory manager to access the specified memory and return the op code
-        Cpu.prototype.readMemory = function (addr) {
-            return _MemoryManager.readFromMemory(addr);
+        Cpu.prototype.readMemory = function (logicalMemAddr) {
+            // Convert from logical to physical memory address
+            var physicalAddress = this.convertLogicalToPhysicalMemoryAddress(logicalMemAddr);
+            return _MemoryManager.readFromMemory(physicalAddress);
         };
         // Helper function to use the memory manager to write to memory
         // not sure if in future I will have to modify the steps to writing, so abstracting it out here
-        Cpu.prototype.writeToMemory = function (addr, valueToWrite) {
+        Cpu.prototype.writeToMemory = function (logicalMemAddr, valueToWrite) {
             // Trim the white space from the value to write
             var trimmedValueToWriteString = valueToWrite.trim();
             // Parse trimmed value as an int
             var trimmedValueToWriteInt = parseInt(trimmedValueToWriteString, 16);
             // Ensure value written in HEX into memory
             var hexToWrite = TSOS.Utils.displayHex(trimmedValueToWriteInt);
+            // Convert from logical to physical address
+            var physicalAddress = this.convertLogicalToPhysicalMemoryAddress(logicalMemAddr);
             // Pass the arguments on to the memory manager
-            _MemoryManager.writeToMemory(addr, hexToWrite);
+            _MemoryManager.writeToMemory(physicalAddress, hexToWrite);
         };
         // Helper function to get the following constant in memory in int form
         Cpu.prototype.getFollowingConstantFromMemory = function () {
             // Get the following address to load the constant from in memory | Increment the program counter
-            var constantAddr = ++this.PC;
+            var logicalConstantAddr = ++this.PC;
+            // Convert to physical address
+            var physicalConstantAddr = this.convertLogicalToPhysicalMemoryAddress(logicalConstantAddr);
             // Read the constant value from memory
-            var constantStringValue = this.readMemory(constantAddr);
+            var constantStringValue = this.readMemory(physicalConstantAddr);
             // Convert the constant to a number
             return parseInt(constantStringValue, 16);
         };
         // Helper function to load a constant number value from memory
-        Cpu.prototype.loadConstantFromMemory = function (addr) {
+        Cpu.prototype.loadConstantFromMemory = function (logicalMemAddr) {
+            // Get the physical address from the logical address
+            var physicalAddress = this.convertLogicalToPhysicalMemoryAddress(logicalMemAddr);
             // Load the constant value from memory
-            var loadedStringValue = this.readMemory(addr);
+            var loadedStringValue = this.readMemory(physicalAddress);
             // Convert the loaded value to an int
             return parseInt(loadedStringValue, 16);
         };
@@ -272,9 +280,20 @@ var TSOS;
             var firstHalfMemAddr = this.getFollowingConstantFromMemory().toString();
             // Combine memory addresses
             var fullMemAddrString = firstHalfMemAddr + secondHalfMemAddr;
-            console.log("FULL MEM ADDR " + fullMemAddrString);
+            // Convert memory address to int
+            var memAddrInt = parseInt(fullMemAddrString);
+            // Before the op code is retrieved, must ensure reading from correct place in memory
+            var physicalAddress = this.convertLogicalToPhysicalMemoryAddress(memAddrInt);
             // Return them the full memory address
-            return parseInt(fullMemAddrString);
+            return physicalAddress;
+        };
+        // Helper function to convert the logical address from the program to the physical address in the system
+        Cpu.prototype.convertLogicalToPhysicalMemoryAddress = function (logicalMemAddr) {
+            // Get current mem segment the PCB is working in
+            var memSegment = _PCBInstances[_CurrentPID].memSegment;
+            // Before the op code is retrieved, must ensure reading from correct place in memory
+            var logicalAddress = _MemoryAccessor.convertLogicalToPhysicalAddress(logicalMemAddr, memSegment);
+            return logicalAddress;
         };
         return Cpu;
     }());
