@@ -44,7 +44,7 @@ var TSOS;
             // Need to FETCH the current op code from memory
             // Get the current program counter location, originally set when program is loaded
             var currentOpCode = this.readMemory(logicalAddress);
-            console.log("FLAG 5 " + currentOpCode);
+            // console.log("FLAG 5 " + currentOpCode);
             // Make switch that DECODES the current OP CODE, so we can EXECUTE proper functionality
             // Issue #27
             switch (currentOpCode) { // Mneumonic Code | Description of code
@@ -134,7 +134,6 @@ var TSOS;
                     memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
                     // Get the byte to compare to the X register
                     constantIntValue = this.loadConstantFromMemory(memoryAddrIndex);
-                    console.log("COMPARING X REG OF " + this.Xreg + " to " + constantIntValue);
                     // Compare the retrieved byte to the X register
                     if (this.Xreg == constantIntValue) {
                         // Set Z flag to 1 if equal
@@ -148,16 +147,12 @@ var TSOS;
                     _PCBInstances[_CurrentPID].ZFlag = this.Zflag;
                     break;
                 case "D0": // BNE <lineToBreakTo> | Branch n bytes if Z flag is 0
-                    console.log("CHECKING FOR BREAK WITH Z FLAG OF " + this.Zflag);
                     // Determine if the program should go to the line break
                     if (this.Zflag == 0) {
                         // Get the amount of lines to break
                         var amountToBreak = this.getFollowingConstantFromMemory();
-                        console.log("AMOUNT TO BREAK: " + amountToBreak);
-                        console.log("PC BEFORE BREAK: " + this.PC);
                         // Increment the PC based on the input
                         this.PC += amountToBreak;
-                        console.log("PC AFTER BREAK: " + this.PC);
                         // Check if wraparound is required
                         if (this.PC > _MemoryBlockSize) {
                             // If the program counter is bigger than the memory block size, set the PC to the amount it goes over
@@ -205,7 +200,6 @@ var TSOS;
                         while (opCodeToPrint != 0) {
                             // Convert non 00 op code to the corresponding char based on ASCII
                             var charToPrint = String.fromCharCode(opCodeToPrint);
-                            console.log("PRINT " + charToPrint);
                             _StdOut.putText(charToPrint);
                             // Get the next op code
                             opCodeToPrint = this.getFollowingConstantFromMemory();
