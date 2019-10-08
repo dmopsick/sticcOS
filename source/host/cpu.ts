@@ -45,7 +45,7 @@ module TSOS {
             // Get the current program counter location, originally set when program is loaded
             const currentOpCode = this.readMemory(logicalAddress);
 
-            console.log("FLAG 5 " + currentOpCode);
+            // console.log("FLAG 5 " + currentOpCode);
 
             // Make switch that DECODES the current OP CODE, so we can EXECUTE proper functionality
             // Issue #27
@@ -160,10 +160,10 @@ module TSOS {
                     _PCBInstances[_CurrentPID].executable = false;
                     break;
                 case "EC": // CPX <memoryAddress| Compare a byte in memory to the X register
+
                     // Get the memory address of the byte to 
                     memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
                     
-
                     // Get the byte to compare to the X register
                     constantIntValue = this.loadConstantFromMemory(memoryAddrIndex);
 
@@ -234,11 +234,15 @@ module TSOS {
                     }
                     // Print 00 teriminated string starting at address sepcified in the Y register 
                     else if (this.Xreg == 2) {
+                        
                         // Get the first location of the string to print
                         let memoryAddrToPrint = this.Yreg;
 
                         // Get value at the first location in memory
                         let opCodeToPrint = this.loadConstantFromMemory(memoryAddrToPrint);
+
+                        // Keep track of where to return to after printing the string
+                        const returnToAddr = this.PC;
 
                         // Set the program counter to the new value in memory
                         this.PC = this.Yreg;
@@ -251,7 +255,11 @@ module TSOS {
 
                             // Get the next op code
                             opCodeToPrint = this.getFollowingConstantFromMemory();
+                            
                         } 
+
+                        // Done printing, return PC back to after the initial call
+                        this.PC = returnToAddr;
 
                     }
                     else {

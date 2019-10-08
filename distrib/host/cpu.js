@@ -44,7 +44,7 @@ var TSOS;
             // Need to FETCH the current op code from memory
             // Get the current program counter location, originally set when program is loaded
             var currentOpCode = this.readMemory(logicalAddress);
-            console.log("FLAG 5 " + currentOpCode);
+            // console.log("FLAG 5 " + currentOpCode);
             // Make switch that DECODES the current OP CODE, so we can EXECUTE proper functionality
             // Issue #27
             switch (currentOpCode) { // Mneumonic Code | Description of code
@@ -192,6 +192,8 @@ var TSOS;
                         var memoryAddrToPrint = this.Yreg;
                         // Get value at the first location in memory
                         var opCodeToPrint = this.loadConstantFromMemory(memoryAddrToPrint);
+                        // Keep track of where to return to after printing the string
+                        var returnToAddr = this.PC;
                         // Set the program counter to the new value in memory
                         this.PC = this.Yreg;
                         // Loop through Print the characters until the breakpoint is reached 
@@ -202,6 +204,8 @@ var TSOS;
                             // Get the next op code
                             opCodeToPrint = this.getFollowingConstantFromMemory();
                         }
+                        // Done printing, return PC back to after the initial call
+                        this.PC = returnToAddr;
                     }
                     else {
                         // Throw a software interrupt error, invalid system call in X register
