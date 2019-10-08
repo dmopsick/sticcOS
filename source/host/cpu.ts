@@ -160,12 +160,14 @@ module TSOS {
                     _PCBInstances[_CurrentPID].executable = false;
                     break;
                 case "EC": // CPX <memoryAddress| Compare a byte in memory to the X register
+
                     // Get the memory address of the byte to 
                     memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
                     
-
                     // Get the byte to compare to the X register
                     constantIntValue = this.loadConstantFromMemory(memoryAddrIndex);
+
+                    console.log("COMPARING X REG OF " + this.Xreg + " to " + constantIntValue);
 
                     // Compare the retrieved byte to the X register
                     if (this.Xreg == constantIntValue) {
@@ -182,13 +184,20 @@ module TSOS {
 
                     break;
                 case "D0": // BNE <lineToBreakTo> | Branch n bytes if Z flag is 0
+                    console.log("CHECKING FOR BREAK WITH Z FLAG OF " + this.Zflag);
                     // Determine if the program should go to the line break
                     if (this.Zflag == 0) {
                         // Get the amount of lines to break
                         let amountToBreak = this.getFollowingConstantFromMemory();
 
+                        console.log("AMOUNT TO BREAK: " + amountToBreak);
+
+                        console.log("PC BEFORE BREAK: " + this.PC);
+
                         // Increment the PC based on the input
                         this.PC += amountToBreak;
+
+                        console.log("PC AFTER BREAK: " + this.PC);
 
                         // Check if wraparound is required
                         if (this.PC > _MemoryBlockSize) {
@@ -234,24 +243,34 @@ module TSOS {
                     }
                     // Print 00 teriminated string starting at address sepcified in the Y register 
                     else if (this.Xreg == 2) {
+                        
                         // Get the first location of the string to print
                         let memoryAddrToPrint = this.Yreg;
 
                         // Get value at the first location in memory
                         let opCodeToPrint = this.loadConstantFromMemory(memoryAddrToPrint);
 
+                        // Keep track of where to return to after printing the string
+                        const returnToAddr = this.PC;
+
                         // Set the program counter to the new value in memory
                         this.PC = this.Yreg;
+
 
                         // Loop through Print the characters until the breakpoint is reached 
                         while (opCodeToPrint != 0) {
                             // Convert non 00 op code to the corresponding char based on ASCII
                             let charToPrint = String.fromCharCode(opCodeToPrint);
+                            console.log("PRINT " + charToPrint);
                             _StdOut.putText(charToPrint);
 
                             // Get the next op code
                             opCodeToPrint = this.getFollowingConstantFromMemory();
+                            
                         } 
+
+                        // Done printing, return PC back to after the initial call
+                        this.PC = returnToAddr;
 
                     }
                     else {
