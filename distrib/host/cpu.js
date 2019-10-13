@@ -45,12 +45,14 @@ var TSOS;
             // Get the current program counter location, originally set when program is loaded
             var currentOpCode = this.readMemory(logicalAddress);
             // console.log("FLAG 5 " + currentOpCode);
+            // Initialize variables outside of the switch to prevent unitialized weirdness. 
+            var constantIntValue, memoryAddrIndex, loadedIntValue;
             // Make switch that DECODES the current OP CODE, so we can EXECUTE proper functionality
             // Issue #27
             switch (currentOpCode) { // Mneumonic Code | Description of code
                 case "A9": // LDA <constant> | Load a constant into the accumulator
                     // Use helper function to get the following value in memory as a int
-                    var constantIntValue = this.getFollowingConstantFromMemory();
+                    constantIntValue = this.getFollowingConstantFromMemory();
                     // Load the retrieved value into the accumulator
                     this.Acc = constantIntValue;
                     // Update the accumulator value of the current process
@@ -58,9 +60,9 @@ var TSOS;
                     break;
                 case "AD": // LDA <memoryAddress> | Load a value from memory into accumulator
                     // Use helper function to get the following address in memory as a int
-                    var memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
+                    memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
                     // Convert the value to a numner
-                    var loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
+                    loadedIntValue = this.loadConstantFromMemory(memoryAddrIndex);
                     // Load the retrieved value into the accumulator
                     this.Acc = loadedIntValue;
                     // Update the accumulator value of the current process
