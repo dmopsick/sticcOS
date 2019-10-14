@@ -116,7 +116,24 @@ module TSOS {
                 "<pid> - Executes the specified program loaded into SticcOS.");
             this.commandList[this.commandList.length] = sc;
 
-            // ps  - list the running processes and their IDs
+            // runall 
+            sc = new ShellCommand(this.shellRunAll,
+                "runAll",
+                "- Executes all programs currently loaded into SticcOS.");
+            this.commandList[this.commandList.length] = sc;
+
+            // clearmem
+            sc = new ShellCommand(this.shellClearMem,
+                "clearmem",
+                "- Clears all 3 of the memory partitions in SticcOS.");
+            this.commandList[this.commandList.length] = sc;
+
+            // ps 
+            sc = new ShellCommand(this.shellPs,
+                "ps",
+                "- Display the PID and state of all processes");
+            this.commandList[this.commandList.length] = sc;
+
             // kill <id> - kills the specified process id.
 
             // Display the initial prompt.
@@ -337,8 +354,18 @@ module TSOS {
                     case "run":
                         _StdOut.putText("Run <pid> runs the process with the given PID loaded into SticcOS.");
                         break;
+                    case "runall":
+                        _StdOut.putText("Runall runs all up to three programs loaded into SticcOS.");
+                        break;
+                    case "clearmem":
+                        _StdOut.putText("Clearmem clears out all three of the memory partitions.");
+                        break;
+                    case "ps":
+                        _StdOut.putText("Ps displays the PID and state of all processes");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
+                        break;
                 }
             } else {
                 _StdOut.putText("Usage: man <topic>  Please supply a topic.");
@@ -590,5 +617,23 @@ module TSOS {
             }
         }
 
+        // Issue #36 | Runs all programs loaded into the system
+        public shellRunAll(args: string[]) {
+            // Verify that there is at least one program loaded and executable
+
+            // Need to determine which PID are currently loaded in memory and executable
+
+            // Execute each of them.
+        }
+
+        // Issue #36 | Clearmem clears all three memory partitions
+        public shellClearMem(args: string[]) {
+            // Reset the three memory partitions, should not be too bad
+        }
+
+        // Issue #36 | PS displays the PID and state of all processes
+        public shellPs(args: string[]) {
+            
+        }
     }
 }
