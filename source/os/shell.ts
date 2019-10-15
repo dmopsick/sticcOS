@@ -138,7 +138,20 @@ module TSOS {
             sc = new ShellCommand(this.shellKillByPID,
                 "kill",
                 "<pid> - Kills the specified process.");
-                this.commandList[this.commandList.length] = sc; 
+            this.commandList[this.commandList.length] = sc; 
+            
+            // killall
+            sc = new ShellCommand(this.shellKillAll,
+                "killall",
+                "- Kills all currently runniing processes"
+            );
+            this.commandList[this.commandList.length] = sc;
+
+            // quantum <int>
+            sc = new ShellCommand(this.shellSetQuantum,
+                "quantum",
+                "<int> - Modifies the quantum for Round Robin scheduling.");
+            this.commandList[this.commandList.length] = sc;
 
             // Display the initial prompt.
             this.putPrompt();
@@ -369,6 +382,12 @@ module TSOS {
                         break;
                     case "kill":
                         _StdOut.putText("Kill <pid> kills the process with the specified process ID");
+                        break;
+                    case "killall":
+                        _StdOut.putText("Killall kills all currently running processes.")
+                        break;
+                    case "quantum":
+                        _StdOut.putText("Quantum <int> allows the user to modify the quantum used for Round Robin scheduling.")
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -652,8 +671,31 @@ module TSOS {
                 // If argument is a number must ensure that it is a valid PID in the system
             }
             else {
-
+                // The user must pass in an argument to the kill function
+                _StdOut.putText("You must pass in a PID to kill a process.");
             }
+        }
+
+        // Issue #36 | Kills all currently running processes
+        public shellKillAll(args: string[]) {
+            // Find out which processes are running
+
+            // Kill each of the running processes
+        }
+
+        // Issue #36 | Allows the user to modify the quantum for Round Robin scheduling
+        public shellSetQuantum(args: string[]) {
+            // Ensure that there is an arguement to set the quantum value to
+            if (args.length > 0) {
+                // Check that the user passed a valid int as an argument
+
+                // If not, tell them the correct way to use this function 
+            }
+            else {
+                // The user must pass a quantum value 
+                _StdOut.putText("Please specify an integer to set as the quantum value.")
+            }
+
         }
     }
 }
