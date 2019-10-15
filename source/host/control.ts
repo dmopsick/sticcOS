@@ -148,7 +148,8 @@ module TSOS {
         // Issue #27 #21 Update the HTML PCB display with the most recent PCB info
         public static updatePCBDisplay(pcb: TSOS.ProcessControlBlock): void {
             // Update the HTML table that displays PCB info
-            // For project 1 only going to record information on one proccess because only saving one at a time
+            // Issue #36 I believe I will need to udpdate the naming schemes to have the PID in them in order to CRUD multiple processes
+            // This def needs to be dynamic 
             (<HTMLElement>document.getElementById("processDisplayPID")).innerHTML = "" + TSOS.Utils.displayHex(pcb.pid);
             (<HTMLElement>document.getElementById("processDisplayState")).innerHTML = "" + pcb.state;
             (<HTMLElement>document.getElementById("processDisplayPC")).innerHTML = "" + TSOS.Utils.displayHex(pcb.PC);
@@ -158,8 +159,17 @@ module TSOS {
             (<HTMLElement>document.getElementById("processDisplayZ")).innerHTML = "" + TSOS.Utils.displayHex(pcb.ZFlag);
         }
 
+        // Issue #36 Remove any process(es) from the PCB display on the HTML display | Used in Kill all, clearmem
+        // Will need a modified version of this for kill I suppose!
+        public static clearAllPCBDisplay(): void {
+            // Issue #36 Will need to remove some dynamically created processes displayed.
+            // Will be dependent on the above rework...
+
+        }
+
+
         // Issue #27 #19 Update the HTML Memory display with the most recent memory info
-        public static updateMemoryDisplay(memSegment: number = 1): void {
+        public static updateMemoryDisplay(): void {
             // Update the HTML table that displays Memory info
             // For project 2 only record information for 1 memory segment. For project 3 will have three segments
             
@@ -170,7 +180,7 @@ module TSOS {
             // Will need to change the starting point and bound
 
             // Want to make rows of 8. So will use modulus to make new rows.
-            for (let i = 0; i < _MemoryBlockSize; i++) {
+            for (let i = 0; i < (_MemoryBlockSize * _MemoryBlockCount); i++) {
                 let hex = i.toString(16);
 
                 // Add 0's to the front of the hex number if need be to make it three significant digits

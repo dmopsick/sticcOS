@@ -132,16 +132,15 @@ var TSOS;
             document.getElementById("processDisplayZ").innerHTML = "" + TSOS.Utils.displayHex(pcb.ZFlag);
         };
         // Issue #27 #19 Update the HTML Memory display with the most recent memory info
-        Control.updateMemoryDisplay = function (memSegment) {
+        Control.updateMemoryDisplay = function () {
             // Update the HTML table that displays Memory info
             // For project 2 only record information for 1 memory segment. For project 3 will have three segments
-            if (memSegment === void 0) { memSegment = 1; }
             // Initialize a string containing the HTML of the memory table
             var memoryTableHTML = "";
             // Will need to change this logic to make it dynamic for project 3
             // Will need to change the starting point and bound
             // Want to make rows of 8. So will use modulus to make new rows.
-            for (var i = 0; i < _MemoryBlockSize; i++) {
+            for (var i = 0; i < (_MemoryBlockSize * _MemoryBlockCount); i++) {
                 var hex = i.toString(16);
                 // Add 0's to the front of the hex number if need be to make it three significant digits
                 if (hex.length == 1) {

@@ -15,11 +15,16 @@ var TSOS;
         };
         // Issue #25 resets the partitions. Used to clear the memory and set it up when the OS is launched
         MemoryManager.prototype.resetBlocks = function () {
+            // Reset the values in memory to all zeros
+            _Memory.resetBlock();
+            // Reset partitions table
             this.partitions = [
                 { memBlockID: 0, base: 0, limit: 255, isFree: true },
                 { memBlockID: 1, base: 256, limit: 511, isFree: true },
                 { memblockID: 2, base: 512, limit: 767, isFree: true }
             ];
+            // Update the memory display | That way most up to date memory displayed (for clearmem)
+            TSOS.Control.updateMemoryDisplay();
         };
         // Issue #25 determine if the one (for project 2) is free or ued
         // Free = no program loaded, or a program that has been loaded and ran already

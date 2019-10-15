@@ -654,7 +654,22 @@ module TSOS {
 
         // Issue #36 | Clearmem clears all three memory partitions
         public shellClearMem(args: string[]) {
-            // Reset the three memory partitions, should not be too bad
+            // Reset the three memory partitions
+            _MemoryManager.resetBlocks();
+            
+            // Need to make the currently loaded processes no longer runnable because they have gotten the AXE
+            // Not sure if this is the best way right now... But it will certainly make all loaded PCBs unexecutable
+            for(let i = 0; i < _PCBInstances.length; i ++) {
+                // Ensure all processes are no longer executable
+                _PCBInstances[i].executable = false;
+            }
+
+            // Update the PCB display to ensure the most uptodate info
+            // Need to rework the displaying of PCB to account for 3... needs to be D Y N A M I C
+            // TSOS.Control.updatePCBDisplay();
+
+            // Let the user know the memory has been cleared, SticcOS is R E S P O N S I V E
+            _StdOut.putText("The memory has been cleared.");
         }
 
         // Issue #36 | PS displays the PID and state of all processes
