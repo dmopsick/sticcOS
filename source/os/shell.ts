@@ -134,7 +134,11 @@ module TSOS {
                 "- Display the PID and state of all processes");
             this.commandList[this.commandList.length] = sc;
 
-            // kill <id> - kills the specified process id.
+            // kill <pid>
+            sc = new ShellCommand(this.shellKillByPID,
+                "kill",
+                "<pid> - Kills the specified process.");
+                this.commandList[this.commandList.length] = sc; 
 
             // Display the initial prompt.
             this.putPrompt();
@@ -362,6 +366,9 @@ module TSOS {
                         break;
                     case "ps":
                         _StdOut.putText("Ps displays the PID and state of all processes");
+                        break;
+                    case "kill":
+                        _StdOut.putText("Kill <pid> kills the process with the specified process ID");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -634,6 +641,19 @@ module TSOS {
         // Issue #36 | PS displays the PID and state of all processes
         public shellPs(args: string[]) {
             
+        }
+
+        // Issue #36 | Kill a process based on its PID
+        public shellKillByPID(args: string[]) {
+            // Ensure that there is an argument to the Kill command
+            if (args.length > 0) {
+                // Must ensure that the argument is a number
+
+                // If argument is a number must ensure that it is a valid PID in the system
+            }
+            else {
+
+            }
         }
     }
 }
