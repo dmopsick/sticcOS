@@ -187,30 +187,38 @@ var TSOS;
                     if (this.Xreg == 1) {
                         // Display the value in the Y register
                         // _StdOut.putText(this.Yreg.toString());
-                        // #45 Create a software interrupt to handle the system call
-                        // Should I pass the Yreg as a variable or get it from the Kernel?
+                        // #45 Create a software interrupt to handle the system call | Seperate structure from presentation
                         _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PRINT_NUM_IRQ, []));
                     }
                     // Print 00 teriminated string starting at address sepcified in the Y register 
                     else if (this.Xreg == 2) {
                         // Get the first location of the string to print
-                        var memoryAddrToPrint = this.Yreg;
+                        /* let memoryAddrToPrint = this.Yreg;
+
                         // Get value at the first location in memory
-                        var opCodeToPrint = this.loadConstantFromMemory(memoryAddrToPrint);
+                        let opCodeToPrint = this.loadConstantFromMemory(memoryAddrToPrint);
+
                         // Keep track of where to return to after printing the string
-                        var returnToAddr = this.PC;
+                        const returnToAddr = this.PC;
+
                         // Set the program counter to the new value in memory
                         this.PC = this.Yreg;
-                        // Loop through Print the characters until the breakpoint is reached 
+
+                        // Loop through Print the characters until the breakpoint is reached
                         while (opCodeToPrint != 0) {
                             // Convert non 00 op code to the corresponding char based on ASCII
-                            var charToPrint = String.fromCharCode(opCodeToPrint);
+                            let charToPrint = String.fromCharCode(opCodeToPrint);
                             _StdOut.putText(charToPrint);
+
                             // Get the next op code
                             opCodeToPrint = this.getFollowingConstantFromMemory();
+                            
                         }
+
                         // Done printing, return PC back to after the initial call
-                        this.PC = returnToAddr;
+                        this.PC = returnToAddr; */
+                        // #45 Create a software intterupt to handle the system call | Seperate structure from presentation
+                        _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PRINT_STRING_IRQ, []));
                     }
                     else {
                         // Throw a software interrupt error, invalid system call in X register

@@ -234,14 +234,14 @@ module TSOS {
                         // Display the value in the Y register
                         // _StdOut.putText(this.Yreg.toString());
 
-                        // #45 Create a software interrupt to handle the system call
+                        // #45 Create a software interrupt to handle the system call | Seperate structure from presentation
                         _KernelInterruptQueue.enqueue(new Interrupt(PRINT_NUM_IRQ, []));
                     }
                     // Print 00 teriminated string starting at address sepcified in the Y register 
                     else if (this.Xreg == 2) {
                         
                         // Get the first location of the string to print
-                        let memoryAddrToPrint = this.Yreg;
+                        /* let memoryAddrToPrint = this.Yreg;
 
                         // Get value at the first location in memory
                         let opCodeToPrint = this.loadConstantFromMemory(memoryAddrToPrint);
@@ -264,8 +264,10 @@ module TSOS {
                         } 
 
                         // Done printing, return PC back to after the initial call
-                        this.PC = returnToAddr;
+                        this.PC = returnToAddr; */
 
+                        // #45 Create a software intterupt to handle the system call | Seperate structure from presentation
+                        _KernelInterruptQueue.enqueue(new Interrupt(PRINT_STRING_IRQ, []));
                     }
                     else {
                         // Throw a software interrupt error, invalid system call in X register

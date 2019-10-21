@@ -26,7 +26,7 @@ module TSOS {
             _Console.init();
 
             // Initialize standard input and output to the _Console.
-            _StdIn  = _Console;
+            _StdIn = _Console;
             _StdOut = _Console;
 
             // Load the Keyboard Device Driver
@@ -131,9 +131,10 @@ module TSOS {
                     _StdIn.handleInput();
                     break;
                 case PRINT_NUM_IRQ:
-                this.krnPrintNumSysCall(params);
+                    this.krnPrintNumSysCall(params);
                     break;
                 case PRINT_STRING_IRQ:
+                    this.krnPrintStringSysCall(params);
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
@@ -154,8 +155,31 @@ module TSOS {
 
         // Issue #45 handles the system call of printing a string
         public krnPrintStringSysCall(params): void {
-            console.log("Flag 2");
-            console.log(params);
+            // Get the first location of the string to print
+            let memoryAddrToPrint = _CPU.Yreg;
+
+            // Get value at the first location in memory
+            let opCodeToPrint = _CPU.loadConstantFromMemory(memoryAddrToPrint);
+
+            // Keep track of where to return to after printing the string
+            const returnToAddr = _CPU.PC;
+
+            // Set the program counter to the new value in memory
+            _CPU.PC = _CPU.Yreg;
+
+            // Loop through Print the characters until the breakpoint is reached 
+            while (opCodeToPrint != 0) {
+                // Convert non 00 op code to the corresponding char based on ASCII
+                let charToPrint = String.fromCharCode(opCodeToPrint);
+                _StdOut.putText(charToPrint);
+
+                // Get the next op code
+                opCodeToPrint = _CPU.getFollowingConstantFromMemory();
+
+            }
+
+            // Done printing, return PC back to after the initial call
+            _CPU.PC = returnToAddr;
         }
 
         //
@@ -178,8 +202,8 @@ module TSOS {
         // OS Utility Routines
         //
         public krnTrace(msg: string) {
-             // Check globals to see if trace is set ON.  If so, then (maybe) log the message.
-             if (_Trace) {
+            // Check globals to see if trace is set ON.  If so, then (maybe) log the message.
+            if (_Trace) {
                 if (msg === "Idle") {
                     // We can't log every idle clock pulse because it would quickly lag the browser quickly.
                     if (_OSclock % 10 == 0) {
@@ -190,7 +214,7 @@ module TSOS {
                 } else {
                     Control.hostLog(msg, "OS");
                 }
-             }
+            }
         }
 
         public krnTrapError(msg) {

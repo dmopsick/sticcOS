@@ -118,6 +118,7 @@ var TSOS;
                     this.krnPrintNumSysCall(params);
                     break;
                 case PRINT_STRING_IRQ:
+                    this.krnPrintStringSysCall(params);
                     break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
@@ -130,16 +131,29 @@ var TSOS;
         };
         // Issue #45 handles the system call of printing of a number
         Kernel.prototype.krnPrintNumSysCall = function (params) {
-            console.log("Flag 2");
-            console.log(params);
-            // const numToPrint = params[0];
             var numToPrint = _CPU.Yreg;
             _StdOut.putText(numToPrint.toString());
         };
         // Issue #45 handles the system call of printing a string
         Kernel.prototype.krnPrintStringSysCall = function (params) {
-            console.log("Flag 2");
-            console.log(params);
+            // Get the first location of the string to print
+            var memoryAddrToPrint = _CPU.Yreg;
+            // Get value at the first location in memory
+            var opCodeToPrint = _CPU.loadConstantFromMemory(memoryAddrToPrint);
+            // Keep track of where to return to after printing the string
+            var returnToAddr = _CPU.PC;
+            // Set the program counter to the new value in memory
+            _CPU.PC = _CPU.Yreg;
+            // Loop through Print the characters until the breakpoint is reached 
+            while (opCodeToPrint != 0) {
+                // Convert non 00 op code to the corresponding char based on ASCII
+                var charToPrint = String.fromCharCode(opCodeToPrint);
+                _StdOut.putText(charToPrint);
+                // Get the next op code
+                opCodeToPrint = _CPU.getFollowingConstantFromMemory();
+            }
+            // Done printing, return PC back to after the initial call
+            _CPU.PC = returnToAddr;
         };
         //
         // System Calls... that generate software interrupts via tha Application Programming Interface library routines.
