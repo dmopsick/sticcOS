@@ -221,8 +221,6 @@ var TSOS;
             this.PC++;
             // Increment the PC for the current PCB
             _PCBInstances[_CurrentPID].PC = this.PC;
-            // Update the PCB display
-            TSOS.Control.updatePCBDisplay(_PCBInstances[_CurrentPID]);
         };
         // Helper Function to use the memory manager to access the specified memory and return the op code
         Cpu.prototype.readMemory = function (logicalMemAddr) {

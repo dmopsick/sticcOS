@@ -469,13 +469,13 @@ var TSOS;
                     _PCBInstances.push(newPCB);
                     // Write the program into memory
                     _MemoryManager.loadProgramToMemory(newPCB, splitProgramInput);
+                    // Issue #35 Add the Loaded PCB as a new row in the table
+                    TSOS.Control.addPCBRowToDisplay(newPCB);
                     // If this is not the first program in memory, make the most recent program unexecutable
                     // This is only for project 2 where one program is being loaded at a time
                     if (_NextPID > 0) {
                         _PCBInstances[_CurrentPID].executable = false;
                     }
-                    // #21 Update the PCB Info Table on the HTML os display
-                    TSOS.Control.updatePCBDisplay(newPCB);
                     // Return the PID of the created process to the user
                     _StdOut.putText("Great job! You loaded the program into memory.");
                     _StdOut.advanceLine();
@@ -543,9 +543,6 @@ var TSOS;
                 // Ensure all processes are no longer executable
                 _PCBInstances[i].executable = false;
             }
-            // Update the PCB display to ensure the most uptodate info
-            // Need to rework the displaying of PCB to account for 3... needs to be D Y N A M I C
-            // TSOS.Control.updatePCBDisplay();
             // Let the user know the memory has been cleared, SticcOS is R E S P O N S I V E
             _StdOut.putText("The memory has been cleared.");
         };

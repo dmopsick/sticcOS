@@ -130,27 +130,42 @@ module TSOS {
         }
 
         // Issue #27 #19 Updates the HTML cpu info display with the most up to date info
-        public static updateCPUDisplay(cpu: TSOS.Cpu): void {
+        public static updateCPUDisplay(): void {
             // Update the HTML table that displays CPU info
-            (<HTMLElement>document.getElementById("cpuDisplayPC")).innerHTML = "" + TSOS.Utils.displayHex(cpu.PC);
-            (<HTMLElement>document.getElementById("cpuDisplayAcc")).innerHTML = "" + TSOS.Utils.displayHex(cpu.Acc);
-            (<HTMLElement>document.getElementById("cpuDisplayX")).innerHTML = "" + TSOS.Utils.displayHex(cpu.Xreg);
-            (<HTMLElement>document.getElementById("cpuDisplayY")).innerHTML = "" + TSOS.Utils.displayHex(cpu.Yreg);
-            (<HTMLElement>document.getElementById("cpuDisplayZ")).innerHTML = "" + TSOS.Utils.displayHex(cpu.Zflag);
+            (<HTMLElement>document.getElementById("cpuDisplayPC")).innerHTML = "" + TSOS.Utils.displayHex(_CPU.PC);
+            (<HTMLElement>document.getElementById("cpuDisplayAcc")).innerHTML = "" + TSOS.Utils.displayHex(_CPU.Acc);
+            (<HTMLElement>document.getElementById("cpuDisplayX")).innerHTML = "" + TSOS.Utils.displayHex(_CPU.Xreg);
+            (<HTMLElement>document.getElementById("cpuDisplayY")).innerHTML = "" + TSOS.Utils.displayHex(_CPU.Yreg);
+            (<HTMLElement>document.getElementById("cpuDisplayZ")).innerHTML = "" + TSOS.Utils.displayHex(_CPU.Zflag);
         }
 
+        // Issue #45 #25 | Add new PCB row to the PCB display
+        public static addPCBRowToDisplay(pcb: ProcessControlBlock): void {
+            // Add a new row element to the Table element #processDisplayTableBody
+            (<HTMLElement>document.getElementById("processDisplayTableBody")).innerHTML += "<tr id='processRow-" + pcb.pid + "'>" + 
+                "<td id='processDisplayPID-" + pcb.pid +"'></td>" + 
+                "<td id='processDisplayState-" + pcb.pid +"'></td>" + 
+                "<td id='processDisplayPC-" + pcb.pid +"'></td>" + 
+                "<td id='processDisplayAcc-" + pcb.pid +"'> </td>" + 
+                "<td id='processDisplayX-" + pcb.pid +"'> </td>" + 
+                "<td id='processDisplayY-" + pcb.pid +"'> </td>" +
+                "<td id='processDisplayZ-" + pcb.pid +"'> </td>" + 
+                "</tr>";
+        } 
+
         // Issue #27 #21 Update the HTML PCB display with the most recent PCB info
-        public static updatePCBDisplay(pcb: TSOS.ProcessControlBlock): void {
+        public static updatePCBDisplay(): void {
             // Update the HTML table that displays PCB info
-            // Issue #36 I believe I will need to udpdate the naming schemes to have the PID in them in order to CRUD multiple processes
-            // This def needs to be dynamic 
-            (<HTMLElement>document.getElementById("processDisplayPID")).innerHTML = "" + TSOS.Utils.displayHex(pcb.pid);
-            (<HTMLElement>document.getElementById("processDisplayState")).innerHTML = "" + pcb.state;
-            (<HTMLElement>document.getElementById("processDisplayPC")).innerHTML = "" + TSOS.Utils.displayHex(pcb.PC);
-            (<HTMLElement>document.getElementById("processDisplayAcc")).innerHTML = "" + TSOS.Utils.displayHex(pcb.Acc);
-            (<HTMLElement>document.getElementById("processDisplayX")).innerHTML = "" + TSOS.Utils.displayHex(pcb.Xreg);
-            (<HTMLElement>document.getElementById("processDisplayY")).innerHTML = "" + TSOS.Utils.displayHex(pcb.Yreg);
-            (<HTMLElement>document.getElementById("processDisplayZ")).innerHTML = "" + TSOS.Utils.displayHex(pcb.ZFlag);
+            // #45 #35 update the display of all executable processes
+            _PCBInstances.forEach(pcb => {
+                (<HTMLElement>document.getElementById("processDisplayPID-" + pcb.pid)).innerHTML = "" + TSOS.Utils.displayHex(pcb.pid);
+                (<HTMLElement>document.getElementById("processDisplayState-" + pcb.pid)).innerHTML = "" + pcb.state;
+                (<HTMLElement>document.getElementById("processDisplayPC-" + pcb.pid)).innerHTML = "" + TSOS.Utils.displayHex(pcb.PC);
+                (<HTMLElement>document.getElementById("processDisplayAcc-" + pcb.pid)).innerHTML = "" + TSOS.Utils.displayHex(pcb.Acc);
+                (<HTMLElement>document.getElementById("processDisplayX-" + pcb.pid)).innerHTML = "" + TSOS.Utils.displayHex(pcb.Xreg);
+                (<HTMLElement>document.getElementById("processDisplayY-" + pcb.pid)).innerHTML = "" + TSOS.Utils.displayHex(pcb.Yreg);
+                (<HTMLElement>document.getElementById("processDisplayZ-" + pcb.pid)).innerHTML = "" + TSOS.Utils.displayHex(pcb.ZFlag);
+            });
         }
 
         // Issue #36 Remove any process(es) from the PCB display on the HTML display | Used in Kill all, clearmem

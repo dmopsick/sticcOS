@@ -87,7 +87,8 @@
                                         <label>
                                                 User Program Input
                                                 <br>
-                                                <textarea class="form-control" name="taProgramInput" id="taProgramInput" rows="8" cols="48" placeholder="Input program code here..." disabled></textarea>
+                                                <textarea class="form-control" name="taProgramInput" id="taProgramInput" rows="8" cols="48" placeholder="Input program code here..."
+                                                        disabled></textarea>
                                         </label>
                                 </div>
                         </div>
@@ -118,41 +119,8 @@
                                                 </table>
                                         </div>
 
-                                        <!-- Issue #19 Dispaly the processes -->
-                                        <div id="processInfoDiv">
-                                                <label for="processInfoTable">
-                                                        Process Display
-                                                </label>
-                                                <table class="table table-dark" id="processInfoTable">
-                                                        <thead>
-                                                                <tr>
-                                                                        <th scope="col">PID</th>
-                                                                        <th scope="col">State</th>
-                                                                        <th scope="col">PC</th>
-                                                                        <th scope="col">Acc</th>
-                                                                        <th scope="col">X</th>
-                                                                        <th scope="col">Y</th>
-                                                                        <th scope="col">Z</th>
-                                                                </tr>
-                                                        </thead>
-                                                        <tbody id="processDisplayTableBody">
-                                                                <tr scope="row" id="processDisplayPlaceholder">
-                                                                        <td id="processDisplayPID">--</td>
-                                                                        <td id="processDisplayState">--</td>
-                                                                        <td id="processDisplayPC">--</td>
-                                                                        <td id="processDisplayAcc">--</td>
-                                                                        <td id="processDisplayX">--</td>
-                                                                        <td id="processDisplayY">--</td>
-                                                                        <td id="processDisplayZ">--</td>
-                                                                </tr>
-                                                        </tbody>
-                                                </table>
-
-                                        </div>
-
                                         <!-- Issue #19 Display the memory block -->
-
-                                        <div style="flex-basis:80%;">
+                                        <div class="overflow-wrapper">
                                                 <label for="memoryInfoDiv">
                                                         Memory
                                                 </label>
@@ -165,6 +133,41 @@
                                                                         </tr>
                                                                 </tbody>
                                                         </table>
+                                                </div>
+
+                                        </div>
+
+                                        <!-- Issue #19 Display the processes -->
+                                        <div class="overflow-wrapper">
+                                                <label for="processInfoDiv">
+                                                        Process Display
+                                                </label>
+                                                <div id="processInfoDiv">
+                                                        <table class="table table-dark" id="processInfoTable">
+                                                                <thead>
+                                                                        <tr>
+                                                                                <th scope="col">PID</th>
+                                                                                <th scope="col">State</th>
+                                                                                <th scope="col">PC</th>
+                                                                                <th scope="col">Acc</th>
+                                                                                <th scope="col">X</th>
+                                                                                <th scope="col">Y</th>
+                                                                                <th scope="col">Z</th>
+                                                                        </tr>
+                                                                </thead>
+                                                                <tbody id="processDisplayTableBody">
+                                                                        <!-- <tr scope="row" id="processDisplayPlaceholder">
+                                                                                        <td id="processDisplayPID">--</td>
+                                                                                        <td id="processDisplayState">--</td>
+                                                                                        <td id="processDisplayPC">--</td>
+                                                                                        <td id="processDisplayAcc">--</td>
+                                                                                        <td id="processDisplayX">--</td>
+                                                                                        <td id="processDisplayY">--</td>
+                                                                                        <td id="processDisplayZ">--</td>
+                                                                                </tr> -->
+                                                                </tbody>
+                                                        </table>
+
                                                 </div>
 
                                         </div>

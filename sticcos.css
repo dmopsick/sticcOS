@@ -71,7 +71,6 @@ h3 {
 .flex-box {
   display: flex;
   flex-wrap: wrap;
-  /* float: left; */
 }
 
 .form-control {
@@ -91,8 +90,13 @@ tr, th, td {
   overflow: scroll;
 }
 
-#cpuInfoDiv, #processInfoDiv {
+#cpuInfoDiv {
   flex-basis:  60%;
+}
+
+#processInfoDiv {
+  overflow: scroll;
+  max-height: 250px;
 }
 
 .footerText {
@@ -100,4 +104,9 @@ tr, th, td {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 8pt;
   text-align: center;
+}
+
+.overflow-wrapper {
+  flex-basis: 80%;
+  margin: 10px 0;
 }

@@ -93,8 +93,8 @@ module TSOS {
 
             // Issue #45 Update the display after each clock tick rather than update it from CPU | Seperation of concerns
             TSOS.Control.updateMemoryDisplay();
-            TSOS.Control.updateCPUDisplay(_CPU);
-            // need to update the PCB display once I figure out how I want to display this
+            TSOS.Control.updateCPUDisplay();
+            TSOS.Control.updatePCBDisplay();
         }
 
 
