@@ -553,8 +553,18 @@ var TSOS;
         Shell.prototype.shellKillByPID = function (args) {
             // Ensure that there is an argument to the Kill command
             if (args.length > 0) {
-                // Must ensure that the argument is a number
-                // If argument is a number must ensure that it is a valid PID in the system
+                // Get the PID from the arguements
+                var pidToKillString = args[0];
+                // Parse the pid as an int
+                var pidToKill = parseInt(pidToKillString);
+                console.log(pidToKill);
+                // Ensure that a valid PID is passed as the argument
+                if ((pidToKill < _NextPID) && (pidToKill >= 0)) {
+                    _StdOut.putText("KILL TIME, BITCH");
+                }
+                else {
+                    _StdOut.putText("Error: The PID you entered does not correspond to any process in the system. Enter a valid PID to kill a process");
+                }
             }
             else {
                 // The user must pass in an argument to the kill function
@@ -565,6 +575,7 @@ var TSOS;
         Shell.prototype.shellKillAll = function (args) {
             // Find out which processes are running
             // Kill each of the running processes
+            // Need to implement the kill command first for 1 PID
         };
         // Issue #36 | Allows the user to modify the quantum for Round Robin scheduling
         Shell.prototype.shellSetQuantum = function (args) {

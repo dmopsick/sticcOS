@@ -138,8 +138,8 @@ module TSOS {
             sc = new ShellCommand(this.shellKillByPID,
                 "kill",
                 "<pid> - Kills the specified process.");
-            this.commandList[this.commandList.length] = sc; 
-            
+            this.commandList[this.commandList.length] = sc;
+
             // killall
             sc = new ShellCommand(this.shellKillAll,
                 "killall",
@@ -656,10 +656,10 @@ module TSOS {
         public shellClearMem(args: string[]) {
             // Reset the three memory partitions
             _MemoryManager.resetBlocks();
-            
+
             // Need to make the currently loaded processes no longer runnable because they have gotten the AXE
             // Not sure if this is the best way right now... But it will certainly make all loaded PCBs unexecutable
-            for(let i = 0; i < _PCBInstances.length; i ++) {
+            for (let i = 0; i < _PCBInstances.length; i++) {
                 // Ensure all processes are no longer executable
                 _PCBInstances[i].executable = false;
             }
@@ -671,16 +671,28 @@ module TSOS {
 
         // Issue #36 | PS displays the PID and state of all processes
         public shellPs(args: string[]) {
-            
+
         }
 
         // Issue #36 | Kill a process based on its PID
         public shellKillByPID(args: string[]) {
             // Ensure that there is an argument to the Kill command
             if (args.length > 0) {
-                // Must ensure that the argument is a number
+                // Get the PID from the arguements
+                const pidToKillString = args[0];
 
-                // If argument is a number must ensure that it is a valid PID in the system
+                // Parse the pid as an int
+                const pidToKill = parseInt(pidToKillString);
+
+                console.log(pidToKill);
+
+                // Ensure that a valid PID is passed as the argument
+                if ((pidToKill < _NextPID) && (pidToKill >= 0)) {
+                    _StdOut.putText("KILL TIME, BITCH");
+                }
+                else {
+                    _StdOut.putText("Error: The PID you entered does not correspond to any process in the system. Enter a valid PID to kill a process");
+                }
             }
             else {
                 // The user must pass in an argument to the kill function
@@ -693,6 +705,8 @@ module TSOS {
             // Find out which processes are running
 
             // Kill each of the running processes
+
+            // Need to implement the kill command first for 1 PID
         }
 
         // Issue #36 | Allows the user to modify the quantum for Round Robin scheduling
