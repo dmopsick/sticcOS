@@ -86,8 +86,6 @@ var TSOS;
             _Memory = new TSOS.Memory([]);
             _Memory.init();
             _MemoryAccessor = new TSOS.MemoryAccessor();
-            // Issue #19 Display the current memory info on the OS console display
-            this.updateMemoryDisplay();
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
@@ -122,7 +120,8 @@ var TSOS;
         // Issue #27 #21 Update the HTML PCB display with the most recent PCB info
         Control.updatePCBDisplay = function (pcb) {
             // Update the HTML table that displays PCB info
-            // For project 1 only going to record information on one proccess because only saving one at a time
+            // Issue #36 I believe I will need to udpdate the naming schemes to have the PID in them in order to CRUD multiple processes
+            // This def needs to be dynamic 
             document.getElementById("processDisplayPID").innerHTML = "" + TSOS.Utils.displayHex(pcb.pid);
             document.getElementById("processDisplayState").innerHTML = "" + pcb.state;
             document.getElementById("processDisplayPC").innerHTML = "" + TSOS.Utils.displayHex(pcb.PC);
@@ -130,6 +129,12 @@ var TSOS;
             document.getElementById("processDisplayX").innerHTML = "" + TSOS.Utils.displayHex(pcb.Xreg);
             document.getElementById("processDisplayY").innerHTML = "" + TSOS.Utils.displayHex(pcb.Yreg);
             document.getElementById("processDisplayZ").innerHTML = "" + TSOS.Utils.displayHex(pcb.ZFlag);
+        };
+        // Issue #36 Remove any process(es) from the PCB display on the HTML display | Used in Kill all, clearmem
+        // Will need a modified version of this for kill I suppose!
+        Control.clearAllPCBDisplay = function () {
+            // Issue #36 Will need to remove some dynamically created processes displayed.
+            // Will be dependent on the above rework...
         };
         // Issue #27 #19 Update the HTML Memory display with the most recent memory info
         Control.updateMemoryDisplay = function () {

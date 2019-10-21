@@ -282,9 +282,6 @@ module TSOS {
             // Increment the PC for the current PCB
             _PCBInstances[_CurrentPID].PC = this.PC;
 
-            // Update the CPU display
-            TSOS.Control.updateCPUDisplay(_CPU);
-
             // Update the PCB display
             TSOS.Control.updatePCBDisplay(_PCBInstances[_CurrentPID]);
         }

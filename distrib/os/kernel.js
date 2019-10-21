@@ -80,6 +80,10 @@ var TSOS;
             else { // If there are no interrupts and there is nothing being executed then just be idle.
                 this.krnTrace("Idle");
             }
+            // Issue #45 Update the display after each clock tick rather than update it from CPU | Seperation of concerns
+            TSOS.Control.updateMemoryDisplay();
+            TSOS.Control.updateCPUDisplay(_CPU);
+            // need to update the PCB display once I figure out how I want to display this
         };
         //
         // Interrupt Handling

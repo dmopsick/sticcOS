@@ -23,8 +23,6 @@ var TSOS;
                 { memBlockID: 1, base: 256, limit: 511, isFree: true },
                 { memblockID: 2, base: 512, limit: 767, isFree: true }
             ];
-            // Update the memory display | That way most up to date memory displayed (for clearmem)
-            TSOS.Control.updateMemoryDisplay();
         };
         // Issue #25 determine if the one (for project 2) is free or ued
         // Free = no program loaded, or a program that has been loaded and ran already
@@ -58,8 +56,6 @@ var TSOS;
             else {
                 this.partitions[2].isFree = false;
             }
-            // Issue #19 Display the updated memory on the HTML OS display
-            TSOS.Control.updateMemoryDisplay();
         };
         // Issue #25 Read code from memory 
         // Issue #18 Need to be able to read from memory to run program
@@ -75,8 +71,6 @@ var TSOS;
             }
             // Save the value to the specified location in memory
             _Memory.memoryArray[addr] = valueToWrite;
-            // Update the memoery display to reflect changes
-            TSOS.Control.updateMemoryDisplay();
         };
         return MemoryManager;
     }());
