@@ -20,6 +20,9 @@ const TIMER_IRQ: number = 0;  // Pages 23 (timer), 9 (interrupts), and 561 (inte
                               // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
 const KEYBOARD_IRQ: number = 1;
 
+// Issue #45 create ISR numbers for the printing of numbers and strings | Seperate structure from presentation
+const PRINT_NUM_IRQ: number = 2; // Handles the X register 1 | printing of numbers
+const PRINT_STRING_IRQ: number = 3; // Handles the X register 2 | printing of strings
 
 //
 // Global Variables

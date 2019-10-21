@@ -131,16 +131,6 @@ var TSOS;
         // Issue #27 #21 Update the HTML PCB display with the most recent PCB info
         Control.updatePCBDisplay = function () {
             // Update the HTML table that displays PCB info
-            // Issue #36 I believe I will need to udpdate the naming schemes to have the PID in them in order to CRUD multiple processes
-            // This def needs to be dynamic 
-            /*(<HTMLElement>document.getElementById("processDisplayPID")).innerHTML = "" + TSOS.Utils.displayHex(pcb.pid);
-            (<HTMLElement>document.getElementById("processDisplayState")).innerHTML = "" + pcb.state;
-            (<HTMLElement>document.getElementById("processDisplayPC")).innerHTML = "" + TSOS.Utils.displayHex(pcb.PC);
-            (<HTMLElement>document.getElementById("processDisplayAcc")).innerHTML = "" + TSOS.Utils.displayHex(pcb.Acc);
-            (<HTMLElement>document.getElementById("processDisplayX")).innerHTML = "" + TSOS.Utils.displayHex(pcb.Xreg);
-            (<HTMLElement>document.getElementById("processDisplayY")).innerHTML = "" + TSOS.Utils.displayHex(pcb.Yreg);
-            (<HTMLElement>document.getElementById("processDisplayZ")).innerHTML = "" + TSOS.Utils.displayHex(pcb.ZFlag);
-            */
             // #45 #35 update the display of all executable processes
             _PCBInstances.forEach(function (pcb) {
                 document.getElementById("processDisplayPID-" + pcb.pid).innerHTML = "" + TSOS.Utils.displayHex(pcb.pid);

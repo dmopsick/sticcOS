@@ -114,6 +114,11 @@ var TSOS;
                     _krnKeyboardDriver.isr(params); // Kernel mode device driver
                     _StdIn.handleInput();
                     break;
+                case PRINT_NUM_IRQ:
+                    this.krnPrintNumSysCall(params);
+                    break;
+                case PRINT_STRING_IRQ:
+                    break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }
@@ -122,6 +127,19 @@ var TSOS;
             // The built-in TIMER (not clock) Interrupt Service Routine (as opposed to an ISR coming from a device driver). {
             // Check multiprogramming parameters and enforce quanta here. Call the scheduler / context switch here if necessary.
             // Or do it elsewhere in the Kernel. We don't really need this.
+        };
+        // Issue #45 handles the system call of printing of a number
+        Kernel.prototype.krnPrintNumSysCall = function (params) {
+            console.log("Flag 2");
+            console.log(params);
+            // const numToPrint = params[0];
+            var numToPrint = _CPU.Yreg;
+            _StdOut.putText(numToPrint.toString());
+        };
+        // Issue #45 handles the system call of printing a string
+        Kernel.prototype.krnPrintStringSysCall = function (params) {
+            console.log("Flag 2");
+            console.log(params);
         };
         //
         // System Calls... that generate software interrupts via tha Application Programming Interface library routines.

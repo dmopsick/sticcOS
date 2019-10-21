@@ -232,8 +232,10 @@ module TSOS {
                     // If there is an 01 in the X register then display the integer in the Y register
                     if (this.Xreg == 1) {
                         // Display the value in the Y register
-                        _StdOut.putText(this.Yreg.toString());
+                        // _StdOut.putText(this.Yreg.toString());
 
+                        // #45 Create a software interrupt to handle the system call
+                        _KernelInterruptQueue.enqueue(new Interrupt(PRINT_NUM_IRQ, []));
                     }
                     // Print 00 teriminated string starting at address sepcified in the Y register 
                     else if (this.Xreg == 2) {
