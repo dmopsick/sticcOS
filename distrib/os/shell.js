@@ -497,7 +497,7 @@ var TSOS;
                         _StdOut.advanceLine();
                         _StdOut.putText("Process ID: " + _NextPID);
                         // Last but not least Increment the current PID
-                        _CurrentPID = _NextPID; // Maybe remove this line ... current PID will prob be set by scheduler
+                        // _CurrentPID = _NextPID; // Maybe remove this line ... current PID will prob be set by scheduler
                         _NextPID++;
                     }
                     // There is no free memory block 

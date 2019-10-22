@@ -61,6 +61,8 @@ var TSOS;
         ProcessControlBlock.runProcess = function (pcb) {
             // Change state of PCB to running, because it is
             pcb.state = "Running";
+            // Set the current running process global vairable
+            _CurrentPID = pcb.pid;
             // Reset the cpu before execution of new program
             _CPU.init();
             // Populate the CPU with values from the process we want to run

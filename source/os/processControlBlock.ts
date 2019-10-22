@@ -52,6 +52,9 @@ module TSOS {
             // Change state of PCB to running, because it is
             pcb.state = "Running";
 
+            // Set the current running process global vairable
+            _CurrentPID = pcb.pid;
+
             // Reset the cpu before execution of new program
             _CPU.init();
 
