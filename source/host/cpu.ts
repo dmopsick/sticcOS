@@ -293,12 +293,15 @@ module TSOS {
             // Convert from logical to physical memory address
             const physicalAddress = this.convertLogicalToPhysicalMemoryAddress(logicalMemAddr);
 
-            return _MemoryManager.readFromMemory(physicalAddress);
+            // Get the memsegment to read from based on the current PCB
+            const memSegment = _PCBInstances[_CurrentPID].memSegment;
+
+            return _MemoryAccessor.readFromMemory(physicalAddress, memSegment);
         }
 
         // Helper function to use the memory manager to write to memory
         // not sure if in future I will have to modify the steps to writing, so abstracting it out here
-        public writeToMemory(logicalMemAddr: number, valueToWrite: string): void {
+        public writeToMemory(logicalAddress: number, valueToWrite: string): void {
             // Trim the white space from the value to write
             const trimmedValueToWriteString = valueToWrite.trim();
 
@@ -308,11 +311,11 @@ module TSOS {
             // Ensure value written in HEX into memory
             const hexToWrite = TSOS.Utils.displayHex(trimmedValueToWriteInt);
 
-            // Convert from logical to physical address
-            const physicalAddress = this.convertLogicalToPhysicalMemoryAddress(logicalMemAddr);
+            // Get the memsegment to read from based on the current PCB
+            const memSegment = _PCBInstances[_CurrentPID].memSegment;
 
             // Pass the arguments on to the memory manager
-            _MemoryManager.writeToMemory(physicalAddress, hexToWrite);
+            _MemoryAccessor.writeToMemory(logicalAddress, memSegment, hexToWrite);
         }
 
         // Helper function to get the following constant in memory in int form

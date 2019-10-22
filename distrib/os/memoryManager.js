@@ -11,12 +11,12 @@ var TSOS;
         }
         // Initialize the memory manager
         MemoryManager.prototype.init = function () {
-            this.resetBlocks();
+            this.resetAllBlocks();
         };
         // Issue #25 resets the partitions. Used to clear the memory and set it up when the OS is launched
-        MemoryManager.prototype.resetBlocks = function () {
+        MemoryManager.prototype.resetAllBlocks = function () {
             // Reset the values in memory to all zeros
-            _Memory.resetBlock();
+            _Memory.resetAllBlocks();
             // Reset partitions table
             this.partitions = [
                 { memBlockID: 0, base: 0, limit: 255, isFree: true },
@@ -28,7 +28,6 @@ var TSOS;
         // Free = no program loaded, or a program that has been loaded and ran already
         // Project 3 will require all three to be checked so going to pass arguement for which block to check
         MemoryManager.prototype.memBlockIsFree = function (memBlockID) {
-            if (memBlockID === void 0) { memBlockID = 0; }
             // See if there is a process already saved in memory
             if (this.partitions[memBlockID].isFree) {
                 return true;
@@ -42,35 +41,25 @@ var TSOS;
         // Issue #25 Loads program into memory
         // Takes in the PCB 
         MemoryManager.prototype.loadProgramToMemory = function (pcb, programCode) {
+            console.log("MEM SEGMENT to load: " + pcb.memSegment);
             // Save each Hex digit into memory
             for (var i = 0; i < programCode.length; i++) {
-                _Memory.memoryArray[i] = programCode[i];
+                // _Memory.memoryArray[i] = programCode[i];
+                _MemoryAccessor.writeToMemory(i, pcb.memSegment, programCode[i]);
             }
-            // Issue #17
-            if (pcb.memAddrStart < 256) {
+            // Issue #17 | make the 
+            if (pcb.memSegment == 0) {
+                console.log("Mem segment 0 is now not free");
                 this.partitions[0].isFree = false;
             }
-            else if (pcb.memAddrStart < 512) {
+            else if (pcb.memSegment == 1) {
+                console.log("Mem segment 1 is now not free");
                 this.partitions[1].isFree = false;
             }
             else {
+                console.log("Mem segment 2 is now not free");
                 this.partitions[2].isFree = false;
             }
-        };
-        // Issue #25 Read code from memory 
-        // Issue #18 Need to be able to read from memory to run program
-        MemoryManager.prototype.readFromMemory = function (addressToRead) {
-            // Return the specified memory address
-            return _Memory.memoryArray[addressToRead];
-        };
-        // Issue #27 #17 This method writes a value to a memory address. This may be combinable with loadProgramToMemory. 
-        MemoryManager.prototype.writeToMemory = function (addr, valueToWrite) {
-            // If the value to write is a lone hex digit, add a zero in front so it looks consistent
-            if (valueToWrite.length == 1) {
-                valueToWrite = 0 + valueToWrite;
-            }
-            // Save the value to the specified location in memory
-            _Memory.memoryArray[addr] = valueToWrite;
         };
         return MemoryManager;
     }());

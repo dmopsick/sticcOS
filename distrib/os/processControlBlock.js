@@ -32,13 +32,16 @@ var TSOS;
             this.memSegment = memSegment;
             switch (memAddrStart) {
                 case 0:
-                    memSegment = 0;
+                    this.memSegment = 0;
+                    console.log("PCB " + pid + " is in memory segment 0");
                     break;
                 case 256:
-                    memSegment = 1;
+                    this.memSegment = 1;
+                    console.log("PCB " + pid + " is in memory segment 1");
                     break;
                 case 512:
-                    memSegment = 2;
+                    this.memSegment = 2;
+                    console.log("PCB " + pid + " is in memory segment 2");
                     break;
             }
         }

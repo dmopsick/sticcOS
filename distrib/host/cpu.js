@@ -238,21 +238,23 @@ var TSOS;
         Cpu.prototype.readMemory = function (logicalMemAddr) {
             // Convert from logical to physical memory address
             var physicalAddress = this.convertLogicalToPhysicalMemoryAddress(logicalMemAddr);
-            return _MemoryManager.readFromMemory(physicalAddress);
+            // Get the memsegment to read from based on the current PCB
+            var memSegment = _PCBInstances[_CurrentPID].memSegment;
+            return _MemoryAccessor.readFromMemory(physicalAddress, memSegment);
         };
         // Helper function to use the memory manager to write to memory
         // not sure if in future I will have to modify the steps to writing, so abstracting it out here
-        Cpu.prototype.writeToMemory = function (logicalMemAddr, valueToWrite) {
+        Cpu.prototype.writeToMemory = function (logicalAddress, valueToWrite) {
             // Trim the white space from the value to write
             var trimmedValueToWriteString = valueToWrite.trim();
             // Parse trimmed value as an int
             var trimmedValueToWriteInt = parseInt(trimmedValueToWriteString, 16);
             // Ensure value written in HEX into memory
             var hexToWrite = TSOS.Utils.displayHex(trimmedValueToWriteInt);
-            // Convert from logical to physical address
-            var physicalAddress = this.convertLogicalToPhysicalMemoryAddress(logicalMemAddr);
+            // Get the memsegment to read from based on the current PCB
+            var memSegment = _PCBInstances[_CurrentPID].memSegment;
             // Pass the arguments on to the memory manager
-            _MemoryManager.writeToMemory(physicalAddress, hexToWrite);
+            _MemoryAccessor.writeToMemory(logicalAddress, memSegment, hexToWrite);
         };
         // Helper function to get the following constant in memory in int form
         Cpu.prototype.getFollowingConstantFromMemory = function () {

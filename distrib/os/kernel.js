@@ -34,7 +34,6 @@ var TSOS;
             // Issue #45 Initialize global memory variables based on the size of the passed in memory
             _MemoryBlockSize = _Memory.memoryBlockSize;
             _MemoryBlockCount = _Memory.memoryBlockCount;
-            console.log("BLOCK: " + _MemoryBlockSize + " COUNT: " + _MemoryBlockCount);
             // Issue #25 Initialize Memory Manager
             _MemoryManager = new TSOS.MemoryManager();
             _MemoryManager.init();

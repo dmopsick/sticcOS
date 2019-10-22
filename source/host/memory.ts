@@ -16,14 +16,28 @@ module TSOS {
         public init(): void {
             this.memoryArray = [];
             // Initialize the block with all 00s
-            this.resetBlock();
+            this.resetAllBlocks();
         }
 
         // Resets the memory in the memory block to all 00s
-        public resetBlock(): void {
-            // Use the constant for size of the memory block to intialize the array
+        public resetAllBlocks(): void {
+            // Use the constant for size of the memory block to set the entire array to 00
             for (let i = 0; i < (this.memoryBlockSize * this.memoryBlockCount); i++) {
                 // Initialize the memory block with 00 in each slot
+                this.memoryArray[i] = "00";
+            }
+        }
+
+        // Reset one specific block in memory 
+        public resetBlock(memSegment: number): void {
+            // Calculate the beginning of the segment to reset
+            const segmentStart = memSegment * this.memoryBlockSize;
+
+            // Calculate the end of the segment to reset 
+            const segmentEnd = memSegment * this.memoryBlockSize + this.memoryBlockSize;
+
+            // Reset the chosen segment with zeros
+            for(let i = segmentStart; i < segmentEnd; i++) {
                 this.memoryArray[i] = "00";
             }
         }

@@ -547,49 +547,88 @@ module TSOS {
 
                 // Verify the program code will not cause an overflow
                 if (splitProgramInput.length <= _MemoryBlockSize) {
-                    // Check to see the memory block is full (Project 2, will check only 1 by defauly)
-                    const freeMemoryBlock = _MemoryManager.memBlockIsFree();
+                    // Need to caluclate which memblock is free
+                    let freeMemoryBlock = -1;
 
-                    // If the lone memory block is currently full... Erase the current code in memory to prepare for new code
-                    if (!freeMemoryBlock) {
-                        _MemoryManager.resetBlocks();
+                    let newPCB;
 
-                        // Have to make the previous process unrunnable by the run command
-                        // The previous program(s) cannot be ran because they are being removed from memory
+                    // Check which memory block is free
+                    if (_MemoryManager.memBlockIsFree(0)) {
+                        // Mem block 0 is free
+                        freeMemoryBlock = 0;
+
+                        console.log("Memory block 0 is free");
+
+                        // Create a Process Control Block (PCB)
+                        newPCB = new TSOS.ProcessControlBlock(
+                            _NextPID, // Use next available PID
+                            0, // Memory Start
+                            255 // Memory Range
+                        );
                     }
-                    // Continue saving the program now
+                    else if (_MemoryManager.memBlockIsFree(1)) {
+                        // Mem block 1 is free
+                        freeMemoryBlock = 1;
 
-                    // Create a Process Control Block (PCB)
-                    const newPCB = new TSOS.ProcessControlBlock(
-                        _NextPID, // Use next available PID
-                        0, // Memory Start
-                        256 // Memory Range
-                    );
+                        console.log("Memory block 1 is free");
 
-                    // Add new PCB to global instance array
-                    _PCBInstances.push(newPCB);
+                        // Create a Process Control Block (PCB)
+                        newPCB = new TSOS.ProcessControlBlock(
+                            _NextPID, // Use next available PID
+                            256, // Memory Start
+                            511 // Memory Range
+                        );
+                    }
+                    else if (_MemoryManager.memBlockIsFree(2)) {
+                        // Mem block 2 is free
+                        freeMemoryBlock = 2;
 
-                    // Write the program into memory
-                    _MemoryManager.loadProgramToMemory(newPCB, splitProgramInput);
+                        console.log("Memory block 2 is free");
 
-                    // Issue #35 Add the Loaded PCB as a new row in the table
-                    TSOS.Control.addPCBRowToDisplay(newPCB);
-
-
-                    // If this is not the first program in memory, make the most recent program unexecutable
-                    // This is only for project 2 where one program is being loaded at a time
-                    if (_NextPID > 0) {
-                        _PCBInstances[_CurrentPID].executable = false;
+                        // Create a Process Control Block (PCB)
+                        newPCB = new TSOS.ProcessControlBlock(
+                            _NextPID, // Use next available PID
+                            512, // Memory Start
+                            767 // Memory Range
+                        );
                     }
 
-                    // Return the PID of the created process to the user
-                    _StdOut.putText("Great job! You loaded the program into memory.");
-                    _StdOut.advanceLine();
-                    _StdOut.putText("Process ID: " + _NextPID);
+                    // If there is a free memblock continue the loading
+                    if (freeMemoryBlock != -1) {
+                        console.log("MEMSEGMENT: " + newPCB.memSegment);
+                        // Add new PCB to global instance array
+                        _PCBInstances.push(newPCB);
 
-                    // Last but not least Increment the current PID
-                    _CurrentPID = _NextPID;
-                    _NextPID++;
+                        // Get the mem segment of the PCB being loaded
+                        const memSegment = newPCB.memSegment;
+
+                        // Write the program into memory
+                        _MemoryManager.loadProgramToMemory(newPCB, splitProgramInput);
+
+                        // Issue #35 Add the Loaded PCB as a new row in the table
+                        TSOS.Control.addPCBRowToDisplay(newPCB);
+
+
+                        // If this is not the first program in memory, make the most recent program unexecutable
+                        // This is only for project 2 where one program is being loaded at a time
+                        /* if (_NextPID > 0) {
+                            _PCBInstances[_CurrentPID].executable = false;
+                        } */
+
+                        // Return the PID of the created process to the user
+                        _StdOut.putText("Great job! You loaded the program into memory.");
+                        _StdOut.advanceLine();
+                        _StdOut.putText("Process ID: " + _NextPID);
+
+                        // Last but not least Increment the current PID
+                        _CurrentPID = _NextPID; // Maybe remove this line ... current PID will prob be set by scheduler
+                        _NextPID++;
+                    }
+                    // There is no free memory block 
+                    else {
+                        // Let the user know that there are three loaded programs, nothing can be loaded unless memory is cleared or ran
+                        _StdOut.putText("There are no empty memory segments. Clear the memory or run one or more processes.");
+                    }
 
                 }
                 // The entered program code is too long
@@ -655,7 +694,7 @@ module TSOS {
         // Issue #36 | Clearmem clears all three memory partitions
         public shellClearMem(args: string[]) {
             // Reset the three memory partitions
-            _MemoryManager.resetBlocks();
+            _MemoryManager.resetAllBlocks();
 
             // Need to make the currently loaded processes no longer runnable because they have gotten the AXE
             // Not sure if this is the best way right now... But it will certainly make all loaded PCBs unexecutable

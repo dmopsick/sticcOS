@@ -9,7 +9,6 @@ var TSOS;
         };
         // Issue #26 Convert the logical address specified in the program code to the physical address
         MemoryAccessor.prototype.convertLogicalToPhysicalAddress = function (logicalAddress, memSegment) {
-            if (memSegment === void 0) { memSegment = 0; }
             var physicalAddress = logicalAddress;
             // Use a switch case to determine if and how to modify the logical address to the correct physical address
             switch (memSegment) {
@@ -28,6 +27,28 @@ var TSOS;
             }
             // Return the physical address to the user
             return physicalAddress;
+        };
+        // Issue #25 Read code from memory | Issue #18 Need to be able to read from memory to run program
+        // Issue #45 | Only allow direct memory access in the Memory Accessor File
+        // Take in Logical address, use convert function to access the physical address
+        MemoryAccessor.prototype.readFromMemory = function (logicalAddress, memSegment) {
+            // Convert the logical address to a physical address 
+            var physicalAddress = this.convertLogicalToPhysicalAddress(logicalAddress, memSegment);
+            // Return the data in the specified memory address
+            return _Memory.memoryArray[physicalAddress];
+        };
+        // Issue #27 #17 This method writes a value to a memory address. This may be combinable with loadProgramToMemory. 
+        // Issue #45 | Only the memory accessor should modify memory
+        MemoryAccessor.prototype.writeToMemory = function (logicalAddress, memSegment, valueToWrite) {
+            // Convert the logical address to a physical address 
+            var physicalAddress = this.convertLogicalToPhysicalAddress(logicalAddress, memSegment);
+            // If the value to write is a lone hex digit, add a zero in front so it looks consistent
+            if (valueToWrite.length == 1) {
+                valueToWrite = 0 + valueToWrite;
+            }
+            console.log(physicalAddress);
+            // Save the value to the specified location in memory
+            _Memory.memoryArray[physicalAddress] = valueToWrite;
         };
         return MemoryAccessor;
     }());
