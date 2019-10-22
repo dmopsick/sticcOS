@@ -72,8 +72,8 @@ var Glados: any = null;  // This is the function Glados() in glados-ip*.js http:
 var _GLaDOS: any = null; // If the above is linked in, this is the instantiated instance of Glados.
 
 // Memory 
-var _MemoryBlockSize: number = 256; // Issue #24 | Keeps track of the size of a single memory block in the system
-var _MemoryBlockCount: number = 3; // Issue #24 | Keeps track of the amount of memory blocks present in the system
+var _MemoryBlockSize: number; // Issue #24 | Keeps track of the size of a single memory block in the system
+var _MemoryBlockCount: number; // Issue #24 | Keeps track of the amount of memory blocks present in the system
 var _Memory: TSOS.Memory;
 var _MemoryAccessor: TSOS.MemoryAccessor;
 var _MemoryManager: TSOS.MemoryManager = null;

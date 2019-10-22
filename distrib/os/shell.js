@@ -560,7 +560,13 @@ var TSOS;
                 console.log(pidToKill);
                 // Ensure that a valid PID is passed as the argument
                 if ((pidToKill < _NextPID) && (pidToKill >= 0)) {
-                    _StdOut.putText("KILL TIME, BITCH");
+                    // Make the specified process no longer executable
+                    _PCBInstances[pidToKill].executable = false;
+                    // Change the state of the process to reflect its MURDER
+                    _PCBInstances[pidToKill].state = "TERMINATED";
+                    // Stop execution
+                    // Remove it from ready queue?
+                    _StdOut.putText("Process: " + pidToKill + " has been killed.");
                 }
                 else {
                     _StdOut.putText("Error: The PID you entered does not correspond to any process in the system. Enter a valid PID to kill a process");

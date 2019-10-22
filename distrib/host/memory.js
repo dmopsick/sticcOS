@@ -8,6 +8,9 @@ var TSOS;
         function Memory(memoryArray) {
             if (memoryArray === void 0) { memoryArray = []; }
             this.memoryArray = memoryArray;
+            // Issue #45 | Assign the memory block size and count in the memory class then assign it to the globals in bootstrap
+            this.memoryBlockSize = 256;
+            this.memoryBlockCount = 3;
         }
         // Initializes the memory when the OS is started
         Memory.prototype.init = function () {
@@ -18,7 +21,7 @@ var TSOS;
         // Resets the memory in the memory block to all 00s
         Memory.prototype.resetBlock = function () {
             // Use the constant for size of the memory block to intialize the array
-            for (var i = 0; i < (_MemoryBlockSize * _MemoryBlockCount); i++) {
+            for (var i = 0; i < (this.memoryBlockSize * this.memoryBlockCount); i++) {
                 // Initialize the memory block with 00 in each slot
                 this.memoryArray[i] = "00";
             }

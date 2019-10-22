@@ -272,6 +272,7 @@ module TSOS {
                     else {
                         // Throw a software interrupt error, invalid system call in X register
                         
+                        // Kill the current process... change state to failed?
                     }
 
                     break;
