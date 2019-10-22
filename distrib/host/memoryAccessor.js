@@ -46,7 +46,6 @@ var TSOS;
             if (valueToWrite.length == 1) {
                 valueToWrite = 0 + valueToWrite;
             }
-            console.log(physicalAddress);
             // Save the value to the specified location in memory
             _Memory.memoryArray[physicalAddress] = valueToWrite;
         };

@@ -557,8 +557,6 @@ module TSOS {
                         // Mem block 0 is free
                         freeMemoryBlock = 0;
 
-                        console.log("Memory block 0 is free");
-
                         // Create a Process Control Block (PCB)
                         newPCB = new TSOS.ProcessControlBlock(
                             _NextPID, // Use next available PID
@@ -569,8 +567,6 @@ module TSOS {
                     else if (_MemoryManager.memBlockIsFree(1)) {
                         // Mem block 1 is free
                         freeMemoryBlock = 1;
-
-                        console.log("Memory block 1 is free");
 
                         // Create a Process Control Block (PCB)
                         newPCB = new TSOS.ProcessControlBlock(
@@ -583,8 +579,6 @@ module TSOS {
                         // Mem block 2 is free
                         freeMemoryBlock = 2;
 
-                        console.log("Memory block 2 is free");
-
                         // Create a Process Control Block (PCB)
                         newPCB = new TSOS.ProcessControlBlock(
                             _NextPID, // Use next available PID
@@ -595,7 +589,6 @@ module TSOS {
 
                     // If there is a free memblock continue the loading
                     if (freeMemoryBlock != -1) {
-                        console.log("MEMSEGMENT: " + newPCB.memSegment);
                         // Add new PCB to global instance array
                         _PCBInstances.push(newPCB);
 
@@ -607,13 +600,6 @@ module TSOS {
 
                         // Issue #35 Add the Loaded PCB as a new row in the table
                         TSOS.Control.addPCBRowToDisplay(newPCB);
-
-
-                        // If this is not the first program in memory, make the most recent program unexecutable
-                        // This is only for project 2 where one program is being loaded at a time
-                        /* if (_NextPID > 0) {
-                            _PCBInstances[_CurrentPID].executable = false;
-                        } */
 
                         // Return the PID of the created process to the user
                         _StdOut.putText("Great job! You loaded the program into memory.");
