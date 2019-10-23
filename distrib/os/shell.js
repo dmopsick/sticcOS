@@ -416,7 +416,7 @@ var TSOS;
                 document.getElementById("hostStatusMessage").innerHTML = "Status: " + statusString;
             }
             else {
-                _StdOut.putText("Usage: status <string> Please supply a string");
+                _StdOut.putText("Error: status <string> Please supply a string");
             }
         };
         // Displays the DREADED blue screen of death :( Issue #6
@@ -616,7 +616,7 @@ var TSOS;
             }
             else {
                 // The user must pass in an argument to the kill function
-                _StdOut.putText("You must pass in a PID to kill a process.");
+                _StdOut.putText("Error: You must pass in a PID to kill a process.");
             }
         };
         // Issue #36 | Kills all currently running processes
@@ -629,12 +629,25 @@ var TSOS;
         Shell.prototype.shellSetQuantum = function (args) {
             // Ensure that there is an arguement to set the quantum value to
             if (args.length > 0) {
-                // Check that the user passed a valid int as an argument
-                // If not, tell them the correct way to use this function 
+                // Get the quantum value argument
+                var newQuantumString = args[0];
+                // Parse the argument as an integer
+                var newQuantum = parseInt(newQuantumString);
+                // Check that the new quantum is a positive integer
+                if (newQuantum > 0) {
+                    // Set the new quantum value as the quantum value in the scheduler
+                    _Scheduler.quantum = newQuantum;
+                    // Confirm to the user that the quantum has indeed been changed
+                    _StdOut.putText("The quantum has been changed to " + newQuantum + ".");
+                }
+                else {
+                    // If not, let the user know that the quantum must be a postiive number
+                    _StdOut.putText("Error: Only postiive numbers are valid quantum values");
+                }
             }
             else {
                 // The user must pass a quantum value 
-                _StdOut.putText("Please specify an integer to set as the quantum value.");
+                _StdOut.putText("Error: Please specify a positive number to set as the quantum value.");
             }
         };
         return Shell;

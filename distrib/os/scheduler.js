@@ -11,7 +11,7 @@ var TSOS;
         // Issue #42 | Check the schedule on a CPU cycle and determine if a context switch is necesary
         Scheduler.prototype.checkSchedule = function () {
             // If the cycle counter is equal to the quantum, it is time for a context switch
-            if (this.cycleCounter == this.quantum) {
+            if (this.cycleCounter >= this.quantum) {
                 // The counter has reached the quantum, time to load the next process
                 // Check if there are any waiting processes to switch to
                 // If so... 
