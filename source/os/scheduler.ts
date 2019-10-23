@@ -18,6 +18,7 @@ module TSOS {
             // If the cycle counter is equal to the quantum, it is time for a context switch
             if (this.cycleCounter >= this.quantum) {
                 // The counter has reached the quantum, time to load the next process
+                console.log("SCHEDULING DECISION TIME");
 
                 // Check if there are any waiting processes to switch to
 

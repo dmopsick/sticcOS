@@ -590,6 +590,22 @@ var TSOS;
         };
         // Issue #36 | PS displays the PID and state of all processes
         Shell.prototype.shellPs = function (args) {
+            // Check that there are any processes to display to the user
+            if (_PCBInstances.length > 0) {
+                // Display an intiail message
+                _StdOut.putText("Processes loaded into SticcOS:");
+                _StdOut.advanceLine();
+                // Loop through the PCB array and diplsay the PID and state of each process
+                // This might get large, which should be displayed? Resident/Ready/Waiting? All?
+                _PCBInstances.forEach(function (pcb) {
+                    _StdOut.putText("  PID: " + pcb.pid + "    State: " + pcb.state);
+                    _StdOut.advanceLine();
+                });
+            }
+            else {
+                // Let the user know there are no processes saved in SticcOS
+                _StdOut.putText("There are no processes loaded in SticcOS to display.");
+            }
         };
         // Issue #36 | Kill a process based on its PID
         Shell.prototype.shellKillByPID = function (args) {
