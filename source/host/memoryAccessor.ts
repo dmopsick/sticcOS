@@ -11,7 +11,9 @@ module TSOS {
 
         // Issue #26 Convert the logical address specified in the program code to the physical address
         public convertLogicalToPhysicalAddress(logicalAddress: number, memSegment: number): number {
+            // Set the physical address to intially be the logical address
             let physicalAddress = logicalAddress;
+            console.log("MEM SEGMENT: " + memSegment + " Physical Address Before: " + physicalAddress);
 
             // Use a switch case to determine if and how to modify the logical address to the correct physical address
             switch (memSegment) {
@@ -28,6 +30,8 @@ module TSOS {
                 default: // This should not be reached
                     break;
             }
+
+            console.log("PHYSICAL ADDRESS AFTER: " + physicalAddress);
 
             // Return the physical address to the user
             return physicalAddress;

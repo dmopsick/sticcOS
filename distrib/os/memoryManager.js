@@ -35,8 +35,6 @@ var TSOS;
             else {
                 return false;
             }
-            // If there is no process found in the chosen block
-            // Or if there is a process already ran it should overwrite?
         };
         // Issue #25 Loads program into memory
         // Takes in the PCB 
@@ -44,20 +42,16 @@ var TSOS;
             console.log("MEM SEGMENT to load: " + pcb.memSegment);
             // Save each Hex digit into memory
             for (var i = 0; i < programCode.length; i++) {
-                // _Memory.memoryArray[i] = programCode[i];
                 _MemoryAccessor.writeToMemory(i, pcb.memSegment, programCode[i]);
             }
-            // Issue #17 | make the 
+            // Issue #17 | Change the partition isFree value to false because it is no longer free
             if (pcb.memSegment == 0) {
-                console.log("Mem segment 0 is now not free");
                 this.partitions[0].isFree = false;
             }
             else if (pcb.memSegment == 1) {
-                console.log("Mem segment 1 is now not free");
                 this.partitions[1].isFree = false;
             }
             else {
-                console.log("Mem segment 2 is now not free");
                 this.partitions[2].isFree = false;
             }
         };

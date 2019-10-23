@@ -40,11 +40,11 @@ var TSOS;
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
             // Before the op code is retrieved, must ensure reading from correct place in memory
-            var logicalAddress = this.convertLogicalToPhysicalMemoryAddress(this.PC);
+            // const logicalAddress = this.convertLogicalToPhysicalMemoryAddress(this.PC);
             // Need to FETCH the current op code from memory
             // Get the current program counter location, originally set when program is loaded
-            var currentOpCode = this.readMemory(logicalAddress);
-            // console.log("FLAG 5 " + currentOpCode);
+            var currentOpCode = this.readMemory(this.PC);
+            console.log("FLAG 5 " + currentOpCode);
             // Initialize variables outside of the switch to prevent unitialized weirdness. 
             var constantIntValue, memoryAddrIndex, loadedIntValue;
             // Make switch that DECODES the current OP CODE, so we can EXECUTE proper functionality
@@ -185,38 +185,11 @@ var TSOS;
                 case "FF": // SYS | The call parameter is based on the X or Y register 
                     // If there is an 01 in the X register then display the integer in the Y register
                     if (this.Xreg == 1) {
-                        // Display the value in the Y register
-                        // _StdOut.putText(this.Yreg.toString());
                         // #45 Create a software interrupt to handle the system call | Seperate structure from presentation
                         _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PRINT_NUM_IRQ, []));
                     }
                     // Print 00 teriminated string starting at address sepcified in the Y register 
                     else if (this.Xreg == 2) {
-                        // Get the first location of the string to print
-                        /* let memoryAddrToPrint = this.Yreg;
-
-                        // Get value at the first location in memory
-                        let opCodeToPrint = this.loadConstantFromMemory(memoryAddrToPrint);
-
-                        // Keep track of where to return to after printing the string
-                        const returnToAddr = this.PC;
-
-                        // Set the program counter to the new value in memory
-                        this.PC = this.Yreg;
-
-                        // Loop through Print the characters until the breakpoint is reached
-                        while (opCodeToPrint != 0) {
-                            // Convert non 00 op code to the corresponding char based on ASCII
-                            let charToPrint = String.fromCharCode(opCodeToPrint);
-                            _StdOut.putText(charToPrint);
-
-                            // Get the next op code
-                            opCodeToPrint = this.getFollowingConstantFromMemory();
-                            
-                        }
-
-                        // Done printing, return PC back to after the initial call
-                        this.PC = returnToAddr; */
                         // #45 Create a software intterupt to handle the system call | Seperate structure from presentation
                         _KernelInterruptQueue.enqueue(new TSOS.Interrupt(PRINT_STRING_IRQ, []));
                     }
@@ -235,12 +208,10 @@ var TSOS;
             _PCBInstances[_CurrentPID].PC = this.PC;
         };
         // Helper Function to use the memory manager to access the specified memory and return the op code
-        Cpu.prototype.readMemory = function (logicalMemAddr) {
-            // Convert from logical to physical memory address
-            var physicalAddress = this.convertLogicalToPhysicalMemoryAddress(logicalMemAddr);
+        Cpu.prototype.readMemory = function (logicalAddess) {
             // Get the memsegment to read from based on the current PCB
             var memSegment = _PCBInstances[_CurrentPID].memSegment;
-            return _MemoryAccessor.readFromMemory(physicalAddress, memSegment);
+            return _MemoryAccessor.readFromMemory(logicalAddess, memSegment);
         };
         // Helper function to use the memory manager to write to memory
         // not sure if in future I will have to modify the steps to writing, so abstracting it out here
@@ -259,20 +230,16 @@ var TSOS;
         // Helper function to get the following constant in memory in int form
         Cpu.prototype.getFollowingConstantFromMemory = function () {
             // Get the following address to load the constant from in memory | Increment the program counter
-            var logicalConstantAddr = ++this.PC;
-            // Convert to physical address
-            var physicalConstantAddr = this.convertLogicalToPhysicalMemoryAddress(logicalConstantAddr);
+            var logicalAddress = ++this.PC;
             // Read the constant value from memory
-            var constantStringValue = this.readMemory(physicalConstantAddr);
+            var constantStringValue = this.readMemory(logicalAddress);
             // Convert the constant to a number
             return parseInt(constantStringValue, 16);
         };
         // Helper function to load a constant number value from memory
-        Cpu.prototype.loadConstantFromMemory = function (logicalMemAddr) {
-            // Get the physical address from the logical address
-            var physicalAddress = this.convertLogicalToPhysicalMemoryAddress(logicalMemAddr);
+        Cpu.prototype.loadConstantFromMemory = function (logicalAddress) {
             // Load the constant value from memory
-            var loadedStringValue = this.readMemory(physicalAddress);
+            var loadedStringValue = this.readMemory(logicalAddress);
             // Convert the loaded value to an int
             return parseInt(loadedStringValue, 16);
         };
@@ -285,19 +252,8 @@ var TSOS;
             // Combine memory addresses
             var fullMemAddrString = firstHalfMemAddr + secondHalfMemAddr;
             // Convert memory address to int
-            var memAddrInt = parseInt(fullMemAddrString);
-            // Before the op code is retrieved, must ensure reading from correct place in memory
-            var physicalAddress = this.convertLogicalToPhysicalMemoryAddress(memAddrInt);
+            var logicalAddress = parseInt(fullMemAddrString);
             // Return them the full memory address
-            return physicalAddress;
-        };
-        // Issue #26 Implementing the memory accessor functionality
-        // Helper function to convert the logical address from the program to the physical address in the system
-        Cpu.prototype.convertLogicalToPhysicalMemoryAddress = function (logicalMemAddr) {
-            // Get current mem segment the PCB is working in
-            var memSegment = _PCBInstances[_CurrentPID].memSegment;
-            // Before the op code is retrieved, must ensure reading from correct place in memory
-            var logicalAddress = _MemoryAccessor.convertLogicalToPhysicalAddress(logicalMemAddr, memSegment);
             return logicalAddress;
         };
         return Cpu;
