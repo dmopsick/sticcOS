@@ -26,6 +26,8 @@ var PRINT_STRING_IRQ = 3; // Handles the X register 2 | printing of strings
 var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 // Issue #42 | Quantum values used for CPU scheduling
 var _DefaultQuantum = 6;
+var _Scheduler;
+var _Dispatcher;
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
 var _Canvas; // Initialized in Control.hostInit().

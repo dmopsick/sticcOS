@@ -34,6 +34,8 @@ var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure th
 
 // Issue #42 | Quantum values used for CPU scheduling
 var _DefaultQuantum: number = 6;
+var _Scheduler: TSOS.Scheduler;
+var _Dispatcher: TSOS.Dispatcher;
 
 var _OSclock: number = 0;  // Page 23.
 
