@@ -32,6 +32,9 @@ const PRINT_STRING_IRQ: number = 3; // Handles the X register 2 | printing of st
 
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 
+// Issue #42 | Quantum values used for CPU scheduling
+var _DefaultQuantum: number = 6;
+
 var _OSclock: number = 0;  // Page 23.
 
 var _Mode: number = 0;     // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
