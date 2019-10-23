@@ -685,8 +685,11 @@ module TSOS {
                     }
                 }
 
-                // If there are not executable processes, tell the user
-                _StdOut.putText("There are currently no runnable processes loaded.")
+                if (numExecutableProcesses == 0) {
+                    // If there are not executable processes, tell the user
+                    _StdOut.putText("There are currently no runnable processes loaded.")
+                        ;
+                }
             }
             else {
                 _StdOut.putText("Error: There are no processes saved in SticcOS.");
