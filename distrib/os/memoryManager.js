@@ -37,7 +37,7 @@ var TSOS;
             }
         };
         // Issue #25 Loads program into memory
-        // Takes in the PCB 
+        // Takes in the PCB and loads it to memory
         MemoryManager.prototype.loadProgramToMemory = function (pcb, programCode) {
             console.log("MEM SEGMENT to load: " + pcb.memSegment);
             // Save each Hex digit into memory

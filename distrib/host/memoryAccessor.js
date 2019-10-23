@@ -11,7 +11,6 @@ var TSOS;
         MemoryAccessor.prototype.convertLogicalToPhysicalAddress = function (logicalAddress, memSegment) {
             // Set the physical address to intially be the logical address
             var physicalAddress = logicalAddress;
-            console.log("MEM SEGMENT: " + memSegment + " Physical Address Before: " + physicalAddress);
             // Use a switch case to determine if and how to modify the logical address to the correct physical address
             switch (memSegment) {
                 case 0: // Working with memory segment 0 (The only one for project 2) 
@@ -27,7 +26,6 @@ var TSOS;
                 default: // This should not be reached
                     break;
             }
-            console.log("PHYSICAL ADDRESS AFTER: " + physicalAddress);
             // Return the physical address to the user
             return physicalAddress;
         };

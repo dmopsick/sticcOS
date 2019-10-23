@@ -68,7 +68,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellRun, "run", "<pid> - Executes the specified program loaded into SticcOS.");
             this.commandList[this.commandList.length] = sc;
             // runall 
-            sc = new TSOS.ShellCommand(this.shellRunAll, "runAll", "- Executes all programs currently loaded into SticcOS.");
+            sc = new TSOS.ShellCommand(this.shellRunAll, "runall", "- Executes all programs currently loaded into SticcOS.");
             this.commandList[this.commandList.length] = sc;
             // clearmem
             sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", "- Clears all 3 of the memory partitions in SticcOS.");
@@ -542,7 +542,7 @@ var TSOS;
                     }
                 }
                 else {
-                    _StdOut.putText("Error: There is no valid process with the PID " + pid);
+                    _StdOut.putText("Error: There is no valid process with the PID " + pid + ".");
                 }
             }
             else {
@@ -550,8 +550,26 @@ var TSOS;
             }
         };
         // Issue #36 | Runs all programs loaded into the system
+        // This cannot be fully completed until 
         Shell.prototype.shellRunAll = function (args) {
             // Verify that there is at least one program loaded and executable
+            if (_PCBInstances.length > 0) {
+                var numExecutableProcesses = 0;
+                // Loop through all processes and run all executable processes
+                for (var i = 0; i < _PCBInstances.length; i++) {
+                    if (_PCBInstances[i].executable) {
+                        // If the process is executable, uh, execute it
+                        TSOS.ProcessControlBlock.runProcess(_PCBInstances[i]);
+                        // Increment the number of executable processes
+                        numExecutableProcesses++;
+                    }
+                }
+                // If there are not executable processes, tell the user
+                _StdOut.putText("There are currently no runnable processes loaded.");
+            }
+            else {
+                _StdOut.putText("Error: There are no processes saved in SticcOS.");
+            }
             // Need to determine which PID are currently loaded in memory and executable
             // Execute each of them.
         };

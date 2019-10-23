@@ -118,7 +118,7 @@ module TSOS {
 
             // runall 
             sc = new ShellCommand(this.shellRunAll,
-                "runAll",
+                "runall",
                 "- Executes all programs currently loaded into SticcOS.");
             this.commandList[this.commandList.length] = sc;
 
@@ -660,7 +660,7 @@ module TSOS {
                     }
                 }
                 else {
-                    _StdOut.putText("Error: There is no valid process with the PID " + pid);
+                    _StdOut.putText("Error: There is no valid process with the PID " + pid + ".");
                 }
             }
             else {
@@ -669,8 +669,28 @@ module TSOS {
         }
 
         // Issue #36 | Runs all programs loaded into the system
+        // This cannot be fully completed until 
         public shellRunAll(args: string[]) {
             // Verify that there is at least one program loaded and executable
+            if (_PCBInstances.length > 0) {
+                let numExecutableProcesses = 0;
+                // Loop through all processes and run all executable processes
+                for (let i = 0; i < _PCBInstances.length; i++) {
+                    if (_PCBInstances[i].executable) {
+                        // If the process is executable, uh, execute it
+                        TSOS.ProcessControlBlock.runProcess(_PCBInstances[i]);
+
+                        // Increment the number of executable processes
+                        numExecutableProcesses++;
+                    }
+                }
+
+                // If there are not executable processes, tell the user
+                _StdOut.putText("There are currently no runnable processes loaded.")
+            }
+            else {
+                _StdOut.putText("Error: There are no processes saved in SticcOS.");
+            }
 
             // Need to determine which PID are currently loaded in memory and executable
 

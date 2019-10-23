@@ -39,7 +39,7 @@ module TSOS {
         }
 
         // Issue #25 Loads program into memory
-        // Takes in the PCB 
+        // Takes in the PCB and loads it to memory
         public loadProgramToMemory(pcb: TSOS.ProcessControlBlock, programCode: string[]): void {
             console.log("MEM SEGMENT to load: " + pcb.memSegment);
 
