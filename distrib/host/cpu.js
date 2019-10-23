@@ -128,8 +128,12 @@ var TSOS;
                     this.isExecuting = false;
                     // Modify the state of the currently executed PCB to Completed
                     _PCBInstances[_CurrentPID].state = "Completed";
-                    // SticcOs lets you only execute a program once? I do not know how I feel about that
+                    // SticcOs lets you only execute a program once
                     _PCBInstances[_CurrentPID].executable = false;
+                    // Get the memory segment used by the current processes to free it up
+                    var segmentToFree = _PCBInstances[_CurrentPID].memSegment;
+                    // #35 set the mem segment to being free so a new process can be laoded
+                    _MemoryManager.partitions[segmentToFree].isFree = true;
                     break;
                 case "EC": // CPX <memoryAddress| Compare a byte in memory to the X register
                     // Get the memory address of the byte to 

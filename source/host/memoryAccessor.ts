@@ -60,6 +60,18 @@ module TSOS {
             _Memory.memoryArray[physicalAddress] = valueToWrite;
         }
 
+        // Reset all of the blocks of memory
+        public resetAllBlocks(): void {
+            // Reset the values in memory to all zeros
+            _Memory.resetAllBlocks();
+        }
+
+        // Reset just one specific block of memory
+        public resetBlock(memSegment: number): void {
+            _Memory.resetBlock(memSegment);
+        }
+
+
 
     }
 }

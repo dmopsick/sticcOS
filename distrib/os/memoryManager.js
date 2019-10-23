@@ -16,8 +16,8 @@ var TSOS;
         // Issue #25 resets the partitions. Used to clear the memory and set it up when the OS is launched
         MemoryManager.prototype.resetAllBlocks = function () {
             // Reset the values in memory to all zeros
-            _Memory.resetAllBlocks();
-            // Reset partitions table
+            _MemoryAccessor.resetAllBlocks();
+            // Initialize partitions table
             this.partitions = [
                 { memBlockID: 0, base: 0, limit: 255, isFree: true },
                 { memBlockID: 1, base: 256, limit: 511, isFree: true },
@@ -40,6 +40,8 @@ var TSOS;
         // Takes in the PCB and loads it to memory
         MemoryManager.prototype.loadProgramToMemory = function (pcb, programCode) {
             console.log("MEM SEGMENT to load: " + pcb.memSegment);
+            // First reset the block to save to
+            _MemoryAccessor.resetBlock(pcb.memSegment);
             // Save each Hex digit into memory
             for (var i = 0; i < programCode.length; i++) {
                 _MemoryAccessor.writeToMemory(i, pcb.memSegment, programCode[i]);

@@ -50,6 +50,15 @@ var TSOS;
             // Save the value to the specified location in memory
             _Memory.memoryArray[physicalAddress] = valueToWrite;
         };
+        // Reset all of the blocks of memory
+        MemoryAccessor.prototype.resetAllBlocks = function () {
+            // Reset the values in memory to all zeros
+            _Memory.resetAllBlocks();
+        };
+        // Reset just one specific block of memory
+        MemoryAccessor.prototype.resetBlock = function (memSegment) {
+            _Memory.resetBlock(memSegment);
+        };
         return MemoryAccessor;
     }());
     TSOS.MemoryAccessor = MemoryAccessor;
