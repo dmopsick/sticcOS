@@ -685,10 +685,9 @@ module TSOS {
                     }
                 }
 
-                if (numExecutableProcesses == 0) {
+                if (numExecutableProcesses == 0) { 
                     // If there are not executable processes, tell the user
-                    _StdOut.putText("There are currently no runnable processes loaded.")
-                        ;
+                    _StdOut.putText("There are currently no runnable processes loaded.");
                 }
             }
             else {
