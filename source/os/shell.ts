@@ -484,7 +484,7 @@ module TSOS {
                     encouragementText = "I love you!!!";
                     break;
                 case 10:
-                    encouragementText = "Existince is pain. Please unplug me.";
+                    encouragementText = "Existence is pain. Please unplug me.";
                     break;
                 // This should never be reached ideally but I wanted the safety net of a default case
                 default:
