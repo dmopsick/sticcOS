@@ -19,18 +19,18 @@ module TSOS {
             switch (memAddrStart) {
                 case 0:
                     this.memSegment = 0;
-                    console.log("PCB " +pid + " is in memory segment 0");
+                    console.log("PCB " + pid + " is in memory segment 0");
                     break;
                 case 256:
                     this.memSegment = 1;
-                    console.log("PCB " +pid + " is in memory segment 1");
+                    console.log("PCB " + pid + " is in memory segment 1");
                     break;
                 case 512:
                     this.memSegment = 2;
-                    console.log("PCB " +pid + " is in memory segment 2");
+                    console.log("PCB " + pid + " is in memory segment 2");
                     break;
             }
-         }
+        }
 
         public init(): void {
 
@@ -49,9 +49,15 @@ module TSOS {
 
         // Issue #18 #42 | Adds the specified processes to the ready queue and lets the CPU know to start executing
         public static runProcess(pcb: ProcessControlBlock): void {
+            console.log("Adding the following process to the queue");
+            console.log(pcb);
+
             // Enqueue the processes
             _Scheduler.readyQueue.enqueue(pcb);
-            
+
+            // Change the state of the process from RESIDENT to READY
+            pcb.state = "READY";
+
             // Set the CPU to be executing
             _CPU.isExecuting = true;
         }
@@ -73,6 +79,7 @@ module TSOS {
             _CPU.Xreg = pcb.Xreg;
             _CPU.Yreg = pcb.Yreg;
             _CPU.Zflag = pcb.ZFlag
+
         }
     }
 }

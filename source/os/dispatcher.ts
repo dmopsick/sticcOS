@@ -8,6 +8,8 @@ module TSOS {
         // Saves the current executing process and load the new process to the CPU
         public contextSwitch(pcbToLoad: ProcessControlBlock): void {
             console.log("CONTEXT SWITCH TIME");
+            console.log("WE SWITCHING TO");
+            console.log(pcbToLoad);
 
             // Change the state of the current PCB from RUNNING to READY
             _PCBInstances[_CurrentPID].state = "READY";

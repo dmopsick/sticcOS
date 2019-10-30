@@ -15,8 +15,9 @@ var TSOS;
             if (this.cycleCounter >= this.quantum) {
                 // The counter has reached the quantum, time to load the next process
                 console.log("SCHEDULING DECISION TIME");
+                console.log(this.readyQueue);
                 // Check if there are any waiting processes to switch to
-                if (this.readyQueue.getSize() == 0) {
+                if (this.readyQueue.getSize() > 0) {
                     // Dequeue the next PCB to load
                     var pcbToLoad = this.readyQueue.dequeue();
                     // Context switch from the dispatcher 
@@ -29,12 +30,38 @@ var TSOS;
                 // Reset the cycle counter
                 this.cycleCounter = 0;
             }
+            // If there is nothing currently executing and there is something in the queue | Initial proccess to run
+            else if (_CurrentPID == null) {
+                console.log("LOAD THE PROCESS IF THERE IS NO CURRENT PID");
+                // Dequeue a PCB to run
+                var pcbToLoad = this.readyQueue.dequeue();
+                // Run that PCB
+                TSOS.ProcessControlBlock.loadProcessToCPU(pcbToLoad);
+            }
             // If it is not time to make a scheduling deicison
             else {
                 console.log("EXECUTE THE PCB. NO CHANGE: " + this.cycleCounter);
                 // Increment the cycle counter
                 this.cycleCounter++;
             }
+        };
+        // Issue #42 Handles the initial loading of a program from the queue the nothing is running
+        // Initial process running must be dequeued
+        // Issue #42 | Handles the scheduling decisions that must be made when a process is terminated 
+        Scheduler.prototype.checkScheduleOnProcessCompletion = function () {
+            console.log("checkScheduleOnProcessCompletion has been called!");
+            // If there is no more processes in the queue to run, stop the execution of the program
+            if (this.readyQueue.isEmpty()) {
+                _CPU.isExecuting = false;
+            }
+            else {
+                console.log("PROCESS HAS FINISHED BUT NOW WE LOADING A NEW ONE");
+                // Dequeue a PCB to run
+                var pcbToLoad = this.readyQueue.dequeue();
+                // Run that PCB
+                TSOS.ProcessControlBlock.loadProcessToCPU(pcbToLoad);
+            }
+            // If there is another process to run, dequeue it and start running it
         };
         return Scheduler;
     }());

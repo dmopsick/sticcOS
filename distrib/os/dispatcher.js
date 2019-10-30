@@ -9,6 +9,8 @@ var TSOS;
         // Saves the current executing process and load the new process to the CPU
         Dispatcher.prototype.contextSwitch = function (pcbToLoad) {
             console.log("CONTEXT SWITCH TIME");
+            console.log("WE SWITCHING TO");
+            console.log(pcbToLoad);
             // Change the state of the current PCB from RUNNING to READY
             _PCBInstances[_CurrentPID].state = "READY";
             // Get the current PCB to enqueue it

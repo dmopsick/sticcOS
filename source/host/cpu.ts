@@ -32,7 +32,7 @@ module TSOS {
             this.Xreg = 0;
             this.Yreg = 0;
             this.Zflag = 0;
-            this.isExecuting = false;
+            // this.isExecuting = false;
         }
 
         public cycle(): void {
@@ -154,9 +154,6 @@ module TSOS {
                     // Do nothing? The program counter is incremented down below
                     break;
                 case "00": // BRK | Break
-                    // Stop the CPU from continuing to cycle
-                    this.isExecuting = false;
-
                     // Modify the state of the currently executed PCB to Completed
                     _PCBInstances[_CurrentPID].state = "COMPLETED"
 
@@ -168,6 +165,9 @@ module TSOS {
 
                     // #35 set the mem segment to being free so a new process can be laoded
                     _MemoryManager.partitions[segmentToFree].isFree = true; 
+
+                    // Issue #42 | Check the schedule to load next program or stop execution
+                    _Scheduler.checkScheduleOnProcessCompletion();
 
                     break;
                 case "EC": // CPX <memoryAddress| Compare a byte in memory to the X register

@@ -59,8 +59,12 @@ var TSOS;
         };
         // Issue #18 #42 | Adds the specified processes to the ready queue and lets the CPU know to start executing
         ProcessControlBlock.runProcess = function (pcb) {
+            console.log("Adding the following process to the queue");
+            console.log(pcb);
             // Enqueue the processes
             _Scheduler.readyQueue.enqueue(pcb);
+            // Change the state of the process from RESIDENT to READY
+            pcb.state = "READY";
             // Set the CPU to be executing
             _CPU.isExecuting = true;
         };
