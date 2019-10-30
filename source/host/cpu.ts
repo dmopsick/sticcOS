@@ -158,7 +158,7 @@ module TSOS {
                     this.isExecuting = false;
 
                     // Modify the state of the currently executed PCB to Completed
-                    _PCBInstances[_CurrentPID].state = "Completed"
+                    _PCBInstances[_CurrentPID].state = "COMPLETED"
 
                     // SticcOs lets you only execute a program once
                     _PCBInstances[_CurrentPID].executable = false;

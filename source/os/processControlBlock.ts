@@ -37,7 +37,7 @@ module TSOS {
         }
 
         // #18 A Utilitiy function used to check the PCB instance list whether an instance with the specified PID exists
-        public static processExists(pidToCheck): boolean {
+        public static processExists(pidToCheck: number): boolean {
             // Loop through instances for a process with specified PID
             for (let i = 0; i < _PCBInstances.length; i++) {
                 if (pidToCheck == _PCBInstances[i].pid) {
@@ -47,10 +47,19 @@ module TSOS {
             return false;
         }
 
+        // Issue #18 #42 | Adds the specified processes to the ready queue and lets the CPU know to start executing
+        public static runProcess(pcb: ProcessControlBlock): void {
+            // Enqueue the processes
+            _Scheduler.readyQueue.enqueue(pcb);
+            
+            // Set the CPU to be executing
+            _CPU.isExecuting = true;
+        }
+
         // #18 Static method to handle the execution of a program
-        public static runProcess(pcb): void {
+        public static loadProcessToCPU(pcb: ProcessControlBlock): void {
             // Change state of PCB to running, because it is
-            pcb.state = "Running";
+            pcb.state = "RUNNING";
 
             // Set the current running process global vairable
             _CurrentPID = pcb.pid;
@@ -64,9 +73,6 @@ module TSOS {
             _CPU.Xreg = pcb.Xreg;
             _CPU.Yreg = pcb.Yreg;
             _CPU.Zflag = pcb.ZFlag
-
-            // Set the CPU to running 
-            _CPU.isExecuting = true;
         }
     }
 }

@@ -397,7 +397,7 @@ var TSOS;
                     encouragementText = "I love you!!!";
                     break;
                 case 10:
-                    encouragementText = "Existince is pain. Please unplug me.";
+                    encouragementText = "Existence is pain. Please unplug me.";
                     break;
                 // This should never be reached ideally but I wanted the safety net of a default case
                 default:
@@ -529,10 +529,12 @@ var TSOS;
                     // Ensure that the selected process is runnable
                     var pcbRunnable = _PCBInstances[pidNum].executable;
                     if (pcbRunnable) {
+                        // #42 set the state of the pcb to READY
+                        _PCBInstances[pidNum].state = "READY";
                         // Get the PCB to run based on the PID, that is confirmed to exist
                         var pcbToRun = _PCBInstances[pidNum];
-                        // Begin the running of the process
-                        TSOS.ProcessControlBlock.runProcess(pcbToRun);
+                        // Add the PCB to the running queue
+                        _Scheduler.readyQueue.enqueue(pcbToRun);
                         // Let the user know that the process is running
                         _StdOut.putText("Process " + pid + " has begun execution :).");
                     }

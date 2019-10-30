@@ -645,11 +645,14 @@ module TSOS {
                     // Ensure that the selected process is runnable
                     const pcbRunnable = _PCBInstances[pidNum].executable;
                     if (pcbRunnable) {
+                        // #42 set the state of the pcb to READY
+                        _PCBInstances[pidNum].state = "READY"; 
+
                         // Get the PCB to run based on the PID, that is confirmed to exist
                         const pcbToRun = _PCBInstances[pidNum];
 
-                        // Begin the running of the process
-                        TSOS.ProcessControlBlock.runProcess(pcbToRun);
+                        // Add the PCB to the running queue
+                        _Scheduler.readyQueue.enqueue(pcbToRun);
 
                         // Let the user know that the process is running
                         _StdOut.putText("Process " + pid + " has begun execution :).");

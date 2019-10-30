@@ -57,10 +57,17 @@ var TSOS;
             }
             return false;
         };
-        // #18 Static method to handle the execution of a program
+        // Issue #18 #42 | Adds the specified processes to the ready queue and lets the CPU know to start executing
         ProcessControlBlock.runProcess = function (pcb) {
+            // Enqueue the processes
+            _Scheduler.readyQueue.enqueue(pcb);
+            // Set the CPU to be executing
+            _CPU.isExecuting = true;
+        };
+        // #18 Static method to handle the execution of a program
+        ProcessControlBlock.loadProcessToCPU = function (pcb) {
             // Change state of PCB to running, because it is
-            pcb.state = "Running";
+            pcb.state = "RUNNING";
             // Set the current running process global vairable
             _CurrentPID = pcb.pid;
             // Reset the cpu before execution of new program
@@ -71,8 +78,6 @@ var TSOS;
             _CPU.Xreg = pcb.Xreg;
             _CPU.Yreg = pcb.Yreg;
             _CPU.Zflag = pcb.ZFlag;
-            // Set the CPU to running 
-            _CPU.isExecuting = true;
         };
         return ProcessControlBlock;
     }());
