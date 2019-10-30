@@ -4,7 +4,7 @@ module TSOS {
     export class ProcessControlBlock {
         constructor(
             public pid: number = _NextPID,
-            public memAddrStart: number = 0,
+            public memAddrStart: number,
             public memRange: number = 256,
             public PC: number = 0,
             public Acc: number = 0,
@@ -75,6 +75,7 @@ module TSOS {
 
             // Populate the CPU with values from the process we want to run
             _CPU.Acc = pcb.Acc;
+            console.log("LOAD PROCESS SETTING THE CPU PC TO " + pcb.PC);
             _CPU.PC = pcb.PC;
             _CPU.Xreg = pcb.Xreg;
             _CPU.Yreg = pcb.Yreg;

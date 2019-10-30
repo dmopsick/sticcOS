@@ -7,7 +7,6 @@ var TSOS;
         memSegment // Records which memory segment the PCB is saved in. Can be determined from memAddrStart
         ) {
             if (pid === void 0) { pid = _NextPID; }
-            if (memAddrStart === void 0) { memAddrStart = 0; }
             if (memRange === void 0) { memRange = 256; }
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
@@ -78,6 +77,7 @@ var TSOS;
             _CPU.init();
             // Populate the CPU with values from the process we want to run
             _CPU.Acc = pcb.Acc;
+            console.log("LOAD PROCESS SETTING THE CPU PC TO " + pcb.PC);
             _CPU.PC = pcb.PC;
             _CPU.Xreg = pcb.Xreg;
             _CPU.Yreg = pcb.Yreg;

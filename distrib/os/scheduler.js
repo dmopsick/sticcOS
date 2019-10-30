@@ -37,6 +37,8 @@ var TSOS;
                 var pcbToLoad = this.readyQueue.dequeue();
                 // Run that PCB
                 TSOS.ProcessControlBlock.loadProcessToCPU(pcbToLoad);
+                // Reset cycle counter
+                this.cycleCounter = 0;
             }
             // If it is not time to make a scheduling deicison
             else {
@@ -52,6 +54,7 @@ var TSOS;
             console.log("checkScheduleOnProcessCompletion has been called!");
             // If there is no more processes in the queue to run, stop the execution of the program
             if (this.readyQueue.isEmpty()) {
+                console.log("COMPLETED AND NOTHING IN QUEUE - SHUT IT DOWN!");
                 _CPU.isExecuting = false;
             }
             else {
@@ -60,6 +63,8 @@ var TSOS;
                 var pcbToLoad = this.readyQueue.dequeue();
                 // Run that PCB
                 TSOS.ProcessControlBlock.loadProcessToCPU(pcbToLoad);
+                // Reset cycle counter
+                this.cycleCounter = 0;
             }
             // If there is another process to run, dequeue it and start running it
         };

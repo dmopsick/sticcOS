@@ -38,8 +38,7 @@ module TSOS {
         public cycle(): void {
             _Kernel.krnTrace('CPU cycle');
 
-            // Before the op code is retrieved, must ensure reading from correct place in memory
-            // const logicalAddress = this.convertLogicalToPhysicalMemoryAddress(this.PC);
+            console.log("READING FROM PC OF " + this.PC);
 
             // Need to FETCH the current op code from memory
             // Get the current program counter location, originally set when program is loaded
@@ -262,6 +261,7 @@ module TSOS {
 
             // Increment the program counter when the cycle is completed
             this.PC++;
+            console.log("PC INCREMENT ON CYCLE COMPLETION!")
 
             // Increment the PC for the current PCB
             _PCBInstances[_CurrentPID].PC = this.PC;
