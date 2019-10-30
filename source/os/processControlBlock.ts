@@ -12,7 +12,7 @@ module TSOS {
             public Yreg: number = 0,
             public ZFlag: number = 0,
             public isExecuted: boolean = false, // Records whether the PCB has been executed
-            public state: String = "Resident",
+            public state: String = "RESIDENT",
             public executable: boolean = true, // Issue #18.. For project 3 only the most recently loaded program that has not been run should be executable
             public memSegment: number = 0 // Records which memory segment the PCB is saved in. Can be determined from memAddrStart
         ) {

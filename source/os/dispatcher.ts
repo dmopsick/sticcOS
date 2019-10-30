@@ -7,6 +7,8 @@ module TSOS {
         // Issue #42 | Handles the context switch
         // Saves the current executing process and load the new process to the CPU
         public contextSwitch(pcbToLoad: ProcessControlBlock): void {
+            console.log("CONTEXT SWITCH TIME");
+
             // Change the state of the current PCB from RUNNING to READY
             _PCBInstances[_CurrentPID].state = "READY";
 
@@ -16,8 +18,10 @@ module TSOS {
             // Enqueue the existing PCB
             _Scheduler.readyQueue.enqueue(pcbToEnqueue);
 
-            // Do I have to save the CPU to the PCB or is it already saved?
-            TSOS.ProcessControlBlock.loadProcessToCPU(pcbToLoad)
+            // Load the next pcb in the CPU
+            TSOS.ProcessControlBlock.loadProcessToCPU(pcbToLoad);
+
+             // Do I have to save the CPU to the PCB or is it already saved?
         }
     }
 }

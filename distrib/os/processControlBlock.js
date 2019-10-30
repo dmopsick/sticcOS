@@ -15,7 +15,7 @@ var TSOS;
             if (Yreg === void 0) { Yreg = 0; }
             if (ZFlag === void 0) { ZFlag = 0; }
             if (isExecuted === void 0) { isExecuted = false; }
-            if (state === void 0) { state = "Resident"; }
+            if (state === void 0) { state = "RESIDENT"; }
             if (executable === void 0) { executable = true; }
             if (memSegment === void 0) { memSegment = 0; }
             this.pid = pid;

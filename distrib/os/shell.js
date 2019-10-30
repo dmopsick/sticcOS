@@ -534,7 +534,7 @@ var TSOS;
                         // Get the PCB to run based on the PID, that is confirmed to exist
                         var pcbToRun = _PCBInstances[pidNum];
                         // Add the PCB to the running queue
-                        _Scheduler.readyQueue.enqueue(pcbToRun);
+                        TSOS.ProcessControlBlock.runProcess(pcbToRun);
                         // Let the user know that the process is running
                         _StdOut.putText("Process " + pid + " has begun execution :).");
                     }

@@ -652,7 +652,7 @@ module TSOS {
                         const pcbToRun = _PCBInstances[pidNum];
 
                         // Add the PCB to the running queue
-                        _Scheduler.readyQueue.enqueue(pcbToRun);
+                        TSOS.ProcessControlBlock.runProcess(pcbToRun);
 
                         // Let the user know that the process is running
                         _StdOut.putText("Process " + pid + " has begun execution :).");
