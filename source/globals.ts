@@ -23,6 +23,8 @@ const KEYBOARD_IRQ: number = 1;
 // Issue #45 create ISR numbers for the printing of numbers and strings | Seperate structure from presentation
 const PRINT_NUM_IRQ: number = 2; // Handles the X register 1 | printing of numbers
 const PRINT_STRING_IRQ: number = 3; // Handles the X register 2 | printing of strings
+// Issue #42 | Add an ISR number for context switches
+const CONTEXT_SWITCH_IRQ: number = 4;
 
 //
 // Global Variables

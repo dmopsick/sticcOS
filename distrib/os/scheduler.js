@@ -18,17 +18,17 @@ var TSOS;
                 console.log(this.readyQueue);
                 // Check if there are any waiting processes to switch to
                 if (this.readyQueue.getSize() > 0) {
-                    // Dequeue the next PCB to load
-                    var pcbToLoad = this.readyQueue.dequeue();
                     // Context switch from the dispatcher 
-                    _Dispatcher.contextSwitch(pcbToLoad);
+                    // _Dispatcher.contextSwitch(pcbToLoad)
+                    // Throw a context switch interrupt request 
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, []));
                 }
                 else {
                     console.log("NO CONTEXT SWITCH NEEDED");
+                    // Reset the cycle counter
+                    this.cycleCounter = 0;
                 }
                 // If there are no processes ready and waiting.... keep on trucking! 
-                // Reset the cycle counter
-                this.cycleCounter = 0;
             }
             // If there is nothing currently executing and there is something in the queue | Initial proccess to run
             else if (_CurrentPID == null) {
@@ -46,27 +46,6 @@ var TSOS;
                 // Increment the cycle counter
                 this.cycleCounter++;
             }
-        };
-        // Issue #42 Handles the initial loading of a program from the queue the nothing is running
-        // Initial process running must be dequeued
-        // Issue #42 | Handles the scheduling decisions that must be made when a process is terminated 
-        Scheduler.prototype.checkScheduleOnProcessCompletion = function () {
-            console.log("checkScheduleOnProcessCompletion has been called!");
-            // If there is no more processes in the queue to run, stop the execution of the program
-            if (this.readyQueue.isEmpty()) {
-                console.log("COMPLETED AND NOTHING IN QUEUE - SHUT IT DOWN!");
-                _CPU.isExecuting = false;
-            }
-            else {
-                console.log("PROCESS HAS FINISHED BUT NOW WE LOADING A NEW ONE");
-                // Dequeue a PCB to run
-                var pcbToLoad = this.readyQueue.dequeue();
-                // Run that PCB
-                TSOS.ProcessControlBlock.loadProcessToCPU(pcbToLoad);
-                // Reset cycle counter
-                this.cycleCounter = 0;
-            }
-            // If there is another process to run, dequeue it and start running it
         };
         return Scheduler;
     }());

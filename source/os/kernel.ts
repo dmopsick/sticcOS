@@ -144,6 +144,9 @@ module TSOS {
                 case PRINT_STRING_IRQ:
                     this.krnPrintStringSysCall(params);
                     break;
+                case CONTEXT_SWITCH_IRQ:
+                    _Dispatcher.contextSwitch();
+                    break;
                 default:
                     this.krnTrapError("Invalid Interrupt Request. irq=" + irq + " params=[" + params + "]");
             }

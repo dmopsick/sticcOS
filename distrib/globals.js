@@ -19,6 +19,8 @@ var KEYBOARD_IRQ = 1;
 // Issue #45 create ISR numbers for the printing of numbers and strings | Seperate structure from presentation
 var PRINT_NUM_IRQ = 2; // Handles the X register 1 | printing of numbers
 var PRINT_STRING_IRQ = 3; // Handles the X register 2 | printing of strings
+// Issue #42 | Add an ISR number for context switches
+var CONTEXT_SWITCH_IRQ = 4;
 //
 // Global Variables
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.

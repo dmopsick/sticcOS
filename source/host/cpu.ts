@@ -165,8 +165,10 @@ module TSOS {
                     // #35 set the mem segment to being free so a new process can be laoded
                     _MemoryManager.partitions[segmentToFree].isFree = true; 
 
-                    // Issue #42 | Check the schedule to load next program or stop execution
-                    _Scheduler.checkScheduleOnProcessCompletion();
+                    // Issue #42 | Throw interrupt to check the schedule to load next program or stop execution
+                    _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, [])); 
+
+                    // _Scheduler.checkScheduleOnProcessCompletion(_PCBInstances[_CurrentPID]);
 
                     break;
                 case "EC": // CPX <memoryAddress| Compare a byte in memory to the X register
