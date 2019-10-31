@@ -645,7 +645,7 @@ module TSOS {
                     const pcbRunnable = _PCBInstances[pidNum].executable;
                     if (pcbRunnable) {
                         // #42 set the state of the pcb to READY
-                        _PCBInstances[pidNum].state = "READY"; 
+                        _PCBInstances[pidNum].state = "READY";
 
                         // Get the PCB to run based on the PID, that is confirmed to exist
                         const pcbToRun = _PCBInstances[pidNum];
@@ -703,19 +703,25 @@ module TSOS {
 
         // Issue #36 | Clearmem clears all three memory partitions
         public shellClearMem(args: string[]) {
-            // Reset the three memory partitions
-            _MemoryManager.resetAllBlocks();
-
-            // Need to make the currently loaded processes no longer runnable because they have gotten the AXE
-            // Not sure if this is the best way right now... But it will certainly make all loaded PCBs unexecutable
-            for (let i = 0; i < _PCBInstances.length; i++) {
-                // Ensure all processes are no longer executable
-                _PCBInstances[i].executable = false;
+            // Check if the CPU is running, if it is tell the user they cannot clear while the computer is executing
+            if (_CPU.isExecuting) {
+                _StdOut.putText("SticcOS is currently executing. Please wait to clear the memory");
             }
+            else {
+                // Clear all the memory segments
+                _MemoryManager.resetAllBlocks();
+
+                // Loop through all the processes to ensrue that all are are no longer executed (inefficient)
+                for (let i = 0; i < _PCBInstances.length; i++) {
+                    // Ensure all processes are no longer executable
+                    _PCBInstances[i].executable = false;
+                }
 
 
             // Let the user know the memory has been cleared, SticcOS is R E S P O N S I V E
             _StdOut.putText("The memory has been cleared.");
+            }
+
         }
 
         // Issue #36 | PS displays the PID and state of all processes
