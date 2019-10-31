@@ -31,15 +31,21 @@ var TSOS;
                 // If there are no processes ready and waiting.... keep on trucking! 
             }
             // If there is nothing currently executing and there is something in the queue | Initial proccess to run
-            else if (_CurrentPID == null) {
-                console.log("LOAD THE PROCESS IF THERE IS NO CURRENT PID");
-                // Dequeue a PCB to run
-                var pcbToLoad = this.readyQueue.dequeue();
-                // Run that PCB
-                TSOS.ProcessControlBlock.loadProcessToCPU(pcbToLoad);
-                // Reset cycle counter
-                this.cycleCounter = 0;
-            }
+            /*  else if ((this.readyQueue.isEmpty() == false) && (_CPU.isExecuting == false)   ) {
+                 console.log("LOAD THE PROCESS IF THERE IS NO CURRENT PID. FLAG 80");
+ 
+                 // Dequeue a PCB to run
+                 const pcbToLoad: ProcessControlBlock = this.readyQueue.dequeue();
+ 
+                 // Run that PCB
+                 TSOS.ProcessControlBlock.loadProcessToCPU(pcbToLoad);
+ 
+                 // Reset cycle counter
+                 this.cycleCounter = 0;
+ 
+                 // Begin the CPU executing
+                 _CPU.isExecuting = true;
+             } */
             // If it is not time to make a scheduling deicison
             else {
                 console.log("EXECUTE THE PCB. NO CHANGE: " + this.cycleCounter);

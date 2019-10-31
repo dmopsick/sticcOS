@@ -90,14 +90,15 @@ module TSOS {
                 var interrupt = _KernelInterruptQueue.dequeue();
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed.
-                // Issue #42 | Invoke the scheduler to check the schedule before exection
-                _Scheduler.checkSchedule();
-
                 // Execute a CPU cycle
                 _CPU.cycle();
+
+                // Issue #42 | Invoke the scheduler to check the schedule before exection
+                _Scheduler.checkSchedule();
             } else {                       // If there are no interrupts and there is nothing being executed then just be idle.
                 this.krnTrace("Idle");
             }
+
 
             // Issue #45 Update the display after each clock tick rather than update it from CPU | Seperation of concerns
             TSOS.Control.updateMemoryDisplay();
@@ -182,6 +183,8 @@ module TSOS {
             while (opCodeToPrint != 0) {
                 // Convert non 00 op code to the corresponding char based on ASCII
                 let charToPrint = String.fromCharCode(opCodeToPrint);
+
+                // Print the character to the screen
                 _StdOut.putText(charToPrint);
 
                 // Get the next op code

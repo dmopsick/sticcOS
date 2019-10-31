@@ -12,17 +12,20 @@ var TSOS;
             var currentPcb = _PCBInstances[_CurrentPID];
             // Dequeue the next PCB to load
             var nextPcb = _Scheduler.readyQueue.dequeue();
-            console.log("CONTEXT SWITCH TIME");
-            console.log("WE SWITCHING FROM");
-            console.log(currentPcb);
-            console.log("TO");
-            console.log(nextPcb);
+            /* console.log("CONTEXT SWITCH TIME");
+               console.log("WE SWITCHING FROM");
+               console.log(currentPcb);
+               console.log("TO");
+               console.log(nextPcb); */
+            // Check if there is nothing running (initial schedule)
+            if (currentPcb == null) {
+                // Load the next pcb in the CPU
+                TSOS.ProcessControlBlock.loadProcessToCPU(nextPcb);
+            }
             // Check to see if the current process is completed, if it is we will not add it back into queue
-            if (currentPcb.state == "COMPLETED") {
+            else if (currentPcb.state == "COMPLETED") {
                 // The current process has completed, check to see if there is another process to load
                 if (nextPcb == null) {
-                    console.log("STOP THE EXECUTION");
-                    console.log(_Scheduler.readyQueue);
                     // Stop the CPU from executing
                     _CPU.isExecuting = false;
                     // Get rid of current ID make it null

@@ -58,14 +58,22 @@ var TSOS;
         };
         // Issue #18 #42 | Adds the specified processes to the ready queue and lets the CPU know to start executing
         ProcessControlBlock.runProcess = function (pcb) {
-            console.log("Adding the following process to the queue");
-            console.log(pcb);
-            // Enqueue the processes
-            _Scheduler.readyQueue.enqueue(pcb);
-            // Change the state of the process from RESIDENT to READY
-            pcb.state = "READY";
-            // Set the CPU to be executing
-            _CPU.isExecuting = true;
+            // Prevent running the same process twice 
+            if (pcb.isExecuted == false) {
+                // Enqueue the processes
+                _Scheduler.readyQueue.enqueue(pcb);
+                // Change the state of the process from RESIDENT to READY
+                pcb.state = "READY";
+                // Mark the process as executed so we do not run the same processes more than once
+                pcb.isExecuted = true;
+                // If the CPU is not running... run it and send context switch interrupt
+                if (_CPU.isExecuting == false) {
+                    // Set the CPU to be executing
+                    _CPU.isExecuting = true;
+                    // Throw an interrupt to start the schedule
+                    _KernelInterruptQueue.enqueue(new TSOS.Interrupt(CONTEXT_SWITCH_IRQ, []));
+                }
+            }
         };
         // #18 Static method to handle the execution of a program
         ProcessControlBlock.loadProcessToCPU = function (pcb) {

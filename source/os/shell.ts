@@ -629,7 +629,6 @@ module TSOS {
 
         // Runs a specified user entered program Issue #18
         public shellRun(args: string[]) {
-            console.log("SHELL RUN CALLED BITCH");
             // The process ID must be specified in order for the program to be ran
             if (args.length > 0) {
                 // Get the PID from the argument
@@ -642,7 +641,6 @@ module TSOS {
                 let pidFound = TSOS.ProcessControlBlock.processExists(pidNum);
 
                 if (pidFound) {
-
                     // Ensure that the selected process is runnable
                     const pcbRunnable = _PCBInstances[pidNum].executable;
                     if (pcbRunnable) {
@@ -680,8 +678,6 @@ module TSOS {
                 // Loop through all processes and run all executable processes
                 for (let i = 0; i < _PCBInstances.length; i++) {
                     if (_PCBInstances[i].executable == true) {
-                        // console.log("Invoke run process with this proceess");
-                        // console.log(_PCBInstances[i]);
 
                         // If the process is executable, uh, execute it
                         TSOS.ProcessControlBlock.runProcess(_PCBInstances[i]);

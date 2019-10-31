@@ -39,7 +39,6 @@ var TSOS;
         // Issue #25 Loads program into memory
         // Takes in the PCB and loads it to memory
         MemoryManager.prototype.loadProgramToMemory = function (pcb, programCode) {
-            console.log("MEM SEGMENT to load: " + pcb.memSegment);
             // First reset the block to save to
             _MemoryAccessor.resetBlock(pcb.memSegment);
             // Save each Hex digit into memory

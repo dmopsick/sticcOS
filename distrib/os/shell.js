@@ -517,7 +517,6 @@ var TSOS;
         };
         // Runs a specified user entered program Issue #18
         Shell.prototype.shellRun = function (args) {
-            console.log("SHELL RUN CALLED BITCH");
             // The process ID must be specified in order for the program to be ran
             if (args.length > 0) {
                 // Get the PID from the argument
@@ -560,8 +559,6 @@ var TSOS;
                 // Loop through all processes and run all executable processes
                 for (var i = 0; i < _PCBInstances.length; i++) {
                     if (_PCBInstances[i].executable == true) {
-                        // console.log("Invoke run process with this proceess");
-                        // console.log(_PCBInstances[i]);
                         // If the process is executable, uh, execute it
                         TSOS.ProcessControlBlock.runProcess(_PCBInstances[i]);
                         // Increment the number of executable processes

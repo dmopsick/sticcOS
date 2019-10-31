@@ -49,17 +49,26 @@ module TSOS {
 
         // Issue #18 #42 | Adds the specified processes to the ready queue and lets the CPU know to start executing
         public static runProcess(pcb: ProcessControlBlock): void {
-            console.log("Adding the following process to the queue");
-            console.log(pcb);
+            // Prevent running the same process twice 
+            if (pcb.isExecuted == false) {
+                // Enqueue the processes
+                _Scheduler.readyQueue.enqueue(pcb);
 
-            // Enqueue the processes
-            _Scheduler.readyQueue.enqueue(pcb);
+                // Change the state of the process from RESIDENT to READY
+                pcb.state = "READY";
 
-            // Change the state of the process from RESIDENT to READY
-            pcb.state = "READY";
+                // Mark the process as executed so we do not run the same processes more than once
+                pcb.isExecuted = true;
 
-            // Set the CPU to be executing
-            _CPU.isExecuting = true;
+                // If the CPU is not running... run it and send context switch interrupt
+                if (_CPU.isExecuting == false) {
+                    // Set the CPU to be executing
+                    _CPU.isExecuting = true;
+
+                    // Throw an interrupt to start the schedule
+                    _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, []));
+                }
+            }
         }
 
         // #18 Static method to handle the execution of a program
