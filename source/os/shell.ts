@@ -764,7 +764,8 @@ module TSOS {
                         TSOS.ProcessControlBlock.killProcess(pcbToKill);
 
                         // Let the user know what is happening here
-                        _StdOut.putText("Process: " + pidToKill + " has been killed.");
+                        // Moving this into the process control bluck class for now for memory access violation feedback
+                        // _StdOut.putText("Process: " + pidToKill + " has been killed.");
                     }
                     else {
                         // Let the user know that the process cannot be killed

@@ -110,6 +110,8 @@ var TSOS;
             _PCBInstances[pidToKill].state = "TERMINATED";
             // Remove the proccess from memory 
             _MemoryManager.freeBlockByMemBlockID(pcbToKill.memSegment);
+            // I do not like putting display logic in here but I am doing it so that when the CPU signals the kill process it wil lprint
+            _StdOut.putText("Process: " + pidToKill + " has been killed.");
         };
         return ProcessControlBlock;
     }());
