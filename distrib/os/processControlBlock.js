@@ -109,7 +109,7 @@ var TSOS;
             // Change the state of the process to reflect its MURDER *gasp*
             _PCBInstances[pidToKill].state = "TERMINATED";
             // Remove the proccess from memory 
-            _MemoryManager.resetSingleBlock(pcbToKill.memSegment);
+            _MemoryManager.freeBlockByMemBlockID(pcbToKill.memSegment);
         };
         return ProcessControlBlock;
     }());

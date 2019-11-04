@@ -112,7 +112,7 @@ module TSOS {
             _PCBInstances[pidToKill].state = "TERMINATED";
 
             // Remove the proccess from memory 
-            _MemoryManager.resetSingleBlock(pcbToKill.memSegment);
+            _MemoryManager.freeBlockByMemBlockID(pcbToKill.memSegment);
         }
     }
 }

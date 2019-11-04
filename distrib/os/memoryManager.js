@@ -21,15 +21,20 @@ var TSOS;
             this.partitions = [
                 { memBlockID: 0, base: 0, limit: 255, isFree: true },
                 { memBlockID: 1, base: 256, limit: 511, isFree: true },
-                { memblockID: 2, base: 512, limit: 767, isFree: true }
+                { memBlockID: 2, base: 512, limit: 767, isFree: true }
             ];
         };
         // Resets just a single block
-        MemoryManager.prototype.resetSingleBlock = function (memblockID) {
+        MemoryManager.prototype.resetSingleBlock = function (memBlockID) {
             // Call the memory accessor to reset the block
-            _MemoryAccessor.resetSingleBlock(memblockID);
+            _MemoryAccessor.resetSingleBlock(memBlockID);
             // Make the partition free so new programs can be loaded
-            this.partitions[memblockID].isFree = true;
+            this.partitions[memBlockID].isFree = true;
+        };
+        // Issue #36 | Frees a block in memory. Used to make a block free without resetting it for kill command
+        MemoryManager.prototype.freeBlockByMemBlockID = function (memBlockID) {
+            // Make the specified partition free so new processes can be loaded
+            this.partitions[memBlockID].isFree = true;
         };
         // Issue #25 determine if the one (for project 2) is free or ued
         // Free = no program loaded, or a program that has been loaded and ran already
