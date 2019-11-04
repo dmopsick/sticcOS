@@ -203,6 +203,8 @@ var TSOS;
                     break;
                 default:
                     // If the op code does not match any of the valid ones for the system it is invalid
+                    // Terminate the process
+                    TSOS.ProcessControlBlock.killProcess(_PCBInstances[_CurrentPID]);
                     break;
             }
             // Increment the program counter when the cycle is completed
