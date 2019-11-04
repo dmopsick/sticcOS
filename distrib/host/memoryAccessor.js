@@ -56,8 +56,8 @@ var TSOS;
             _Memory.resetAllBlocks();
         };
         // Reset just one specific block of memory
-        MemoryAccessor.prototype.resetBlock = function (memSegment) {
-            _Memory.resetBlock(memSegment);
+        MemoryAccessor.prototype.resetSingleBlock = function (memSegment) {
+            _Memory.resetSingleBlock(memSegment);
         };
         return MemoryAccessor;
     }());

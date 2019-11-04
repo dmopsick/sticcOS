@@ -24,6 +24,13 @@ var TSOS;
                 { memblockID: 2, base: 512, limit: 767, isFree: true }
             ];
         };
+        // Resets just a single block
+        MemoryManager.prototype.resetSingleBlock = function (memblockID) {
+            // Call the memory accessor to reset the block
+            _MemoryAccessor.resetSingleBlock(memblockID);
+            // Make the partition free so new programs can be loaded
+            this.partitions[memblockID].isFree = true;
+        };
         // Issue #25 determine if the one (for project 2) is free or ued
         // Free = no program loaded, or a program that has been loaded and ran already
         // Project 3 will require all three to be checked so going to pass arguement for which block to check
@@ -40,7 +47,7 @@ var TSOS;
         // Takes in the PCB and loads it to memory
         MemoryManager.prototype.loadProgramToMemory = function (pcb, programCode) {
             // First reset the block to save to
-            _MemoryAccessor.resetBlock(pcb.memSegment);
+            _MemoryAccessor.resetSingleBlock(pcb.memSegment);
             // Save each Hex digit into memory
             for (var i = 0; i < programCode.length; i++) {
                 _MemoryAccessor.writeToMemory(i, pcb.memSegment, programCode[i]);

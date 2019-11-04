@@ -25,6 +25,15 @@ module TSOS {
             ];
         }
 
+        // Resets just a single block
+        public resetSingleBlock(memblockID: number): void {
+            // Call the memory accessor to reset the block
+            _MemoryAccessor.resetSingleBlock(memblockID);
+
+            // Make the partition free so new programs can be loaded
+            this.partitions[memblockID].isFree = true;
+        }
+
         // Issue #25 determine if the one (for project 2) is free or ued
         // Free = no program loaded, or a program that has been loaded and ran already
         // Project 3 will require all three to be checked so going to pass arguement for which block to check
@@ -42,7 +51,7 @@ module TSOS {
         // Takes in the PCB and loads it to memory
         public loadProgramToMemory(pcb: TSOS.ProcessControlBlock, programCode: string[]): void {
             // First reset the block to save to
-            _MemoryAccessor.resetBlock(pcb.memSegment);
+            _MemoryAccessor.resetSingleBlock(pcb.memSegment);
 
             // Save each Hex digit into memory
             for (let i = 0; i < programCode.length; i++) {

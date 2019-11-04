@@ -27,7 +27,7 @@ var TSOS;
             }
         };
         // Reset one specific block in memory 
-        Memory.prototype.resetBlock = function (memSegment) {
+        Memory.prototype.resetSingleBlock = function (memSegment) {
             // Calculate the beginning of the segment to reset
             var segmentStart = memSegment * this.memoryBlockSize;
             // Calculate the end of the segment to reset 

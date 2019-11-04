@@ -67,8 +67,8 @@ module TSOS {
         }
 
         // Reset just one specific block of memory
-        public resetBlock(memSegment: number): void {
-            _Memory.resetBlock(memSegment);
+        public resetSingleBlock(memSegment: number): void {
+            _Memory.resetSingleBlock(memSegment);
         }
 
 

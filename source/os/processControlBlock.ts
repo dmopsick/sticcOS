@@ -84,12 +84,41 @@ module TSOS {
 
             // Populate the CPU with values from the process we want to run
             _CPU.Acc = pcb.Acc;
-            console.log("LOAD PROCESS SETTING THE CPU PC TO " + pcb.PC);
             _CPU.PC = pcb.PC;
             _CPU.Xreg = pcb.Xreg;
             _CPU.Yreg = pcb.Yreg;
             _CPU.Zflag = pcb.ZFlag
+        }
 
+        // Issue #36 | Kill a process | Different functionality based on different state of the process to kill
+        public static killProcess(pcbToKill: ProcessControlBlock): void {
+            // Get the PID of the process to kill
+            const pidToKill = pcbToKill.pid;
+
+            // If the process to kill is running, throw interrupt for context switch
+            if (pcbToKill.state == "RUNNING") {
+                // Throw a context switch interrupt to claim a new process
+                _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, []));
+            }
+            else {
+                // Remove the process from the Ready queue
+                for(let i = 0; i < _Scheduler.readyQueue.getSize(); i++) {
+                    if (_Scheduler.readyQueue.q[i] == pidToKill) {
+                        // Remove the item from the queue
+                        _Scheduler.readyQueue.q.splice(i, 1);
+                    }
+
+                }
+            }
+
+            // Make the specified process no longer executable
+            _PCBInstances[pidToKill].executable = false;
+
+            // Change the state of the process to reflect its MURDER *gasp*
+            _PCBInstances[pidToKill].state = "TERMINATED";
+
+            // Remove the proccess from memory 
+            _MemoryManager.resetSingleBlock(pcbToKill.memSegment);
         }
     }
 }

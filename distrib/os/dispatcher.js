@@ -22,8 +22,8 @@ var TSOS;
                 // Load the next pcb in the CPU
                 TSOS.ProcessControlBlock.loadProcessToCPU(nextPcb);
             }
-            // Check to see if the current process is completed, if it is we will not add it back into queue
-            else if (currentPcb.state == "COMPLETED") {
+            // Check to see if the current process is completed or terminated, if it is we will not add it back into queue
+            else if ((currentPcb.state == "COMPLETED") || (currentPcb.state == "TERMINATED")) {
                 // The current process has completed, check to see if there is another process to load
                 if (nextPcb == null) {
                     // Stop the CPU from executing

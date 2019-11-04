@@ -29,7 +29,7 @@ module TSOS {
         }
 
         // Reset one specific block in memory 
-        public resetBlock(memSegment: number): void {
+        public resetSingleBlock(memSegment: number): void {
             // Calculate the beginning of the segment to reset
             const segmentStart = memSegment * this.memoryBlockSize;
 

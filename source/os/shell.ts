@@ -761,44 +761,9 @@ module TSOS {
                     const pcbToKill = _PCBInstances[pidToKill];
 
                     // Check to see if process can be killed | State must be READY, RUNNING, RESIDENT handle each one appropriately 
-                    if (pcbToKill.state == "RESIDENT") {
-                        // Remove the proccess from memory 
-
-                        // Make the specified process no longer executable
-                        _PCBInstances[pidToKill].executable = false;
-
-                        // Change the state of the process to reflect its MURDER *gasp*
-                        _PCBInstances[pidToKill].state = "TERMINATED";
-
-                        // Let the user know what is happening here
-                        _StdOut.putText("Process: " + pidToKill + " has been killed.");
-                    }
-                    else if (pcbToKill.state == "READY") {
-                        // Remove the process from the Ready queue
-
-                        // Remove the proccess from memory 
-
-                        // Make the specified process no longer executable
-                        _PCBInstances[pidToKill].executable = false;
-
-                        // Change the state of the process to reflect its MURDER *gasp*
-                        _PCBInstances[pidToKill].state = "TERMINATED";
-
-                        // Let the user know what is happening here wow this code is reused there has to be a better way
-                        _StdOut.putText("Process: " + pidToKill + " has been killed.");
-                    }
-                    else if (pcbToKill.state == "RUNNING") {
-                        // Stop the process from executing
-
-                        // Remove the proccess from memory 
-
-                        // Make the specified process no longer executable
-                        _PCBInstances[pidToKill].executable = false;
-
-                        // Change the state of the process to reflect its MURDER *gasp*
-                        _PCBInstances[pidToKill].state = "TERMINATED";
-
-                        // Throw a context switch intterupt 
+                    if ((pcbToKill.state == "RESIDENT") || (pcbToKill.state == "READY") || (pcbToKill.state == "RUNNING")) {
+                        // Invoke the function to kill the process
+                        TSOS.ProcessControlBlock.killProcess(pcbToKill);
 
                         // Let the user know what is happening here
                         _StdOut.putText("Process: " + pidToKill + " has been killed.");
@@ -807,10 +772,9 @@ module TSOS {
                         // Let the user know that the process cannot be killed
                         _StdOut.putText("Process: " + pidToKill + " cannot be killed. It's state is: " + pcbToKill.state);
                     }
-
                 }
                 else {
-                    _StdOut.putText("Error: The PID you entered does not correspond to any process in the system. Enter a valid PID to kill a process");
+                    _StdOut.putText("Error: The PID you entered does not correspond to any process in the system.");
                 }
             }
             else {
