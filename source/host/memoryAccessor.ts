@@ -37,12 +37,20 @@ module TSOS {
         // Issue #25 Read code from memory | Issue #18 Need to be able to read from memory to run program
         // Issue #45 | Only allow direct memory access in the Memory Accessor File
         // Take in Logical address, use convert function to access the physical address
-        public readFromMemory(logicalAddress: number, memSegment: number): string {
+        public readFromMemory(logicalAddress: number, memSegment: number) {
             // Convert the logical address to a physical address 
             const physicalAddress = this.convertLogicalToPhysicalAddress(logicalAddress, memSegment);
 
-            // Return the data in the specified memory address
-            return _Memory.memoryArray[physicalAddress];
+            // Check if the process is trying to read an address it does not have access to
+            if (logicalAddress > _MemoryBlockSize) {
+                // Kill the process 
+                TSOS.ProcessControlBlock.killProcess(_PCBInstances[_CurrentPID]);
+                // Where can I let the user know about this memory access violation
+            }
+            else {
+                // Return the data in the specified memory address
+                return _Memory.memoryArray[physicalAddress];
+            }
         }
 
         // Issue #27 #17 This method writes a value to a memory address. This may be combinable with loadProgramToMemory. 
@@ -51,13 +59,21 @@ module TSOS {
             // Convert the logical address to a physical address 
             const physicalAddress = this.convertLogicalToPhysicalAddress(logicalAddress, memSegment);
 
-            // If the value to write is a lone hex digit, add a zero in front so it looks consistent
-            if (valueToWrite.length == 1) {
-                valueToWrite = 0 + valueToWrite;
+            // Check for memory access violation 
+            if (logicalAddress > _MemoryBlockSize) {
+                // Kill the process 
+                TSOS.ProcessControlBlock.killProcess(_PCBInstances[_CurrentPID]);
+                // Where can I let the user know about this memory access violation
             }
+            else {
+                // If the value to write is a lone hex digit, add a zero in front so it looks consistent
+                if (valueToWrite.length == 1) {
+                    valueToWrite = 0 + valueToWrite;
+                }
 
-            // Save the value to the specified location in memory
-            _Memory.memoryArray[physicalAddress] = valueToWrite;
+                // Save the value to the specified location in memory
+                _Memory.memoryArray[physicalAddress] = valueToWrite;
+            }
         }
 
         // Reset all of the blocks of memory
@@ -70,8 +86,5 @@ module TSOS {
         public resetSingleBlock(memSegment: number): void {
             _Memory.resetSingleBlock(memSegment);
         }
-
-
-
     }
 }

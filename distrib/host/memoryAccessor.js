@@ -35,20 +35,36 @@ var TSOS;
         MemoryAccessor.prototype.readFromMemory = function (logicalAddress, memSegment) {
             // Convert the logical address to a physical address 
             var physicalAddress = this.convertLogicalToPhysicalAddress(logicalAddress, memSegment);
-            // Return the data in the specified memory address
-            return _Memory.memoryArray[physicalAddress];
+            // Check if the process is trying to read an address it does not have access to
+            if (logicalAddress > _MemoryBlockSize) {
+                // Kill the process 
+                TSOS.ProcessControlBlock.killProcess(_PCBInstances[_CurrentPID]);
+                // Where can I let the user know about this memory access violation
+            }
+            else {
+                // Return the data in the specified memory address
+                return _Memory.memoryArray[physicalAddress];
+            }
         };
         // Issue #27 #17 This method writes a value to a memory address. This may be combinable with loadProgramToMemory. 
         // Issue #45 | Only the memory accessor should modify memory
         MemoryAccessor.prototype.writeToMemory = function (logicalAddress, memSegment, valueToWrite) {
             // Convert the logical address to a physical address 
             var physicalAddress = this.convertLogicalToPhysicalAddress(logicalAddress, memSegment);
-            // If the value to write is a lone hex digit, add a zero in front so it looks consistent
-            if (valueToWrite.length == 1) {
-                valueToWrite = 0 + valueToWrite;
+            // Check for memory access violation 
+            if (logicalAddress > _MemoryBlockSize) {
+                // Kill the process 
+                TSOS.ProcessControlBlock.killProcess(_PCBInstances[_CurrentPID]);
+                // Where can I let the user know about this memory access violation
             }
-            // Save the value to the specified location in memory
-            _Memory.memoryArray[physicalAddress] = valueToWrite;
+            else {
+                // If the value to write is a lone hex digit, add a zero in front so it looks consistent
+                if (valueToWrite.length == 1) {
+                    valueToWrite = 0 + valueToWrite;
+                }
+                // Save the value to the specified location in memory
+                _Memory.memoryArray[physicalAddress] = valueToWrite;
+            }
         };
         // Reset all of the blocks of memory
         MemoryAccessor.prototype.resetAllBlocks = function () {

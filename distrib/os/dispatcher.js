@@ -46,6 +46,8 @@ var TSOS;
                 _PCBInstances[_CurrentPID].state = "READY";
                 // Enqueue the existing PCB
                 _Scheduler.readyQueue.enqueue(currentPcb);
+                // Log the context switch to the kernel log 
+                _Kernel.krnTrace("Context Switch: Switching from PID " + _CurrentPID + " to PID " + nextPcb.pid);
                 // Load the next pcb in the CPU
                 TSOS.ProcessControlBlock.loadProcessToCPU(nextPcb);
             }

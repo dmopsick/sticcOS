@@ -158,13 +158,13 @@ module TSOS {
                     _PCBInstances[_CurrentPID].executable = false;
 
                     // Get the memory segment used by the current processes to free it up
-                    const segmentToFree =  _PCBInstances[_CurrentPID].memSegment;
+                    const segmentToFree = _PCBInstances[_CurrentPID].memSegment;
 
                     // #35 set the mem segment to being free so a new process can be laoded
-                    _MemoryManager.partitions[segmentToFree].isFree = true; 
+                    _MemoryManager.partitions[segmentToFree].isFree = true;
 
                     // Issue #42 | Throw interrupt to check the schedule to load next program or stop execution
-                    _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, [])); 
+                    _KernelInterruptQueue.enqueue(new Interrupt(CONTEXT_SWITCH_IRQ, []));
 
                     // _Scheduler.checkScheduleOnProcessCompletion(_PCBInstances[_CurrentPID]);
 
@@ -173,7 +173,7 @@ module TSOS {
 
                     // Get the memory address of the byte to 
                     memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
-                    
+
                     // Get the byte to compare to the X register
                     constantIntValue = this.loadConstantFromMemory(memoryAddrIndex);
 
@@ -221,7 +221,7 @@ module TSOS {
                     break;
                 case "EE": // INC <byteToIncrement> | Increment the value of a byte
                     // Verify byteToIncrement exists | Does this need to be done for all memory calls?
-                    
+
                     // Get the memory address for the byte to increment
                     memoryAddrIndex = this.getFollowingMemoryLocationFromMemory();
 
@@ -243,13 +243,13 @@ module TSOS {
                     }
                     // Print 00 teriminated string starting at address sepcified in the Y register 
                     else if (this.Xreg == 2) {
-                        
+
                         // #45 Create a software intterupt to handle the system call | Seperate structure from presentation
                         _KernelInterruptQueue.enqueue(new Interrupt(PRINT_STRING_IRQ, []));
                     }
                     else {
                         // Throw a software interrupt error, invalid system call in X register
-                        
+
                         // Kill the current process... change state to failed?
                     }
 
@@ -294,6 +294,7 @@ module TSOS {
 
             // Pass the arguments on to the memory manager
             _MemoryAccessor.writeToMemory(logicalAddress, memSegment, hexToWrite);
+
         }
 
         // Helper function to get the following constant in memory in int form
@@ -321,7 +322,7 @@ module TSOS {
         public getFollowingMemoryLocationFromMemory(): number {
             // Get the following memory address as a string, second half of memory address 
             const secondHalfMemAddr = this.getFollowingConstantFromMemory().toString();
-    
+
             // Get the memory address as a string after that, front half of memory address
             const firstHalfMemAddr = this.getFollowingConstantFromMemory().toString();
 
