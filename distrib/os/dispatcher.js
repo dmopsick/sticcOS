@@ -19,6 +19,8 @@ var TSOS;
                console.log(nextPcb); */
             // Check if there is nothing running (initial schedule)
             if (currentPcb == null) {
+                // Log the loading of the processes to the kernel
+                _Kernel.krnTrace("Context Switch: Loading PID " + nextPcb.pid);
                 // Load the next pcb in the CPU
                 TSOS.ProcessControlBlock.loadProcessToCPU(nextPcb);
             }
@@ -32,6 +34,8 @@ var TSOS;
                     _CurrentPID = null;
                 }
                 else {
+                    // Log the context switch to the kernel log 
+                    _Kernel.krnTrace("Context Switch: Switching from PID " + _CurrentPID + " to PID " + nextPcb.pid);
                     // Load the next pcb in the CPU
                     TSOS.ProcessControlBlock.loadProcessToCPU(nextPcb);
                 }

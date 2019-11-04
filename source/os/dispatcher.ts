@@ -13,19 +13,22 @@ module TSOS {
             // Dequeue the next PCB to load
             const nextPcb: ProcessControlBlock = _Scheduler.readyQueue.dequeue();
 
-         /* console.log("CONTEXT SWITCH TIME");
-            console.log("WE SWITCHING FROM");
-            console.log(currentPcb);
-            console.log("TO");
-            console.log(nextPcb); */
+            /* console.log("CONTEXT SWITCH TIME");
+               console.log("WE SWITCHING FROM");
+               console.log(currentPcb);
+               console.log("TO");
+               console.log(nextPcb); */
 
             // Check if there is nothing running (initial schedule)
-            if (currentPcb == null){
+            if (currentPcb == null) {
+                // Log the loading of the processes to the kernel
+                _Kernel.krnTrace("Context Switch: Loading PID " + nextPcb.pid);
+
                 // Load the next pcb in the CPU
                 TSOS.ProcessControlBlock.loadProcessToCPU(nextPcb);
             }
             // Check to see if the current process is completed or terminated, if it is we will not add it back into queue
-             else if ((currentPcb.state == "COMPLETED") || (currentPcb.state == "TERMINATED")) {
+            else if ((currentPcb.state == "COMPLETED") || (currentPcb.state == "TERMINATED")) {
                 // The current process has completed, check to see if there is another process to load
                 if (nextPcb == null) {
                     // Stop the CPU from executing
@@ -35,6 +38,9 @@ module TSOS {
                     _CurrentPID = null;
                 }
                 else {
+                    // Log the context switch to the kernel log 
+                    _Kernel.krnTrace("Context Switch: Switching from PID " + _CurrentPID + " to PID " + nextPcb.pid);
+
                     // Load the next pcb in the CPU
                     TSOS.ProcessControlBlock.loadProcessToCPU(nextPcb);
                 }
