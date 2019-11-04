@@ -785,11 +785,46 @@ module TSOS {
 
         // Issue #36 | Kills all currently running processes
         public shellKillAll(args: string[]) {
-            // Find out which processes are running
+            // Create a variable to hold a list of the pcbs to kill
+            let pcbsToKill = [];
 
-            // Kill each of the running processes
+            // If there is a current running processes, it shall be killed.
+            if (_CurrentPID != null) {
+                // Add the current PCB of the list to kill if there is currently one running
+                pcbsToKill.push(_PCBInstances[_CurrentPID]);
+            }
 
-            // Need to implement the kill command first for 1 PID
+            // Loop through the ready queue and add them to the kill list
+            for (let i = 0; i < _Scheduler.readyQueue.getSize(); i++) {
+                // Get the pcb to kill
+                const pcbToKill: ProcessControlBlock = _Scheduler.readyQueue.q[i];
+
+                // Add the pcb to the list
+                pcbsToKill.push(pcbToKill);
+            }
+
+            // Loop through the list of processes to find processes that are both executable and resident to also kill
+            // Should I make a resident queue? Would this change functionality elsewhere? For now do it this hacky way
+            _PCBInstances.forEach(pcb => {
+                if ((pcb.state == "RESIDENT") && (pcb.executable == true)) {
+                    // Add the pcb to the list
+                    pcbsToKill.push(pcb);
+                }
+            });
+
+            // Loop through the list and kill each of the processes
+            pcbsToKill.forEach(pcb => {
+                // Do the deed
+                TSOS.ProcessControlBlock.killProcess(pcb);
+            });
+
+            // Provide some USEFUL feedback to the user
+            if (pcbsToKill.length > 0) {
+                _StdOut.putText("All loaded processes have been killed.");
+            }
+            else {
+                _StdOut.putText("Error: There are no processes to kill.")
+            }
         }
 
         // Issue #36 | Allows the user to modify the quantum for Round Robin scheduling
