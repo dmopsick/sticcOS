@@ -32,20 +32,16 @@ var TSOS;
             switch (memAddrStart) {
                 case 0:
                     this.memSegment = 0;
-                    console.log("PCB " + pid + " is in memory segment 0");
                     break;
                 case 256:
                     this.memSegment = 1;
-                    console.log("PCB " + pid + " is in memory segment 1");
                     break;
                 case 512:
                     this.memSegment = 2;
-                    console.log("PCB " + pid + " is in memory segment 2");
                     break;
             }
         }
-        ProcessControlBlock.prototype.init = function () {
-        };
+        ProcessControlBlock.prototype.init = function () { };
         // #18 A Utilitiy function used to check the PCB instance list whether an instance with the specified PID exists
         ProcessControlBlock.processExists = function (pidToCheck) {
             // Loop through instances for a process with specified PID

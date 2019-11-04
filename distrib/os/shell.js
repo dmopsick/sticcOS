@@ -621,7 +621,6 @@ var TSOS;
                 var pidToKillString = args[0];
                 // Parse the pid as an int
                 var pidToKill = parseInt(pidToKillString);
-                console.log(pidToKill);
                 // Ensure that a valid PID is passed as the argument
                 if ((pidToKill < _NextPID) && (pidToKill >= 0)) {
                     // Get the PCB of the process to kill

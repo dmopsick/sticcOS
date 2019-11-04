@@ -19,22 +19,17 @@ module TSOS {
             switch (memAddrStart) {
                 case 0:
                     this.memSegment = 0;
-                    console.log("PCB " + pid + " is in memory segment 0");
                     break;
                 case 256:
                     this.memSegment = 1;
-                    console.log("PCB " + pid + " is in memory segment 1");
                     break;
                 case 512:
                     this.memSegment = 2;
-                    console.log("PCB " + pid + " is in memory segment 2");
                     break;
             }
         }
 
-        public init(): void {
-
-        }
+        public init(): void { }
 
         // #18 A Utilitiy function used to check the PCB instance list whether an instance with the specified PID exists
         public static processExists(pidToCheck: number): boolean {
@@ -102,12 +97,11 @@ module TSOS {
             }
             else {
                 // Remove the process from the Ready queue
-                for(let i = 0; i < _Scheduler.readyQueue.getSize(); i++) {
+                for (let i = 0; i < _Scheduler.readyQueue.getSize(); i++) {
                     if (_Scheduler.readyQueue.q[i] == pidToKill) {
                         // Remove the item from the queue
                         _Scheduler.readyQueue.q.splice(i, 1);
                     }
-
                 }
             }
 

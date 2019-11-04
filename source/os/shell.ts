@@ -753,8 +753,6 @@ module TSOS {
                 // Parse the pid as an int
                 const pidToKill = parseInt(pidToKillString);
 
-                console.log(pidToKill);
-
                 // Ensure that a valid PID is passed as the argument
                 if ((pidToKill < _NextPID) && (pidToKill >= 0)) {
                     // Get the PCB of the process to kill

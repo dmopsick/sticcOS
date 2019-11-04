@@ -39,7 +39,6 @@ var TSOS;
         };
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
-            console.log("READING FROM PC OF " + this.PC);
             // Need to FETCH the current op code from memory
             // Get the current program counter location, originally set when program is loaded
             var currentOpCode = this.readMemory(this.PC);
@@ -208,7 +207,6 @@ var TSOS;
             }
             // Increment the program counter when the cycle is completed
             this.PC++;
-            console.log("PC INCREMENT ON CYCLE COMPLETION!");
             // Increment the PC for the current PCB
             _PCBInstances[_CurrentPID].PC = this.PC;
         };
