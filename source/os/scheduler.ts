@@ -67,9 +67,13 @@ module TSOS {
             }
         }
 
+        // Issue #48 | This function ensures that the ready queue is sorted by proceses
+        // Using https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
         private priorityScheduling(): void {
-            console.log("Non preemptive priority scheduling");
+            // Ensure the ready queue is sorted properly by priority
+            this.readyQueue.q.sort(function(a, b) {
+                return a.priority - b.priority;
+            });
         }
-
     }
 }
