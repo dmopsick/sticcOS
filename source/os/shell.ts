@@ -153,6 +153,18 @@ module TSOS {
                 "<int> - Modifies the quantum for Round Robin scheduling.");
             this.commandList[this.commandList.length] = sc;
 
+            // getschedule
+            sc = new ShellCommand(this.shellGetSchedule,
+                "getschedule",
+                "- Returns the current scheduling algorithm being used by SticcOs.");
+            this.commandList[this.commandList.length] = sc;
+
+            // set schedule [rr, fcfs, priority]
+            sc = new ShellCommand(this.shellSetSchedule,
+                "setschedule",
+                "[rr, fcfs, priority] - sets which scheduling algorithm to use");
+            this.commandList[this.commandList.length] = sc;
+
             // Display the initial prompt.
             this.putPrompt();
         }
@@ -366,7 +378,7 @@ module TSOS {
                         _StdOut.putText("BSOD is used to test the blue screen of death in SticcOS.")
                         break;
                     case "load":
-                        _StdOut.putText("Load is used to validate the user entered program code.");
+                        _StdOut.putText("Load [0-4] is used to validate the user entered program code with an optional priority value of 0-4.");
                         break;
                     case "run":
                         _StdOut.putText("Run <pid> runs the process with the given PID loaded into SticcOS.");
@@ -388,6 +400,12 @@ module TSOS {
                         break;
                     case "quantum":
                         _StdOut.putText("Quantum <int> allows the user to modify the quantum used for Round Robin scheduling.")
+                        break;
+                    case "getschedule":
+                        _StdOut.putText("Getschedule returns the name of the current scheduling algorithm.");
+                        break;
+                    case "setschedule":
+                        _StdOut.putText("Setschedule [rr, fcfs, priority] allows user to set the cpu scheduling algorithm.")
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -542,6 +560,23 @@ module TSOS {
                 _StdOut.putText("Error: An empty program is an invalid one.");
             }
             else if (valid) {
+                // Declare variable for default priority value 
+                let priority = 4;
+
+                // Check if there is a priority value to use and if that value is valid
+                if (args.length > 0) {
+                    const priorityString = args[0];
+
+                    // The extra check is because 0 == false in evaluation So need to check that the string is parseable and 0-4
+                    if ((!parseInt(priorityString) && parseInt(priorityString) != 0) || ( (parseInt(priorityString) < 0)  || (parseInt(priorityString) > 5))) {
+                        // If the priority value cannot be parsed as a number! It is invalid
+                        _StdOut.putText("Error: The priority value must be a number from 0-4.");
+                        return;
+                    }
+                    // If the priority value is valid
+                    priority = parseInt(priorityString);
+                }
+
                 // Issue #17 checking the count of commands to see if there is an overflow
                 const splitProgramInput = programInput.split(" ");
 
@@ -550,45 +585,33 @@ module TSOS {
                     // Need to caluclate which memblock is free
                     let freeMemoryBlock = -1;
 
-                    let newPCB;
+                    let memStart, memRange;
 
-                    // Check which memory block is free
-                    if (_MemoryManager.memBlockIsFree(0)) {
-                        // Mem block 0 is free
+                    if (_MemoryManager.memBlockIsFree(0)) { 
                         freeMemoryBlock = 0;
-
-                        // Create a Process Control Block (PCB)
-                        newPCB = new TSOS.ProcessControlBlock(
-                            _NextPID, // Use next available PID
-                            0, // Memory Start
-                            255 // Memory Range
-                        );
+                        memStart = 0;
+                        memRange = 255;
                     }
-                    else if (_MemoryManager.memBlockIsFree(1)) {
-                        // Mem block 1 is free
+                    else if (_MemoryManager.memBlockIsFree(1)) { 
                         freeMemoryBlock = 1;
-
-                        // Create a Process Control Block (PCB)
-                        newPCB = new TSOS.ProcessControlBlock(
-                            _NextPID, // Use next available PID
-                            256, // Memory Start
-                            511 // Memory Range
-                        );
-                    }
-                    else if (_MemoryManager.memBlockIsFree(2)) {
-                        // Mem block 2 is free
+                        memStart = 256
+                        memRange = 511;
+                    } 
+                    else if (_MemoryManager.memBlockIsFree(2)) { 
                         freeMemoryBlock = 2;
-
-                        // Create a Process Control Block (PCB)
-                        newPCB = new TSOS.ProcessControlBlock(
-                            _NextPID, // Use next available PID
-                            512, // Memory Start
-                            767 // Memory Range
-                        );
+                        memStart = 512;
+                        memRange = 767;
                     }
 
                     // If there is a free memblock continue the loading
                     if (freeMemoryBlock != -1) {
+                        const newPCB = new TSOS.ProcessControlBlock(
+                            _NextPID,
+                            memStart,
+                            memRange,
+                            priority
+                        )
+
                         // Add new PCB to global instance array
                         _PCBInstances.push(newPCB);
 
@@ -854,6 +877,73 @@ module TSOS {
                 _StdOut.putText("Error: Please specify a positive number to set as the quantum value.")
             }
 
+        }
+
+        // Issue # 48 | Returns the currently used scheduling algorithm
+        public shellGetSchedule(args: string[]) {
+            let schedulingAlgorithm: String = "";
+
+            // Get the current scheduling algorithm from the scheduler
+            const currentSchedulingId = _Scheduler.schedulingAlgorithm;
+
+            switch (currentSchedulingId) {
+                case 0: // Round robin
+                    schedulingAlgorithm = "Round Robin";
+                    break;
+                case 1: // FCFS
+                    schedulingAlgorithm = "First Come, First Served";
+                    break;
+                case 2: // Priority
+                    schedulingAlgorithm = "Non Preemptive Priority";
+                    break;
+                default:
+                    // This should not be reached
+                    schedulingAlgorithm = "Error: Scheduling algorithm N/A";
+                    break;
+            }
+
+            _StdOut.putText("Current Schedule: " + schedulingAlgorithm)
+        }
+
+        // Issue #48 | Modifies the currently used scheduling algorithm
+        public shellSetSchedule(args: string[]) {
+            // Check that there was an argument passed to the setSchedule function
+            if (args.length > 0) {
+                const inputtedSchedule = args[0];
+
+                // Check if valid argument passed, if so modify the schedule
+                switch (inputtedSchedule) {
+                    case "rr":
+                        // Set RR as the current scheduling algorithm
+                        _Scheduler.schedulingAlgorithm = 0;
+
+                        // Let the user know the scheduling algorithm has been changed
+                        _StdOut.putText("Round Robin has been set as the CPU scheduling algorithm");
+                        break;
+                    case "fcfs":
+                        // Set FCFS as the current scheduling algorithm
+                        _Scheduler.schedulingAlgorithm = 1;
+
+                        // Let the user know the scheduling algorithm has been changed
+                        _StdOut.putText("First Come, First Served has been set as the CPU scheduling algorithm.");
+                        break;
+                    case "priority":
+                        // Set NP Priority as the current scheduling algorithm
+                        _Scheduler.schedulingAlgorithm = 2;
+
+                        // Let the user know the scheduling algorithm has been changed
+                        _StdOut.putText("Non Preemptive Priority has been set as the CPU scheduling algorithm.");
+                        break;
+                    default:
+                        // Let user know valid input for setschedule
+                        _StdOut.putText("Error: Invalid argument. Valid arguments: 'rr', 'fcfs', & 'priority'");
+                        break;
+                }
+            }
+            else {
+                // Let user know they need to pass an argument
+                _StdOut.putText("Error: No argument provided. Valid arguments: 'rr', 'fcfs', & 'priority'");
+            }
         }
     }
 }

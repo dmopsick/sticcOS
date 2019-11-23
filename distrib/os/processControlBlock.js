@@ -1,13 +1,14 @@
-// Issue #21
 var TSOS;
 (function (TSOS) {
     var ProcessControlBlock = /** @class */ (function () {
-        function ProcessControlBlock(pid, memAddrStart, memRange, PC, Acc, Xreg, Yreg, ZFlag, isExecuted, // Records whether the PCB has been executed
+        function ProcessControlBlock(pid, memAddrStart, memRange, priority, // Issue #48 | 0 (high) - 5 (low) | Default to 4 |  Processes all have a priority value now for priority based scheduling.
+        PC, Acc, Xreg, Yreg, ZFlag, isExecuted, // Records whether the PCB has been executed
         state, executable, // Issue #18.. For project 3 only the most recently loaded program that has not been run should be executable
         memSegment // Records which memory segment the PCB is saved in. Can be determined from memAddrStart
         ) {
             if (pid === void 0) { pid = _NextPID; }
             if (memRange === void 0) { memRange = 256; }
+            if (priority === void 0) { priority = 4; }
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
             if (Xreg === void 0) { Xreg = 0; }
@@ -20,6 +21,7 @@ var TSOS;
             this.pid = pid;
             this.memAddrStart = memAddrStart;
             this.memRange = memRange;
+            this.priority = priority;
             this.PC = PC;
             this.Acc = Acc;
             this.Xreg = Xreg;
