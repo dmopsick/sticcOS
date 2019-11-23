@@ -13,7 +13,6 @@ var TSOS;
         }
         // Issue #42 | Check the schedule on a CPU cycle and determine if a context switch is necesary
         Scheduler.prototype.checkSchedule = function () {
-            console.log(this.fcfsQuantum);
             switch (this.schedulingAlgorithm) {
                 case 0: // Round robin
                     this.roundRobinScheduling(this.quantum);

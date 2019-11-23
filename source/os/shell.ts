@@ -153,6 +153,12 @@ module TSOS {
                 "<int> - Modifies the quantum for Round Robin scheduling.");
             this.commandList[this.commandList.length] = sc;
 
+            // getschedule
+            sc = new ShellCommand(this.shellGetSchedule,
+                "getschedule",
+                "- Returns the current scheduling algorithm being used by SticcOs.");
+            this.commandList[this.commandList.length] = sc;
+
             // Display the initial prompt.
             this.putPrompt();
         }
@@ -854,6 +860,32 @@ module TSOS {
                 _StdOut.putText("Error: Please specify a positive number to set as the quantum value.")
             }
 
+        }
+
+        // Issue # 48 | Returns the currently used scheduling algorithm
+        public shellGetSchedule(args: string[]) {
+            let schedulingAlgorithm: String = "";
+
+            // Get the current scheduling algorithm from the scheduler
+            const currentSchedulingId = _Scheduler.schedulingAlgorithm;
+
+            switch(currentSchedulingId) {
+                case 0: // Round robin
+                    schedulingAlgorithm = "Round Robin";
+                    break;
+                case 1: // FCFS
+                    schedulingAlgorithm = "First Come, First Served";
+                    break;
+                case 2: // Priority
+                    schedulingAlgorithm = "Non Preemptive Priority";
+                    break;
+                default:
+                    // This should not be reached
+                    schedulingAlgorithm = "Error: Scheduling algorithm N/A";
+                    break;
+            }
+
+            _StdOut.putText("Current Schedule: " + schedulingAlgorithm)            
         }
     }
 }
