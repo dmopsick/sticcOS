@@ -88,6 +88,9 @@ var TSOS;
             // getschedule
             sc = new TSOS.ShellCommand(this.shellGetSchedule, "getschedule", "- Returns the current scheduling algorithm being used by SticcOs.");
             this.commandList[this.commandList.length] = sc;
+            // set schedule [rr, fcfs, priority]
+            sc = new TSOS.ShellCommand(this.shellSetSchedule, "setschedule", "[rr, fcfs, priority] - sets which scheduling algorithm to use");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -305,6 +308,12 @@ var TSOS;
                         break;
                     case "quantum":
                         _StdOut.putText("Quantum <int> allows the user to modify the quantum used for Round Robin scheduling.");
+                        break;
+                    case "getschedule":
+                        _StdOut.putText("Getschedule returns the name of the current scheduling algorithm.");
+                        break;
+                    case "setschedule":
+                        _StdOut.putText("Setschedule [rr, fcfs, priority] allows user to set the cpu scheduling algorithm.");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -733,6 +742,42 @@ var TSOS;
                     break;
             }
             _StdOut.putText("Current Schedule: " + schedulingAlgorithm);
+        };
+        // Issue #48 | Modifies the currently used scheduling algorithm
+        Shell.prototype.shellSetSchedule = function (args) {
+            // Check that there was an argument passed to the setSchedule function
+            if (args.length > 0) {
+                var inputtedSchedule = args[0];
+                // Check if valid argument passed, if so modify the schedule
+                switch (inputtedSchedule) {
+                    case "rr":
+                        // Set RR as the current scheduling algorithm
+                        _Scheduler.schedulingAlgorithm = 0;
+                        // Let the user know the scheduling algorithm has been changed
+                        _StdOut.putText("Round Robin has been set as the CPU scheduling algorithm.");
+                        break;
+                    case "fcfs":
+                        // Set FCFS as the current scheduling algorithm
+                        _Scheduler.schedulingAlgorithm = 1;
+                        // Let the user know the scheduling algorithm has been changed
+                        _StdOut.putText("First Come, First Served has been set as the CPU scheduling algorithm.");
+                        break;
+                    case "priority":
+                        // Set NP Priority as the current scheduling algorithm
+                        _Scheduler.schedulingAlgorithm = 2;
+                        // Let the user know the scheduling algorithm has been changed
+                        _StdOut.putText("Non Preemptive Priority has been set as the CPU scheduling algorithm.");
+                        break;
+                    default:
+                        // Let user know valid input for setschedule
+                        _StdOut.putText("Error: Invalid argument. Valid arguments: 'rr', 'fcfs', & 'priority'");
+                        break;
+                }
+            }
+            else {
+                // Let user know they need to pass an argument
+                _StdOut.putText("Error: No argument provided. Valid arguments: 'rr', 'fcfs', & 'priority'");
+            }
         };
         return Shell;
     }());
