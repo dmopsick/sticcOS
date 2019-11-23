@@ -286,7 +286,7 @@ var TSOS;
                         _StdOut.putText("BSOD is used to test the blue screen of death in SticcOS.");
                         break;
                     case "load":
-                        _StdOut.putText("Load is used to validate the user entered program code.");
+                        _StdOut.putText("Load [0-4] is used to validate the user entered program code with an optional priority value of 0-4.");
                         break;
                     case "run":
                         _StdOut.putText("Run <pid> runs the process with the given PID loaded into SticcOS.");
@@ -459,43 +459,45 @@ var TSOS;
                 _StdOut.putText("Error: An empty program is an invalid one.");
             }
             else if (valid) {
+                // Declare variable for default priority value 
+                var priority = 4;
+                // Check if there is a priority value to use and if that value is valid
+                if (args.length > 0) {
+                    var priorityString = args[0];
+                    // The extra check is because 0 == false in evaluation So need to check that the string is parseable and 0-4
+                    if ((!parseInt(priorityString) && parseInt(priorityString) != 0) || ((parseInt(priorityString) < 0) || (parseInt(priorityString) > 5))) {
+                        // If the priority value cannot be parsed as a number! It is invalid
+                        _StdOut.putText("Error: The priority value must be a number from 0-4.");
+                        return;
+                    }
+                    // If the priority value is valid
+                    priority = parseInt(priorityString);
+                }
                 // Issue #17 checking the count of commands to see if there is an overflow
                 var splitProgramInput = programInput.split(" ");
                 // Verify the program code will not cause an overflow
                 if (splitProgramInput.length <= _MemoryBlockSize) {
                     // Need to caluclate which memblock is free
                     var freeMemoryBlock = -1;
-                    var newPCB = void 0;
-                    // Check which memory block is free
+                    var memStart = void 0, memRange = void 0;
                     if (_MemoryManager.memBlockIsFree(0)) {
-                        // Mem block 0 is free
                         freeMemoryBlock = 0;
-                        // Create a Process Control Block (PCB)
-                        newPCB = new TSOS.ProcessControlBlock(_NextPID, // Use next available PID
-                        0, // Memory Start
-                        255 // Memory Range
-                        );
+                        memStart = 0;
+                        memRange = 255;
                     }
                     else if (_MemoryManager.memBlockIsFree(1)) {
-                        // Mem block 1 is free
                         freeMemoryBlock = 1;
-                        // Create a Process Control Block (PCB)
-                        newPCB = new TSOS.ProcessControlBlock(_NextPID, // Use next available PID
-                        256, // Memory Start
-                        511 // Memory Range
-                        );
+                        memStart = 256;
+                        memRange = 511;
                     }
                     else if (_MemoryManager.memBlockIsFree(2)) {
-                        // Mem block 2 is free
                         freeMemoryBlock = 2;
-                        // Create a Process Control Block (PCB)
-                        newPCB = new TSOS.ProcessControlBlock(_NextPID, // Use next available PID
-                        512, // Memory Start
-                        767 // Memory Range
-                        );
+                        memStart = 512;
+                        memRange = 767;
                     }
                     // If there is a free memblock continue the loading
                     if (freeMemoryBlock != -1) {
+                        var newPCB = new TSOS.ProcessControlBlock(_NextPID, memStart, memRange, priority);
                         // Add new PCB to global instance array
                         _PCBInstances.push(newPCB);
                         // Get the mem segment of the PCB being loaded
@@ -754,7 +756,7 @@ var TSOS;
                         // Set RR as the current scheduling algorithm
                         _Scheduler.schedulingAlgorithm = 0;
                         // Let the user know the scheduling algorithm has been changed
-                        _StdOut.putText("Round Robin has been set as the CPU scheduling algorithm.");
+                        _StdOut.putText("Round Robin has been set as the CPU scheduling algorithm");
                         break;
                     case "fcfs":
                         // Set FCFS as the current scheduling algorithm

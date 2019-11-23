@@ -8,6 +8,10 @@ var TSOS;
         // Issue #42 | Handles the context switch
         // Saves the current executing process and load the new process to the CPU
         Dispatcher.prototype.contextSwitch = function () {
+            // Check if priority scheduling .. if so Sort!
+            if (_Scheduler.schedulingAlgorithm === 2) {
+                _Scheduler.priorityScheduling();
+            }
             // Get the current PCB to enqueue it
             var currentPcb = _PCBInstances[_CurrentPID];
             // Dequeue the next PCB to load

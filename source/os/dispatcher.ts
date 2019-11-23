@@ -7,6 +7,11 @@ module TSOS {
         // Issue #42 | Handles the context switch
         // Saves the current executing process and load the new process to the CPU
         public contextSwitch(): void {
+            // Check if priority scheduling .. if so Sort!
+            if (_Scheduler.schedulingAlgorithm === 2) {
+                _Scheduler.priorityScheduling();
+            }
+
             // Get the current PCB to enqueue it
             const currentPcb: ProcessControlBlock = _PCBInstances[_CurrentPID];
 

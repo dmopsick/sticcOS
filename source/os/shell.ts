@@ -378,7 +378,7 @@ module TSOS {
                         _StdOut.putText("BSOD is used to test the blue screen of death in SticcOS.")
                         break;
                     case "load":
-                        _StdOut.putText("Load is used to validate the user entered program code.");
+                        _StdOut.putText("Load [0-4] is used to validate the user entered program code with an optional priority value of 0-4.");
                         break;
                     case "run":
                         _StdOut.putText("Run <pid> runs the process with the given PID loaded into SticcOS.");
@@ -560,6 +560,23 @@ module TSOS {
                 _StdOut.putText("Error: An empty program is an invalid one.");
             }
             else if (valid) {
+                // Declare variable for default priority value 
+                let priority = 4;
+
+                // Check if there is a priority value to use and if that value is valid
+                if (args.length > 0) {
+                    const priorityString = args[0];
+
+                    // The extra check is because 0 == false in evaluation So need to check that the string is parseable and 0-4
+                    if ((!parseInt(priorityString) && parseInt(priorityString) != 0) || ( (parseInt(priorityString) < 0)  || (parseInt(priorityString) > 5))) {
+                        // If the priority value cannot be parsed as a number! It is invalid
+                        _StdOut.putText("Error: The priority value must be a number from 0-4.");
+                        return;
+                    }
+                    // If the priority value is valid
+                    priority = parseInt(priorityString);
+                }
+
                 // Issue #17 checking the count of commands to see if there is an overflow
                 const splitProgramInput = programInput.split(" ");
 
@@ -568,45 +585,33 @@ module TSOS {
                     // Need to caluclate which memblock is free
                     let freeMemoryBlock = -1;
 
-                    let newPCB;
+                    let memStart, memRange;
 
-                    // Check which memory block is free
-                    if (_MemoryManager.memBlockIsFree(0)) {
-                        // Mem block 0 is free
+                    if (_MemoryManager.memBlockIsFree(0)) { 
                         freeMemoryBlock = 0;
-
-                        // Create a Process Control Block (PCB)
-                        newPCB = new TSOS.ProcessControlBlock(
-                            _NextPID, // Use next available PID
-                            0, // Memory Start
-                            255 // Memory Range
-                        );
+                        memStart = 0;
+                        memRange = 255;
                     }
-                    else if (_MemoryManager.memBlockIsFree(1)) {
-                        // Mem block 1 is free
+                    else if (_MemoryManager.memBlockIsFree(1)) { 
                         freeMemoryBlock = 1;
-
-                        // Create a Process Control Block (PCB)
-                        newPCB = new TSOS.ProcessControlBlock(
-                            _NextPID, // Use next available PID
-                            256, // Memory Start
-                            511 // Memory Range
-                        );
-                    }
-                    else if (_MemoryManager.memBlockIsFree(2)) {
-                        // Mem block 2 is free
+                        memStart = 256
+                        memRange = 511;
+                    } 
+                    else if (_MemoryManager.memBlockIsFree(2)) { 
                         freeMemoryBlock = 2;
-
-                        // Create a Process Control Block (PCB)
-                        newPCB = new TSOS.ProcessControlBlock(
-                            _NextPID, // Use next available PID
-                            512, // Memory Start
-                            767 // Memory Range
-                        );
+                        memStart = 512;
+                        memRange = 767;
                     }
 
                     // If there is a free memblock continue the loading
                     if (freeMemoryBlock != -1) {
+                        const newPCB = new TSOS.ProcessControlBlock(
+                            _NextPID,
+                            memStart,
+                            memRange,
+                            priority
+                        )
+
                         // Add new PCB to global instance array
                         _PCBInstances.push(newPCB);
 

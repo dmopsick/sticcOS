@@ -27,7 +27,7 @@ module TSOS {
                     this.roundRobinScheduling(this.fcfsQuantum);
                     break;
                 case 2:
-                    this.priorityScheduling();
+                    // this.priorityScheduling();
                     break;
                 default:
                     // This should not be reached
@@ -69,11 +69,14 @@ module TSOS {
 
         // Issue #48 | This function ensures that the ready queue is sorted by proceses
         // Using https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
-        private priorityScheduling(): void {
+        public priorityScheduling(): void {
+            console.log("SORT by priority");
             // Ensure the ready queue is sorted properly by priority
-            this.readyQueue.q.sort(function(a, b) {
+            this.readyQueue.q = this.readyQueue.q.sort(function(a, b) {
                 return a.priority - b.priority;
             });
+
+            console.log(this.readyQueue.q);
         }
     }
 }
