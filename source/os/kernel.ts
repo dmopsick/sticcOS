@@ -43,6 +43,10 @@ module TSOS {
             _MemoryManager = new TSOS.MemoryManager();
             _MemoryManager.init();
 
+            // Issue #46 initialize Disk
+            _Disk = new TSOS.Disk();
+            _Disk.init();
+
             // Issue #42 | Initialize scheduler and dispatcher
             _Scheduler = new TSOS.Scheduler();
             _Dispatcher = new TSOS.Dispatcher();
