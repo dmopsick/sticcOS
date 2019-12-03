@@ -15,9 +15,14 @@ var TSOS;
         // Issue #46 | Format the disk 
         // Initalize the values
         Disk.prototype.init = function () {
-            // Initialize the data blocks to all "00"
-            sessionStorage.disk = "HELLO WORLD";
-            console.log(sessionStorage.disk);
+            // Initialize every single data block to "00"
+            for (var i = 0; i < this.tracks; i++) {
+                for (var j = 0; j < this.sections; j++) {
+                    for (var k = 0; k < this.blocks; k++) {
+                        // Need to write to the disk here 00
+                    }
+                }
+            }
         };
         return Disk;
     }());

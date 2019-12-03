@@ -37,7 +37,7 @@ var TSOS;
             // Issue #25 Initialize Memory Manager
             _MemoryManager = new TSOS.MemoryManager();
             _MemoryManager.init();
-            // Issue #48 initialize Disk
+            // Issue #46 initialize Disk
             _Disk = new TSOS.Disk();
             _Disk.init();
             // Issue #42 | Initialize scheduler and dispatcher

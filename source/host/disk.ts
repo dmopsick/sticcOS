@@ -18,9 +18,14 @@ module TSOS {
         // Issue #46 | Format the disk 
         // Initalize the values
         public init(): void {
-            // Initialize the data blocks to all "00"
-            sessionStorage.disk = "HELLO WORLD";
-            console.log(sessionStorage.disk);
+            // Initialize every single data block to "00"
+            for(let i = 0; i < this.tracks; i++) {
+                for (let j = 0; j < this.sections; j++) {
+                    for(let k = 0; k < this.blocks; k++) {
+                        // Need to write to the disk here 00
+                    }
+                }
+            }
         }
     }
 }
