@@ -43,6 +43,8 @@ var TSOS;
             // Issue #42 | Initialize scheduler and dispatcher
             _Scheduler = new TSOS.Scheduler();
             _Dispatcher = new TSOS.Dispatcher();
+            // Issue #49 | Initialize the Disk display
+            TSOS.Control.initDiskDisplay();
             // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
             this.krnTrace("Enabling the interrupts.");
             this.krnEnableInterrupts();
@@ -93,6 +95,7 @@ var TSOS;
             TSOS.Control.updateMemoryDisplay();
             TSOS.Control.updateCPUDisplay();
             TSOS.Control.updatePCBDisplay();
+            // Issue #49 update disk display here?
         };
         //
         // Interrupt Handling

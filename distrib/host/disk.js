@@ -24,6 +24,13 @@ var TSOS;
                 }
             }
         };
+        // Issue #46 | Write to the disk
+        Disk.prototype.writeToDisk = function (tsb, data) {
+            // Set the data using the tsb as the key
+            sessionStorage.setItem(tsb.getTSBKey(), data);
+            // Update the HTML display
+            // The HTML display must be implemented to update it 
+        };
         return Disk;
     }());
     TSOS.Disk = Disk;

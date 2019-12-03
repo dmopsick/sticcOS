@@ -208,17 +208,60 @@ module TSOS {
                 }
                 memoryTableHTML += "<th id='mem-block-" + i + "'> " +  TSOS.Utils.displayHex(_Memory.memoryArray[i]) + " </th>";
             }
-            (<HTMLElement>document.getElementById("memoryInfoTableBody")).innerHTML = memoryTableHTML
+            (<HTMLElement>document.getElementById("memoryInfoTableBody")).innerHTML = memoryTableHTML;
         }
 
         // Issue #49 Initialize the disk display
         // Inspired by TienOS way of displaying TSB | In Use | Next | Data
         public static initDiskDisplay(): void {
+            // Variable to hold the table body generated from the following triple nested loop
+            let diskTableBodyHTML = "";
 
+            // Create each row in the table for each block and populate with starting values BEFORE FORMAT
+            for (let i = 0; i < _Disk.tracks; i++) {
+                for (let j = 0; j < _Disk.sections; j++) {
+                    for (let k = 0; k < _Disk.sections; k++) {
+                        // Variable to keep track of data for each row
+                        let data = "";
+
+                        // Compile the TSB from the index of each of the loops
+                        const tsb = new TSB(i, j, k);
+
+                        // Generate a unique ID for each row of the table
+                        const rowId = "tsb-" + tsb.track + tsb.section + tsb.block;
+
+                        // Handle MBR as special case 
+                        if (i == 0 && j == 0 && k == 0) {
+                            // Set the first available directory and file entry 
+                            // 0 For in use | 0 for next | 001 for next dir | 100 for next file
+                            data += "0000001100";
+                            // Set the rest of the block to 0
+                            for (let m = 0; m < _Disk.blockSize - 10; m++) {
+                                data += "0";
+                            }
+                        }
+                        // Every other record
+                        else {
+                            // Set all the block to 0
+                            for (let m = 0; m < _Disk.blockSize; m++) {
+                                data += "0";
+                            }
+                        }
+
+                        diskTableBodyHTML += "<tr id='" + rowId + "'>";
+                        diskTableBodyHTML += "<td>" + tsb.getTSBKey() + "</td>";
+                        diskTableBodyHTML += "<td>" + data[0] + "</td>";
+                        diskTableBodyHTML += "<td>" + data[1] + data[2] + data[3] + "</td>";
+                        diskTableBodyHTML += "<td>" + data.substring(4, _Disk.blockSize) + "</td>";
+                        diskTableBodyHTML += "</tr>";
+                    }
+                }
+            }
+            // Update the HTML tablebody with the generated table
+            (<HTMLElement>document.getElementById("diskInfoTableBody")).innerHTML = diskTableBodyHTML;
         }
 
         // Issue #49 | Update specific key/value pair in HTML disk display
-        // Basing this implementation on above memory implementation. Maybe it works maybe not 
         public static updateDiskDisplay(tsb: TSB, data): void {
             // Initialize s
             let diskTableHTML = "";

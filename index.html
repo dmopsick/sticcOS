@@ -20,6 +20,7 @@
         <script type="text/javascript" src="distrib/host/memory.js"></script>
         <script type="text/javascript" src="distrib/host/memoryAccessor.js"></script>
         <script type="text/javascript" src="distrib/host/disk.js"></script>
+        <script type="text/javascript" src="distrib/host/tsb.js"></script>
 
         <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
         <script type="text/javascript" src="distrib/os/interrupt.js"></script>
@@ -160,7 +161,7 @@
                                                                                 <th>Data</th>
                                                                         </tr>
                                                                 </thead>
-                                                                <tbody>
+                                                                <tbody id="diskInfoTableBody">
                                                                         <tr>
                                                                                 <td colspan="4">Disk not loaded</td>
                                                                         </tr>

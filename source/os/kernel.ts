@@ -51,6 +51,9 @@ module TSOS {
             _Scheduler = new TSOS.Scheduler();
             _Dispatcher = new TSOS.Dispatcher();
 
+            // Issue #49 | Initialize the Disk display
+            TSOS.Control.initDiskDisplay();
+
             // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
             this.krnTrace("Enabling the interrupts.");
             this.krnEnableInterrupts();

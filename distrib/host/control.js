@@ -176,6 +176,55 @@ var TSOS;
             }
             document.getElementById("memoryInfoTableBody").innerHTML = memoryTableHTML;
         };
+        // Issue #49 Initialize the disk display
+        // Inspired by TienOS way of displaying TSB | In Use | Next | Data
+        Control.initDiskDisplay = function () {
+            // Variable to hold the table body generated from the following triple nested loop
+            var diskTableBodyHTML = "";
+            // Create each row in the table for each block and populate with starting values BEFORE FORMAT
+            for (var i = 0; i < _Disk.tracks; i++) {
+                for (var j = 0; j < _Disk.sections; j++) {
+                    for (var k = 0; k < _Disk.sections; k++) {
+                        // Variable to keep track of data for each row
+                        var data = "";
+                        // Compile the TSB from the index of each of the loops
+                        var tsb = new TSOS.TSB(i, j, k);
+                        // Generate a unique ID for each row of the table
+                        var rowId = "tsb-" + tsb.track + tsb.section + tsb.block;
+                        // Handle MBR as special case 
+                        if (i == 0 && j == 0 && k == 0) {
+                            // Set the first available directory and file entry 
+                            // 0 For in use | 0 for next | 001 for next dir | 100 for next file
+                            data += "0000001100";
+                            // Set the rest of the block to 0
+                            for (var m = 0; m < _Disk.blockSize - 10; m++) {
+                                data += "0";
+                            }
+                        }
+                        // Every other record
+                        else {
+                            // Set all the block to 0
+                            for (var m = 0; m < _Disk.blockSize; m++) {
+                                data += "0";
+                            }
+                        }
+                        diskTableBodyHTML += "<tr id='" + rowId + "'>";
+                        diskTableBodyHTML += "<td>" + tsb.getTSBKey() + "</td>";
+                        diskTableBodyHTML += "<td>" + data[0] + "</td>";
+                        diskTableBodyHTML += "<td>" + data[1] + data[2] + data[3] + "</td>";
+                        diskTableBodyHTML += "<td>" + data.substring(4, _Disk.blockSize) + "</td>";
+                        diskTableBodyHTML += "</tr>";
+                    }
+                }
+            }
+            // Update the HTML tablebody with the generated table
+            document.getElementById("diskInfoTableBody").innerHTML = diskTableBodyHTML;
+        };
+        // Issue #49 | Update specific key/value pair in HTML disk display
+        Control.updateDiskDisplay = function (tsb, data) {
+            // Initialize s
+            var diskTableHTML = "";
+        };
         return Control;
     }());
     TSOS.Control = Control;
