@@ -108,6 +108,7 @@ module TSOS {
             TSOS.Control.updateMemoryDisplay();
             TSOS.Control.updateCPUDisplay();
             TSOS.Control.updatePCBDisplay();
+            // Issue #49 update disk display here?
         }
 
 

@@ -28,7 +28,7 @@ module TSOS {
             }
         }
 
-        // Issue #46 | Write 
+        // Issue #46 | Write to the disk
         public writeToDisk(tsb: TSB, data): void {
             // Set the data using the tsb as the key
             sessionStorage.setItem(tsb.getTSBKey(), data);

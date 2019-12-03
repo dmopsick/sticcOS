@@ -210,5 +210,20 @@ module TSOS {
             }
             (<HTMLElement>document.getElementById("memoryInfoTableBody")).innerHTML = memoryTableHTML
         }
+
+        // Issue #49 Initialize the disk display
+        // Inspired by TienOS way of displaying TSB | In Use | Next | Data
+        public static initDiskDisplay(): void {
+
+        }
+
+        // Issue #49 | Update specific key/value pair in HTML disk display
+        // Basing this implementation on above memory implementation. Maybe it works maybe not 
+        public static updateDiskDisplay(tsb: TSB, data): void {
+            // Initialize s
+            let diskTableHTML = "";
+
+
+        }
     }
 }
