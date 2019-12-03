@@ -27,5 +27,14 @@ module TSOS {
                 }
             }
         }
-    }
+
+        // Issue #46 | Write 
+        public writeToDisk(tsb: TSB, data): void {
+            // Set the data using the tsb as the key
+            sessionStorage.setItem(tsb.getTSBKey(), data);
+
+            // Update the HTML display
+            // The HTML display must be implemented to update it 
+        }
+    } 
 }
