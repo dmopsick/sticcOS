@@ -228,7 +228,7 @@ module TSOS {
                         const tsb = new TSB(i, j, k);
 
                         // Generate a unique ID for each row of the table
-                        const rowId = "tsb-" + tsb.track + tsb.section + tsb.block;
+                        const rowId = "tsb-" + tsb.getRawTSB();
 
                         // Handle MBR as special case 
                         if (i == 0 && j == 0 && k == 0) {
@@ -262,11 +262,20 @@ module TSOS {
         }
 
         // Issue #49 | Update specific key/value pair in HTML disk display
-        public static updateDiskDisplay(tsb: TSB, data): void {
-            // Initialize s
-            let diskTableHTML = "";
+        public static updateDiskDisplay(tsb: TSB, data: string): void {
+            // Update the specific row with key of TSB and value of data
+            // Initialize variable with TSB
+            let rowHTML = "<td>" + tsb.getTSBKey() +"</td>";
+            // In Use
+            rowHTML += "<td>" + data.substring(1,2)  +"</td>";
+            // Next
+            rowHTML += "<td>" + data.substring(3,4) + ":" + data.substring(5, 6) + ":" + data.substring(7, 8) + "</td>";
+            // Data
+            rowHTML += "<td>" + data.substring(8) + "</td>"
 
-
+            const rowId = "tsb-" + tsb.getRawTSB();
+            console.log("FLAG 16_" + rowId);
+            (<HTMLElement>document.getElementById(rowId)).innerHTML = rowHTML;
         }
     }
 }

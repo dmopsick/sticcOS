@@ -8,9 +8,14 @@ module TSOS {
         }
 
         // Issue #46 return the TSB formatted as key
-        // T:S:B
+        // returns T:S:B ex 0:0:1
         public getTSBKey(): string {
             return this.track + ":" + this.section + ":" + this.block;
         }
+
+        // returns TSB ex 001
+        public getRawTSB(): string {
+            return this.track.toString() + this.section.toString() + this.block.toString();
+        } 
     }
 }

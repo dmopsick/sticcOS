@@ -19,17 +19,28 @@ var TSOS;
             for (var i = 0; i < this.tracks; i++) {
                 for (var j = 0; j < this.sections; j++) {
                     for (var k = 0; k < this.blocks; k++) {
-                        // Need to write to the disk here 00
+                        // Create TSB to write to the disk with
+                        var tsb = new TSOS.TSB(i, j, k);
+                        // Write a blank block to the disk, the zero fill write will fill in the 00s.
+                        this.writeToDisk(tsb, "00");
                     }
                 }
             }
         };
-        // Issue #46 | Write to the disk
+        // Issue #46 | Write to the disk with zero fill to fit block size
         Disk.prototype.writeToDisk = function (tsb, data) {
+            // Create variable to hold the value of the data with the zero fill
+            var zeroFilledData = data;
+            // blockSize * 2 because 64 bytes and each byte is two characters
+            // Loading each empty byte as 00 | Do not want to leave old data in the block
+            // Makes the write a destructive write
+            while (zeroFilledData.length < (this.blockSize * 2)) {
+                zeroFilledData += "00";
+            }
             // Set the data using the tsb as the key
-            sessionStorage.setItem(tsb.getTSBKey(), data);
+            sessionStorage.setItem(tsb.getTSBKey(), zeroFilledData);
             // Update the HTML display
-            // The HTML display must be implemented to update it 
+            TSOS.Control.updateDiskDisplay(tsb, zeroFilledData);
         };
         return Disk;
     }());

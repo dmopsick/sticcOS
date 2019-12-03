@@ -37,14 +37,13 @@ var TSOS;
             // Issue #25 Initialize Memory Manager
             _MemoryManager = new TSOS.MemoryManager();
             _MemoryManager.init();
-            // Issue #46 initialize Disk
+            // Issue #46 initialize Disk object 
             _Disk = new TSOS.Disk();
-            _Disk.init();
+            // Issue #49 | Initialize the HTML Disk display
+            TSOS.Control.initDiskDisplay();
             // Issue #42 | Initialize scheduler and dispatcher
             _Scheduler = new TSOS.Scheduler();
             _Dispatcher = new TSOS.Dispatcher();
-            // Issue #49 | Initialize the Disk display
-            TSOS.Control.initDiskDisplay();
             // Enable the OS Interrupts.  (Not the CPU clock interrupt, as that is done in the hardware sim.)
             this.krnTrace("Enabling the interrupts.");
             this.krnEnableInterrupts();

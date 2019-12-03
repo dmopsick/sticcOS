@@ -190,7 +190,7 @@ var TSOS;
                         // Compile the TSB from the index of each of the loops
                         var tsb = new TSOS.TSB(i, j, k);
                         // Generate a unique ID for each row of the table
-                        var rowId = "tsb-" + tsb.track + tsb.section + tsb.block;
+                        var rowId = "tsb-" + tsb.getRawTSB();
                         // Handle MBR as special case 
                         if (i == 0 && j == 0 && k == 0) {
                             // Set the first available directory and file entry 
@@ -222,8 +222,18 @@ var TSOS;
         };
         // Issue #49 | Update specific key/value pair in HTML disk display
         Control.updateDiskDisplay = function (tsb, data) {
-            // Initialize s
-            var diskTableHTML = "";
+            // Update the specific row with key of TSB and value of data
+            // Initialize variable with TSB
+            var rowHTML = "<td>" + tsb.getTSBKey() + "</td>";
+            // In Use
+            rowHTML += "<td>" + data.substring(1, 2) + "</td>";
+            // Next
+            rowHTML += "<td>" + data.substring(3, 4) + ":" + data.substring(5, 6) + ":" + data.substring(7, 8) + "</td>";
+            // Data
+            rowHTML += "<td>" + data.substring(8) + "</td>";
+            var rowId = "tsb-" + tsb.getRawTSB();
+            console.log("FLAG 16_" + rowId);
+            document.getElementById(rowId).innerHTML = rowHTML;
         };
         return Control;
     }());

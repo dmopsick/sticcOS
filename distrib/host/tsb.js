@@ -7,9 +7,13 @@ var TSOS;
             this.block = block;
         }
         // Issue #46 return the TSB formatted as key
-        // T:S:B
+        // returns T:S:B ex 0:0:1
         TSB.prototype.getTSBKey = function () {
             return this.track + ":" + this.section + ":" + this.block;
+        };
+        // returns TSB ex 001
+        TSB.prototype.getRawTSB = function () {
+            return this.track.toString() + this.section.toString() + this.block.toString();
         };
         return TSB;
     }());
