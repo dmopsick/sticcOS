@@ -91,6 +91,9 @@ var TSOS;
             // set schedule [rr, fcfs, priority]
             sc = new TSOS.ShellCommand(this.shellSetSchedule, "setschedule", "[rr, fcfs, priority] - sets which scheduling algorithm to use");
             this.commandList[this.commandList.length] = sc;
+            // format
+            sc = new TSOS.ShellCommand(this.shellFormat, "format", "- Formats the disk. Erases all saved data on disk and reinitializes it to all 00s.");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -315,6 +318,9 @@ var TSOS;
                     case "setschedule":
                         _StdOut.putText("Setschedule [rr, fcfs, priority] allows user to set the cpu scheduling algorithm.");
                         break;
+                    case "format":
+                        _StdOut.putText("Format clears and intializes the disk.");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                         break;
@@ -501,7 +507,7 @@ var TSOS;
                         // Add new PCB to global instance array
                         _PCBInstances.push(newPCB);
                         // Get the mem segment of the PCB being loaded
-                        var memSegment = newPCB.memSegment;
+                        // const memSegment = newPCB.memSegment;
                         // Write the program into memory
                         _MemoryManager.loadProgramToMemory(newPCB, splitProgramInput);
                         // Issue #35 Add the Loaded PCB as a new row in the table
@@ -511,7 +517,6 @@ var TSOS;
                         _StdOut.advanceLine();
                         _StdOut.putText("Process ID: " + _NextPID);
                         // Last but not least Increment the current PID
-                        // _CurrentPID = _NextPID; // Maybe remove this line ... current PID will prob be set by scheduler
                         _NextPID++;
                     }
                     // There is no free memory block 
@@ -780,6 +785,15 @@ var TSOS;
                 // Let user know they need to pass an argument
                 _StdOut.putText("Error: No argument provided. Valid arguments: 'rr', 'fcfs', & 'priority'");
             }
+        };
+        // Issue #47 | Format the disk... Clear and reinitialize the disk
+        Shell.prototype.shellFormat = function (args) {
+            // Do we need to check here that nothing is running? What about formatting while process ran from disk
+            // Format the disk
+            _Disk.init();
+            // What about programs that are loaded on disk? Do we need to change PCB
+            // Let the user know that the disk was formatted
+            _StdOut.putText("The disk has been formatted.");
         };
         return Shell;
     }());

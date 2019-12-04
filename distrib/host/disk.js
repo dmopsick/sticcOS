@@ -19,10 +19,17 @@ var TSOS;
             for (var i = 0; i < this.tracks; i++) {
                 for (var j = 0; j < this.sections; j++) {
                     for (var k = 0; k < this.blocks; k++) {
+                        var data = "";
+                        // Handle MBR as special case 
+                        if (i == 0 && j == 0 && k == 0) {
+                            // Set the first available directory and file entry 
+                            // 0 For in use | 0 for next | 001 for next dir | 100 for next file
+                            data += "00000001100000";
+                        }
                         // Create TSB to write to the disk with
                         var tsb = new TSOS.TSB(i, j, k);
                         // Write a blank block to the disk, the zero fill write will fill in the 00s.
-                        this.writeToDisk(tsb, "00");
+                        this.writeToDisk(tsb, data);
                     }
                 }
             }

@@ -8,7 +8,7 @@ module TSOS {
         public blocks: number;
         public blockSize: number;
 
-        constructor(tracks = 4, sections = 8, blocks = 8,  blockSize = 64) {
+        constructor(tracks = 4, sections = 8, blocks = 8, blockSize = 64) {
             this.tracks = tracks;
             this.sections = sections;
             this.blocks = blocks;
@@ -19,13 +19,23 @@ module TSOS {
         // Initalize the values
         public init(): void {
             // Initialize every single data block to "00"
-            for(let i = 0; i < this.tracks; i++) {
+            for (let i = 0; i < this.tracks; i++) {
                 for (let j = 0; j < this.sections; j++) {
-                    for(let k = 0; k < this.blocks; k++) {
+                    for (let k = 0; k < this.blocks; k++) {
+                        let data = "";
+
+                        // Handle MBR as special case 
+                        if (i == 0 && j == 0 && k == 0) {
+                            // Set the first available directory and file entry 
+                            // 0 For in use | 0 for next | 001 for next dir | 100 for next file
+                            // What do I want to put in the MBR?
+                            data += "00000001100000";
+                        }
+
                         // Create TSB to write to the disk with
                         const tsb = new TSB(i, j, k);
                         // Write a blank block to the disk, the zero fill write will fill in the 00s.
-                        this.writeToDisk(tsb, "00");
+                        this.writeToDisk(tsb, data);
                     }
                 }
             }
@@ -49,5 +59,5 @@ module TSOS {
             // Update the HTML display
             TSOS.Control.updateDiskDisplay(tsb, zeroFilledData);
         }
-    } 
+    }
 }

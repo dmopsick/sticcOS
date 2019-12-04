@@ -142,16 +142,16 @@ module TSOS {
         // Issue #45 #25 | Add new PCB row to the PCB display
         public static addPCBRowToDisplay(pcb: ProcessControlBlock): void {
             // Add a new row element to the Table element #processDisplayTableBody
-            (<HTMLElement>document.getElementById("processDisplayTableBody")).innerHTML += "<tr id='processRow-" + pcb.pid + "'>" + 
-                "<td id='processDisplayPID-" + pcb.pid +"'></td>" + 
-                "<td id='processDisplayState-" + pcb.pid +"'></td>" + 
-                "<td id='processDisplayPC-" + pcb.pid +"'></td>" + 
-                "<td id='processDisplayAcc-" + pcb.pid +"'> </td>" + 
-                "<td id='processDisplayX-" + pcb.pid +"'> </td>" + 
-                "<td id='processDisplayY-" + pcb.pid +"'> </td>" +
-                "<td id='processDisplayZ-" + pcb.pid +"'> </td>" + 
+            (<HTMLElement>document.getElementById("processDisplayTableBody")).innerHTML += "<tr id='processRow-" + pcb.pid + "'>" +
+                "<td id='processDisplayPID-" + pcb.pid + "'></td>" +
+                "<td id='processDisplayState-" + pcb.pid + "'></td>" +
+                "<td id='processDisplayPC-" + pcb.pid + "'></td>" +
+                "<td id='processDisplayAcc-" + pcb.pid + "'> </td>" +
+                "<td id='processDisplayX-" + pcb.pid + "'> </td>" +
+                "<td id='processDisplayY-" + pcb.pid + "'> </td>" +
+                "<td id='processDisplayZ-" + pcb.pid + "'> </td>" +
                 "</tr>";
-        } 
+        }
 
         // Issue #27 #21 Update the HTML PCB display with the most recent PCB info
         public static updatePCBDisplay(): void {
@@ -181,7 +181,7 @@ module TSOS {
         public static updateMemoryDisplay(): void {
             // Update the HTML table that displays Memory info
             // For project 2 only record information for 1 memory segment. For project 3 will have three segments
-            
+
             // Initialize a string containing the HTML of the memory table
             let memoryTableHTML = "";
 
@@ -200,13 +200,13 @@ module TSOS {
                     hex = "0" + hex;
                 }
 
-                if(i == 0) {
+                if (i == 0) {
                     memoryTableHTML += "<tr>";
                 }
                 if (i % 8 == 0) {
                     memoryTableHTML += "</tr><tr><th>0x" + hex + "</th>";
                 }
-                memoryTableHTML += "<th id='mem-block-" + i + "'> " +  TSOS.Utils.displayHex(_Memory.memoryArray[i]) + " </th>";
+                memoryTableHTML += "<th id='mem-block-" + i + "'> " + TSOS.Utils.displayHex(_Memory.memoryArray[i]) + " </th>";
             }
             (<HTMLElement>document.getElementById("memoryInfoTableBody")).innerHTML = memoryTableHTML;
         }
@@ -230,23 +230,11 @@ module TSOS {
                         // Generate a unique ID for each row of the table
                         const rowId = "tsb-" + tsb.getRawTSB();
 
-                        // Handle MBR as special case 
-                        if (i == 0 && j == 0 && k == 0) {
-                            // Set the first available directory and file entry 
-                            // 0 For in use | 0 for next | 001 for next dir | 100 for next file
-                            data += "0000001100";
-                            // Set the rest of the block to 0
-                            for (let m = 0; m < _Disk.blockSize - 10; m++) {
-                                data += "0";
-                            }
+                        // Set all the block to 0
+                        for (let m = 0; m < _Disk.blockSize; m++) {
+                            data += "0";
                         }
-                        // Every other record
-                        else {
-                            // Set all the block to 0
-                            for (let m = 0; m < _Disk.blockSize; m++) {
-                                data += "0";
-                            }
-                        }
+
 
                         diskTableBodyHTML += "<tr id='" + rowId + "'>";
                         diskTableBodyHTML += "<td>" + tsb.getTSBKey() + "</td>";
@@ -263,18 +251,18 @@ module TSOS {
 
         // Issue #49 | Update specific key/value pair in HTML disk display
         public static updateDiskDisplay(tsb: TSB, data: string): void {
+            console.log(data);
             // Update the specific row with key of TSB and value of data
             // Initialize variable with TSB
-            let rowHTML = "<td>" + tsb.getTSBKey() +"</td>";
+            let rowHTML = "<td>" + tsb.getTSBKey() + "</td>";
             // In Use
-            rowHTML += "<td>" + data.substring(1,2)  +"</td>";
+            rowHTML += "<td>" + data.substring(1, 2) + "</td>";
             // Next
-            rowHTML += "<td>" + data.substring(3,4) + ":" + data.substring(5, 6) + ":" + data.substring(7, 8) + "</td>";
+            rowHTML += "<td>" + data.substring(3, 4) + ":" + data.substring(5, 6) + ":" + data.substring(7, 8) + "</td>";
             // Data
             rowHTML += "<td>" + data.substring(8) + "</td>"
 
             const rowId = "tsb-" + tsb.getRawTSB();
-            console.log("FLAG 16_" + rowId);
             (<HTMLElement>document.getElementById(rowId)).innerHTML = rowHTML;
         }
     }

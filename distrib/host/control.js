@@ -191,22 +191,9 @@ var TSOS;
                         var tsb = new TSOS.TSB(i, j, k);
                         // Generate a unique ID for each row of the table
                         var rowId = "tsb-" + tsb.getRawTSB();
-                        // Handle MBR as special case 
-                        if (i == 0 && j == 0 && k == 0) {
-                            // Set the first available directory and file entry 
-                            // 0 For in use | 0 for next | 001 for next dir | 100 for next file
-                            data += "0000001100";
-                            // Set the rest of the block to 0
-                            for (var m = 0; m < _Disk.blockSize - 10; m++) {
-                                data += "0";
-                            }
-                        }
-                        // Every other record
-                        else {
-                            // Set all the block to 0
-                            for (var m = 0; m < _Disk.blockSize; m++) {
-                                data += "0";
-                            }
+                        // Set all the block to 0
+                        for (var m = 0; m < _Disk.blockSize; m++) {
+                            data += "0";
                         }
                         diskTableBodyHTML += "<tr id='" + rowId + "'>";
                         diskTableBodyHTML += "<td>" + tsb.getTSBKey() + "</td>";
@@ -222,6 +209,7 @@ var TSOS;
         };
         // Issue #49 | Update specific key/value pair in HTML disk display
         Control.updateDiskDisplay = function (tsb, data) {
+            console.log(data);
             // Update the specific row with key of TSB and value of data
             // Initialize variable with TSB
             var rowHTML = "<td>" + tsb.getTSBKey() + "</td>";
@@ -232,7 +220,6 @@ var TSOS;
             // Data
             rowHTML += "<td>" + data.substring(8) + "</td>";
             var rowId = "tsb-" + tsb.getRawTSB();
-            console.log("FLAG 16_" + rowId);
             document.getElementById(rowId).innerHTML = rowHTML;
         };
         return Control;
