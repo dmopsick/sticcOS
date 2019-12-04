@@ -24,6 +24,7 @@ var TSOS;
                         if (i == 0 && j == 0 && k == 0) {
                             // Set the first available directory and file entry 
                             // 0 For in use | 0 for next | 001 for next dir | 100 for next file
+                            // What do I want to put in the MBR?
                             data += "00000001100000";
                         }
                         // Create TSB to write to the disk with

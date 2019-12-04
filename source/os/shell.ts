@@ -171,6 +171,12 @@ module TSOS {
                 "- Formats the disk. Erases all saved data on disk and reinitializes it to all 00s.");
             this.commandList[this.commandList.length] = sc;
 
+            // create <filename>
+            sc = new ShellCommand(this.shellCreateFile,
+                "create",
+                "<filename> - Creates a file with the given name.");
+            this.commandList[this.commandList.length] = sc;
+
             // Display the initial prompt.
             this.putPrompt();
         }
@@ -416,6 +422,9 @@ module TSOS {
                     case "format":
                         _StdOut.putText("Format clears and intializes the disk.");
                         break;
+                    case "create":
+                        _StdOut.putText("Create <filename> create a new file in the SticcOS file system.");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                         break;
@@ -577,7 +586,7 @@ module TSOS {
                     const priorityString = args[0];
 
                     // The extra check is because 0 == false in evaluation So need to check that the string is parseable and 0-4
-                    if ((!parseInt(priorityString) && parseInt(priorityString) != 0) || ( (parseInt(priorityString) < 0)  || (parseInt(priorityString) > 5))) {
+                    if ((!parseInt(priorityString) && parseInt(priorityString) != 0) || ((parseInt(priorityString) < 0) || (parseInt(priorityString) > 5))) {
                         // If the priority value cannot be parsed as a number! It is invalid
                         _StdOut.putText("Error: The priority value must be a number from 0-4.");
                         return;
@@ -596,17 +605,17 @@ module TSOS {
 
                     let memStart, memRange;
 
-                    if (_MemoryManager.memBlockIsFree(0)) { 
+                    if (_MemoryManager.memBlockIsFree(0)) {
                         freeMemoryBlock = 0;
                         memStart = 0;
                         memRange = 255;
                     }
-                    else if (_MemoryManager.memBlockIsFree(1)) { 
+                    else if (_MemoryManager.memBlockIsFree(1)) {
                         freeMemoryBlock = 1;
                         memStart = 256
                         memRange = 511;
-                    } 
-                    else if (_MemoryManager.memBlockIsFree(2)) { 
+                    }
+                    else if (_MemoryManager.memBlockIsFree(2)) {
                         freeMemoryBlock = 2;
                         memStart = 512;
                         memRange = 767;
@@ -965,6 +974,30 @@ module TSOS {
 
             // Let the user know that the disk was formatted
             _StdOut.putText("The disk has been formatted.")
+        }
+
+        // Issue #47 | Create a file
+        // I believe this will create a directory file entry and the data of the file will be in data entries
+        public shellCreateFile(args: string[]) {
+            // cannot create a file if the disk is not formatted
+
+            // Check to see argument has been passed
+            if (args.length > 0) {
+                const filename = args[0];
+
+                // Ensure filename is not too long. Must be Less than 60 characters
+                if (filename.length < 60) {
+                    console.log("Must create file with filename " + filename);
+                }
+                else {
+                    // Let the user know to shorten their filename
+                    _StdOut.putText("Error: Filename too long. Must be 60 characters or less.");
+                }
+            }
+            else {
+                // Let user know they must pass an argument for file name
+                _StdOut.putText("Error: No argument provided. Enter a name for the file.");
+            }
         }
     }
 }
