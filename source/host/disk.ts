@@ -7,12 +7,14 @@ module TSOS {
         public sections: number;
         public blocks: number;
         public blockSize: number;
+        public isFormatted: boolean;
 
         constructor(tracks = 4, sections = 8, blocks = 8, blockSize = 64) {
             this.tracks = tracks;
             this.sections = sections;
             this.blocks = blocks;
             this.blockSize = blockSize;
+            this.isFormatted = false; // When the OS is started up the disk is not formatted
         }
 
         // Issue #46 | Format the disk 
@@ -28,7 +30,7 @@ module TSOS {
                         if (i == 0 && j == 0 && k == 0) {
                             // Set the first available directory and file entry 
                             // 0 For in use | 0 for next | 001 for next dir | 100 for next file
-                            // What do I want to put in the MBR?
+                            // What do I want to put in the MBR? May change this
                             data += "00000001100000";
                         }
 
@@ -39,6 +41,8 @@ module TSOS {
                     }
                 }
             }
+            // The Disk has been formatted | Limit disk actions if the disk is not formatted
+            this.isFormatted = true;
         }
 
         // Issue #46 | Write to the disk with zero fill to fit block size

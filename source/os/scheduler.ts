@@ -32,7 +32,7 @@ module TSOS {
                     break;
                 default:
                     // This should not be reached
-                    console.log("ERROR: Scheduling arlgorithm N/A")
+                    console.log("ERROR: Scheduling arlgorithm N/A");
                     break;
             }
 

@@ -251,7 +251,6 @@ module TSOS {
 
         // Issue #49 | Update specific key/value pair in HTML disk display
         public static updateDiskDisplay(tsb: TSB, data: string): void {
-            console.log(data);
             // Update the specific row with key of TSB and value of data
             // Initialize variable with TSB
             let rowHTML = "<td>" + tsb.getTSBKey() + "</td>";

@@ -209,7 +209,6 @@ var TSOS;
         };
         // Issue #49 | Update specific key/value pair in HTML disk display
         Control.updateDiskDisplay = function (tsb, data) {
-            console.log(data);
             // Update the specific row with key of TSB and value of data
             // Initialize variable with TSB
             var rowHTML = "<td>" + tsb.getTSBKey() + "</td>";

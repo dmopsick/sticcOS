@@ -980,23 +980,28 @@ module TSOS {
         // I believe this will create a directory file entry and the data of the file will be in data entries
         public shellCreateFile(args: string[]) {
             // cannot create a file if the disk is not formatted
+            if (_Disk.isFormatted) {
+                // Check to see argument has been passed
+                if (args.length > 0) {
+                    const filename = args[0];
 
-            // Check to see argument has been passed
-            if (args.length > 0) {
-                const filename = args[0];
-
-                // Ensure filename is not too long. Must be Less than 60 characters
-                if (filename.length < 60) {
-                    console.log("Must create file with filename " + filename);
+                    // Ensure filename is not too long. Must be Less than 60 characters
+                    if (filename.length < 60) {
+                        _krnFileSystemDriver.createFile(filename);
+                    }
+                    else {
+                        // Let the user know to shorten their filename
+                        _StdOut.putText("Error: Filename too long. Must be 60 characters or less.");
+                    }
                 }
                 else {
-                    // Let the user know to shorten their filename
-                    _StdOut.putText("Error: Filename too long. Must be 60 characters or less.");
+                    // Let user know they must pass an argument for file name
+                    _StdOut.putText("Error: No argument provided. Enter a name for the file.");
                 }
             }
             else {
-                // Let user know they must pass an argument for file name
-                _StdOut.putText("Error: No argument provided. Enter a name for the file.");
+                // Let the user know they must first format the disk
+                _StdOut.putText("Error: The disk must be formatted before files can be created.")
             }
         }
     }

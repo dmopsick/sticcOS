@@ -31,6 +31,11 @@ var TSOS;
             _krnKeyboardDriver = new TSOS.DeviceDriverKeyboard(); // Construct it.
             _krnKeyboardDriver.driverEntry(); // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
+            // Load the file system devivce driver 
+            this.krnTrace("Loading the file system device driver.");
+            _krnFileSystemDriver = new TSOS.DeviceDriverFileSystem();
+            _krnFileSystemDriver.driverEntry();
+            this.krnTrace(_krnFileSystemDriver.status);
             // Issue #45 Initialize global memory variables based on the size of the passed in memory
             _MemoryBlockSize = _Memory.memoryBlockSize;
             _MemoryBlockCount = _Memory.memoryBlockCount;
