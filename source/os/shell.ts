@@ -987,7 +987,26 @@ module TSOS {
 
                     // Ensure filename is not too long. Must be Less than 60 characters
                     if (filename.length < 60) {
-                        _krnFileSystemDriver.createFile(filename);
+                        const createResponse: number = _krnFileSystemDriver.createFile(filename);
+
+                        // Based on the number returned from the create File function, return the appropriate message
+                        switch (createResponse) {
+                            case -1:
+                                _StdOut.putText("Error: The file you are attempting to create already exists");
+                                break;
+                            case -2:
+                                _StdOut.putText("Error: There are no directory blocks currently open in SticcOS.");
+                                break;
+                            case -3: 
+                                _StdOut.putText("Error: There are no data blocks currently open in SticcOS.");
+                                break;
+                            case 1:
+                                _StdOut.putText("Successfully created a file with the name: " +filename);
+                                break;
+                            default:
+                                _StdOut.putText("Error: Unexpected response number");
+                                break;
+                        }
                     }
                     else {
                         // Let the user know to shorten their filename

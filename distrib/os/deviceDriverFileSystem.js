@@ -27,7 +27,34 @@ var TSOS;
         // Issue #47 create the directory file
         DeviceDriverFileSystem.prototype.createFile = function (filename) {
             // Check if there is already a file with the specified name
+            if (this.getDirectoryFileByFilename(filename)) {
+                // Return -1 to indicate that the file already exists
+                return -1;
+            }
+            // Check if there is any open space in the directory 
+            var tsbToSave = this.findOpenDirectoryBlock();
+            // tsbToSave will === false if there is no open directory blocks
+            if (tsbToSave === false) {
+                // Return -2 to indicate that there is no room to create files
+                return -2;
+            }
+            // Check if there is any open space for data
             console.log("Create file called with filename of  " + filename);
+            // Return 1 if the file was created successfully with no error
+            return 1;
+        };
+        // Issue #47 | Retrieve a directory file by filename
+        DeviceDriverFileSystem.prototype.getDirectoryFileByFilename = function (filename) {
+            // Need to get file from directory
+            // Return TSB if found
+            // Return false if the file does not exist
+            return false;
+        };
+        // Issue #47 | 
+        DeviceDriverFileSystem.prototype.findOpenDirectoryBlock = function () {
+            // If there is an open directory block return the TSB of it
+            // Return false if there is no open directory block
+            return false;
         };
         return DeviceDriverFileSystem;
     }(TSOS.DeviceDriver));
