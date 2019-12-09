@@ -44,15 +44,31 @@ module TSOS {
             
             // Return 1 if the file was created successfully with no error
             return 1;
-            
         }
 
         // Issue #47 | Retrieve a directory file by filename
         public getDirectoryFileByFilename(filename: string): any {
             // Need to get file from directory
 
-            // Return TSB if found
+            // Loop through the sectors and blocks of the first track to inf
+            for(let j = 0; j < _Disk.sections; j++) {
+                for (let k = 0; k < _Disk.blocks; k++) {
+                    // Check that the TSB is in use
+                    const inUse = true; 
+                    // Need to actually implement the in use check
 
+                    if (inUse) {
+                        // Need to compare the data to the file name
+                        // Either convert the filename to ascii... or the ascii to a string
+
+                        // If the filename is equal to the data in the TSB, return the TSB 
+                        if (true) {
+                            return new TSB(0, j, k);
+                        }
+                    }
+
+                }
+            }
 
             // Return false if the file does not exist
             return false;
