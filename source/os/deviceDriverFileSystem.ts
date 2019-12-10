@@ -2,6 +2,7 @@
 module TSOS {
     export class DeviceDriverFileSystem extends DeviceDriver {
         private _DirectoryTrack: number = 0;
+        private _FirstDataTrack: number = 1
 
         constructor() {
             super();
@@ -14,9 +15,6 @@ module TSOS {
 
         // Issue #47 create the directory file
         public createFile(filename: string): number {
-
-            console.log("CREATING: " + filename);
-            
             // Check if there is already a file with the specified name | Will return false if the file does not exist
             if (this.getDirectoryFileTSBByFilename(filename)) {
                 // Return -1 to indicate that the file already exists
@@ -26,6 +24,7 @@ module TSOS {
             // Check if there is any open directory blocks
             const directoryTSB = this.findOpenDirectoryBlock();
 
+            console.log("Directory TSB");
             console.log(directoryTSB);
 
             // directoryTSB will === false if there is no open directory blocks
@@ -37,11 +36,15 @@ module TSOS {
             // Check if there is any open data blocks for the file
             const dataTSB = this.findOpenDataBlock();
 
+            console.log("Data TSB");
+            console.log(dataTSB);
+
             if (dataTSB === false) {
                 // Return -3 to indicate there is no open data blocks for the file
                 return -3;
             }
 
+            console.log("Okay time to create");
 
             // Create the directory file
 
@@ -64,8 +67,8 @@ module TSOS {
                     // Need to read from the disk
                     const data = _Disk.readFromDisk(tsb);
 
-                    console.log("FLAG 11");
-                    console.log(data);
+                    // console.log("FLAG 11");
+                    // console.log(data);
 
                     // The block is in use | It's in use block will be zero if it is indeed in use
                     if (this.blockIsInUse(data)) {
@@ -73,11 +76,10 @@ module TSOS {
                         // Either convert the filename to ascii... or the ascii to a string
                         const filenameData = data.substring(8);
 
+                        // Created util function to convert the ascii data to a string... maybe it works we will see
                         const dataFilename = Utils.convertAsciiToString(filenameData);
 
                         console.log(dataFilename);
-
-                        // Need to convert the last 60 bytes of data loaded from the TSB from "ascii" --> "string" then compare
 
                         // If the filename is equal to the data in the TSB, return the TSB 
                         if (filename == dataFilename) {
@@ -100,7 +102,7 @@ module TSOS {
 
             // Loop through each directory block to find one thtat has a zero for in use
             for (let j = 0; j < _Disk.sections; j++) {
-                for (let k = 0; k < _Disk.blockSize; k++) {
+                for (let k = 0; k < _Disk.blocks; k++) {
                     // Generate a TSB for each directory block
                     const tsb = new TSB(this._DirectoryTrack, j, k);
 
@@ -122,6 +124,23 @@ module TSOS {
         // Returns TSB if there is an open Data block
         // Returns false if there is no open data block
         public findOpenDataBlock(): any {
+            // Loop through each TSB to find a open block
+            for (let i = this._FirstDataTrack; i < _Disk.tracks; i++) {
+                for (let j = 0; j < _Disk.sections; j++) {
+                    for (let k = 0; k < _Disk.blocks; k++) { 
+                        // Generate TSB object for each block
+                        const tsb = new TSB(i, j, k);
+
+                        // Get the data associated with the TSB in the disk
+                        const data = _Disk.readFromDisk(tsb);
+
+                        if(!this.blockIsInUse(data)) {
+                            // This tsb links to an open block, return it!
+                            return tsb;
+                        }
+                    }
+                }
+            }
 
             // An open data block has not been found
             return false;
