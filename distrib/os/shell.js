@@ -818,7 +818,10 @@ var TSOS;
                                 _StdOut.putText("Error: The file you are attempting to create already exists");
                                 break;
                             case -2:
-                                _StdOut.putText("Error: There is no room in SticcOS to create another file currently.");
+                                _StdOut.putText("Error: There are no directory blocks currently open in SticcOS.");
+                                break;
+                            case -3:
+                                _StdOut.putText("Error: There are no data blocks currently open in SticcOS.");
                                 break;
                             case 1:
                                 _StdOut.putText("Successfully created a file with the name: " + filename);

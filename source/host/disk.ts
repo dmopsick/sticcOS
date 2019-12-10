@@ -31,7 +31,7 @@ module TSOS {
                             // Set the first available directory and file entry 
                             // 0 For in use | 0 for next | 001 for next dir | 100 for next file
                             // What do I want to put in the MBR? May change this
-                            data += "00000001100000";
+                            data += "01000000000001010000";
                         }
 
                         // Create TSB to write to the disk with
@@ -62,6 +62,12 @@ module TSOS {
 
             // Update the HTML display
             TSOS.Control.updateDiskDisplay(tsb, zeroFilledData);
+        }
+
+        // Issue #46 #47 | Read data from the disk with a given TSB
+        public readFromDisk(tsb: TSB): string {
+            // Return the data associated with the given TSB key
+            return sessionStorage.getItem(tsb.getTSBKey());
         }
     }
 }

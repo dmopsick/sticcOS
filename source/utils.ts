@@ -49,5 +49,24 @@ module TSOS {
         public static displayHex(numToDisplay: number): string {
             return numToDisplay.toString(16).toUpperCase();
         }
+
+        // Issue #47 | Convert ascii to string
+        // Used in getting string of filename from the disk
+        public static convertAsciiToString(asciiString: string): string {
+            // Make variable to hold the string being built from asci
+            let convertedString = "";
+
+            // ASCII is two characters at a time for one character so need to read the string two characters at a time
+            for (let i = 0; i < asciiString.length; i++) {
+                const asciiCodeString = asciiString[i] + asciiString[i + 1];
+                const asciiCode = Number(asciiCodeString);
+
+                const convertedChar = String.fromCharCode(asciiCode);
+
+                convertedString += convertedChar;
+            }
+
+            return convertedString;
+        }
     }
 }

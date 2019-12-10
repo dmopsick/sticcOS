@@ -49,6 +49,20 @@ var TSOS;
         Utils.displayHex = function (numToDisplay) {
             return numToDisplay.toString(16).toUpperCase();
         };
+        // Issue #47 | Convert ascii to string
+        // Used in getting string of filename from the disk
+        Utils.convertAsciiToString = function (asciiString) {
+            // Make variable to hold the string being built from asci
+            var convertedString = "";
+            // ASCII is two characters at a time for one character so need to read the string two characters at a time
+            for (var i = 0; i < asciiString.length; i++) {
+                var asciiCodeString = asciiString[i] + asciiString[i + 1];
+                var asciiCode = Number(asciiCodeString);
+                var convertedChar = String.fromCharCode(asciiCode);
+                convertedString += convertedChar;
+            }
+            return convertedString;
+        };
         return Utils;
     }());
     TSOS.Utils = Utils;
