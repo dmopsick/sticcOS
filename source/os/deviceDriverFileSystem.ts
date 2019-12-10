@@ -1,9 +1,11 @@
 // Based on deviceDriverKeyboard.ts
 module TSOS {
     export class DeviceDriverFileSystem extends DeviceDriver {
+        // Constants that will be used in one or more file functions
         private _DirectoryTrack: number = 0;
         private _FirstDataTrack: number = 1;
         private _IsActiveDataByte: string = "01";
+        private _NextBlockPlaceholder: string = "0-0-0-";
 
         constructor() {
             super();
@@ -14,7 +16,8 @@ module TSOS {
             this.status = "loaded";
         }
 
-        // Issue #47 create the directory file
+        // Issue #47 | Create the directory entry for a file
+        // Retruns a number that indicates the status of the create in order to be R E S P O N S I V E
         public createFile(filename: string): number {
             // Check if there is already a file with the specified name | Will return false if the file does not exist
             if (this.getDirectoryFileTSBByFilename(filename) !== null) {
@@ -25,8 +28,8 @@ module TSOS {
             // Check if there is any open directory blocks
             const directoryTSB: TSB = this.findOpenDirectoryBlock();
 
-            console.log("Directory TSB");
-            console.log(directoryTSB);
+            // console.log("Directory TSB");
+            // console.log(directoryTSB);
 
             // directoryTSB will === false if there is no open directory blocks
             if (directoryTSB ===  null) {
@@ -37,35 +40,40 @@ module TSOS {
             // Check if there is any open data blocks for the file
             const dataTSB: TSB = this.findOpenDataBlock();
 
-            console.log("Data TSB");
-            console.log(dataTSB);
+            // console.log("Data TSB");
+            // console.log(dataTSB);
 
             if (dataTSB === null) {
                 // Return -3 to indicate there is no open data blocks for the file
                 return -3;
             }
 
-            console.log("Okay time to create");
-
             // Convert filename to Hex
             const hexFilename = Utils.convertStringToHex(filename);
 
             // Generate data to save to directory TSB .. ex: 01 for isactive, TSB of data, and filename
-            const directoryData = this._IsActiveDataByte + dataTSB.getTSBByte() + hexFilename;
-
-            console.log(this._IsActiveDataByte);
-            console.log(dataTSB.getTSBByte());
-            console.log(hexFilename);
-
-            console.log(directoryData);
+            const directoryBlockData = this._IsActiveDataByte + dataTSB.getTSBByte() + hexFilename;
 
             // Create the directory file
-            _Disk.writeToDisk(directoryTSB, directoryData);
+            _Disk.writeToDisk(directoryTSB, directoryBlockData);
 
-            // Create first data file associated with directory file to prepare for writing
+            // Generate data to initialize data block
+            const dataBlockData = this._IsActiveDataByte + this._NextBlockPlaceholder; 
 
+            // Create data file
+            _Disk.writeToDisk(dataTSB, dataBlockData);
 
             // Return 1 if the file was created successfully with no error
+            return 1;
+        }
+
+        // Issue #47 | Write the data contents of a file
+        // Destructive write, overwrites any existing data, can not append contents of file
+        // Returns an int that indicates the status to the shell in order to be responsive
+        public writeFile(filename: string, data: string): number {
+            
+
+            // Return 1 if file was written to succesfully
             return 1;
         }
 

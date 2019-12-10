@@ -18,9 +18,11 @@ var TSOS;
         __extends(DeviceDriverFileSystem, _super);
         function DeviceDriverFileSystem() {
             var _this = _super.call(this) || this;
+            // Constants that will be used in one or more file functions
             _this._DirectoryTrack = 0;
             _this._FirstDataTrack = 1;
             _this._IsActiveDataByte = "01";
+            _this._NextBlockPlaceholder = "0-0-0-";
             _this.driverEntry = _this.krnFileSystemDriverEntry;
             return _this;
         }
@@ -28,6 +30,7 @@ var TSOS;
             this.status = "loaded";
         };
         // Issue #47 create the directory file
+        // Retruns a number that indicates the status of the create in order to be R E S P O N S I V E
         DeviceDriverFileSystem.prototype.createFile = function (filename) {
             // Check if there is already a file with the specified name | Will return false if the file does not exist
             if (this.getDirectoryFileTSBByFilename(filename) !== null) {
@@ -36,8 +39,8 @@ var TSOS;
             }
             // Check if there is any open directory blocks
             var directoryTSB = this.findOpenDirectoryBlock();
-            console.log("Directory TSB");
-            console.log(directoryTSB);
+            // console.log("Directory TSB");
+            // console.log(directoryTSB);
             // directoryTSB will === false if there is no open directory blocks
             if (directoryTSB === null) {
                 // Return -2 to indicate that there is no room to create files
@@ -45,24 +48,22 @@ var TSOS;
             }
             // Check if there is any open data blocks for the file
             var dataTSB = this.findOpenDataBlock();
-            console.log("Data TSB");
-            console.log(dataTSB);
+            // console.log("Data TSB");
+            // console.log(dataTSB);
             if (dataTSB === null) {
                 // Return -3 to indicate there is no open data blocks for the file
                 return -3;
             }
-            console.log("Okay time to create");
             // Convert filename to Hex
             var hexFilename = TSOS.Utils.convertStringToHex(filename);
             // Generate data to save to directory TSB .. ex: 01 for isactive, TSB of data, and filename
-            var directoryData = this._IsActiveDataByte + dataTSB.getTSBByte() + hexFilename;
-            console.log(this._IsActiveDataByte);
-            console.log(dataTSB.getTSBByte());
-            console.log(hexFilename);
-            console.log(directoryData);
+            var directoryBlockData = this._IsActiveDataByte + dataTSB.getTSBByte() + hexFilename;
             // Create the directory file
-            _Disk.writeToDisk(directoryTSB, directoryData);
-            // Create first data file associated with directory file to prepare for writing
+            _Disk.writeToDisk(directoryTSB, directoryBlockData);
+            // Generate data to initialize data block
+            var dataBlockData = this._IsActiveDataByte + this._NextBlockPlaceholder;
+            // Create data file
+            _Disk.writeToDisk(dataTSB, dataBlockData);
             // Return 1 if the file was created successfully with no error
             return 1;
         };

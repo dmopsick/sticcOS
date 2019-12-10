@@ -177,6 +177,12 @@ module TSOS {
                 "<filename> - Creates a file with the given name.");
             this.commandList[this.commandList.length] = sc;
 
+            // write <filename> "<data>"
+            sc = new ShellCommand(this.shellWriteFile,
+                "write",
+                '<filename> "<data>" - Writes the specified data to the specified file.');
+            this.commandList[this.commandList.length] = sc;
+
             // Display the initial prompt.
             this.putPrompt();
         }
@@ -424,6 +430,9 @@ module TSOS {
                         break;
                     case "create":
                         _StdOut.putText("Create <filename> create a new file in the SticcOS file system.");
+                        break;
+                    case "write":
+                        _StdOut.putText('Write <filename> "<data>" writes the specified data to the file with the provided name. The write is a destructive write not an append.')
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -977,7 +986,7 @@ module TSOS {
         }
 
         // Issue #47 | Create a file
-        // I believe this will create a directory file entry and the data of the file will be in data entries
+        // Creates a directory file block for a file with the provided name
         public shellCreateFile(args: string[]) {
             // cannot create a file if the disk is not formatted
             if (_Disk.isFormatted) {
@@ -990,6 +999,7 @@ module TSOS {
                         const createResponse: number = _krnFileSystemDriver.createFile(filename);
 
                         // Based on the number returned from the create File function, return the appropriate message
+                        // R E S P O N S I V E
                         switch (createResponse) {
                             case -1:
                                 _StdOut.putText("Error: The file you are attempting to create already exists");
@@ -1021,6 +1031,28 @@ module TSOS {
             else {
                 // Let the user know they must first format the disk
                 _StdOut.putText("Error: The disk must be formatted before files can be created.")
+            }
+        }
+
+        // Issue #47 | Writes the data of the specified file
+        public shellWriteFile(args: string[]) {
+            // Ensure that the disk is formatted before attempting any file operations
+            if(_Disk.isFormatted) {
+                if (args.length >= 2) {
+                    // Check that the passed in file name correlates to an inUse Directory block
+
+                    // Handle the data? While loop to parse whatever is started and ended with ""
+                    // What if not ended or started with "" ??
+                    // How to handle invalid data entry
+                }
+                else {
+                    // If there are not enough arguments for filename and data, infrom the user of the correct usage
+                    _StdOut.putText('Error: Invalid argument structure. Usage: write <filename> "data"');
+                }
+            }
+            else {
+                // Let user know they must format the disk before doing file operations
+                _StdOut.putText("Error: This disk must be formatted before files can be created or written to.");
             }
         }
     }
