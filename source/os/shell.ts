@@ -995,7 +995,7 @@ module TSOS {
                     const filename = args[0];
 
                     // Ensure filename is not too long. Must be Less than 60 characters
-                    if (filename.length < 60) {
+                    if (filename.length <= 60) {
                         const createResponse: number = _krnFileSystemDriver.createFile(filename);
 
                         // Based on the number returned from the create File function, return the appropriate message
@@ -1007,11 +1007,11 @@ module TSOS {
                             case -2:
                                 _StdOut.putText("Error: There are no directory blocks currently open in SticcOS.");
                                 break;
-                            case -3: 
+                            case -3:
                                 _StdOut.putText("Error: There are no data blocks currently open in SticcOS.");
                                 break;
                             case 1:
-                                _StdOut.putText("Successfully created a file with the name: " +filename);
+                                _StdOut.putText("Successfully created a file with the name: " + filename);
                                 break;
                             default:
                                 _StdOut.putText("Error: Unexpected response number");
@@ -1037,13 +1037,50 @@ module TSOS {
         // Issue #47 | Writes the data of the specified file
         public shellWriteFile(args: string[]) {
             // Ensure that the disk is formatted before attempting any file operations
-            if(_Disk.isFormatted) {
+            if (_Disk.isFormatted) {
                 if (args.length >= 2) {
-                    // Check that the passed in file name correlates to an inUse Directory block
+                    // The filename will be the first argument
+                    const filename = args[0];
+                    if (filename.length <= 60) {
+                        // Create a string of all the arguments following the filename
+                        const data = args.slice(1).join(" ");
 
-                    // Handle the data? While loop to parse whatever is started and ended with ""
-                    // What if not ended or started with "" ??
-                    // How to handle invalid data entry
+                        // Get the first and last character of the data to ensure that the data begins and ends with quotes
+                        const firstChar = data[0];
+                        const lastChar = data[data.length - 1];
+
+                        // If the first and last char are both double or single quotes, proceed
+                        if ((firstChar === lastChar) && ((firstChar === "'")|| (firstChar === '"'))) {
+                            // Strip the data of its single or double quotes to send to the file system driver
+                            const strippedData = data.substring(1, data.length - 1);
+
+                            // Call the file system driver to write the file and return appropriate response to the user
+                            const writeResponse = _krnFileSystemDriver.writeFile(filename, strippedData);
+
+                            switch (writeResponse) {
+                                case -1:
+                                     _StdOut.putText("Error: No file exists with the name " + filename + " in SticcOS.");
+                                    break;
+                                case -2:
+                                    _StdOut.putText("Error: There are no open data blocks in SticcOS.");
+                                    break;
+                                case 1:
+                                    _StdOut.putText("Successfully wrote to the file: " + filename);
+                                    break;
+                                default: 
+                                    _StdOut.putText("Error: Unexpected write response");
+                                    break;
+                            }
+                        }
+                        else {
+                            // Let the user know how to correctly format their data
+                            _StdOut.putText("Error: Invalid argument for data. Data must be contained within single or double quotes with no preceding or following characters.");
+                        }
+                    }
+                    else {
+                        // Inform user they entered an invalid filename
+                        _StdOut.putText("Error: Invalid argument for filename. Filenames are 60 characters or less.");
+                    }
                 }
                 else {
                     // If there are not enough arguments for filename and data, infrom the user of the correct usage

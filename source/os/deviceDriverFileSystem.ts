@@ -20,7 +20,7 @@ module TSOS {
         // Retruns a number that indicates the status of the create in order to be R E S P O N S I V E
         public createFile(filename: string): number {
             // Check if there is already a file with the specified name | Will return false if the file does not exist
-            if (this.getDirectoryFileTSBByFilename(filename) !== null) {
+            if (this.getDirectoryBlockTSBByFilename(filename) !== null) {
                 // Return -1 to indicate that the file already exists
                 return -1;
             }
@@ -32,7 +32,7 @@ module TSOS {
             // console.log(directoryTSB);
 
             // directoryTSB will === false if there is no open directory blocks
-            if (directoryTSB ===  null) {
+            if (directoryTSB === null) {
                 // Return -2 to indicate that there is no room to create files
                 return -2;
             }
@@ -58,7 +58,7 @@ module TSOS {
             _Disk.writeToDisk(directoryTSB, directoryBlockData);
 
             // Generate data to initialize data block
-            const dataBlockData = this._IsActiveDataByte + this._NextBlockPlaceholder; 
+            const dataBlockData = this._IsActiveDataByte + this._NextBlockPlaceholder;
 
             // Create data file
             _Disk.writeToDisk(dataTSB, dataBlockData);
@@ -71,14 +71,40 @@ module TSOS {
         // Destructive write, overwrites any existing data, can not append contents of file
         // Returns an int that indicates the status to the shell in order to be responsive
         public writeFile(filename: string, data: string): number {
-            
+            // Get TSB for specified file
+            const directoryTSB = this.getDirectoryBlockTSBByFilename(filename);
+
+            if (directoryTSB === null) {
+                // Return -1 represents that there is no directory file for specified filename
+                return -1;
+            }
+
+            let dataTSB = this.findOpenDataBlock();
+
+            if (dataTSB === null) {
+                // Returning -2 means that there are no datablocks open in the system
+                return -2;
+            }
+
+            // Check that there is that many?
+
+            // Data that os 60 or less characters will only take one 
+            // if (data <=)
+
+            // Loop through the data as many times as it takes and save the data to data block(s)
+            while (false) {
+
+            }
+         
+            // So maybe a while loop to write data to file as many times as it takes
+            // Maybe have a seperate functionality for data that can fit in one block
 
             // Return 1 if file was written to succesfully
             return 1;
         }
 
         // Issue #47 | Retrieve a directory file by filename
-        public getDirectoryFileTSBByFilename(filename: string): TSB {
+        public getDirectoryBlockTSBByFilename(filename: string): TSB {
             // Loop through the sectors and blocks of the first track to find directory file with given file name
             for (let j = 0; j < _Disk.sections; j++) {
                 for (let k = 0; k < _Disk.blocks; k++) {
@@ -151,14 +177,14 @@ module TSOS {
             // Loop through each TSB to find a open block
             for (let i = this._FirstDataTrack; i < _Disk.tracks; i++) {
                 for (let j = 0; j < _Disk.sections; j++) {
-                    for (let k = 0; k < _Disk.blocks; k++) { 
+                    for (let k = 0; k < _Disk.blocks; k++) {
                         // Generate TSB object for each block
                         const tsb = new TSB(i, j, k);
 
                         // Get the data associated with the TSB in the disk
                         const data = _Disk.readFromDisk(tsb);
 
-                        if(!this.blockIsInUse(data)) {
+                        if (!this.blockIsInUse(data)) {
                             // This tsb links to an open block, return it!
                             return tsb;
                         }

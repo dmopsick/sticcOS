@@ -29,11 +29,11 @@ var TSOS;
         DeviceDriverFileSystem.prototype.krnFileSystemDriverEntry = function () {
             this.status = "loaded";
         };
-        // Issue #47 create the directory file
+        // Issue #47 | Create the directory entry for a file
         // Retruns a number that indicates the status of the create in order to be R E S P O N S I V E
         DeviceDriverFileSystem.prototype.createFile = function (filename) {
             // Check if there is already a file with the specified name | Will return false if the file does not exist
-            if (this.getDirectoryFileTSBByFilename(filename) !== null) {
+            if (this.getDirectoryBlockTSBByFilename(filename) !== null) {
                 // Return -1 to indicate that the file already exists
                 return -1;
             }
@@ -67,8 +67,34 @@ var TSOS;
             // Return 1 if the file was created successfully with no error
             return 1;
         };
+        // Issue #47 | Write the data contents of a file
+        // Destructive write, overwrites any existing data, can not append contents of file
+        // Returns an int that indicates the status to the shell in order to be responsive
+        DeviceDriverFileSystem.prototype.writeFile = function (filename, data) {
+            // Get TSB for specified file
+            var directoryTSB = this.getDirectoryBlockTSBByFilename(filename);
+            if (directoryTSB === null) {
+                // Return -1 represents that there is no directory file for specified filename
+                return -1;
+            }
+            var dataTSB = this.findOpenDataBlock();
+            if (dataTSB === null) {
+                // Returning -2 means that there are no datablocks open in the system
+                return -2;
+            }
+            // Check that there is that many?
+            // Data that os 60 or less characters will only take one 
+            // if (data <=)
+            // Loop through the data as many times as it takes and save the data to data block(s)
+            while (false) {
+            }
+            // So maybe a while loop to write data to file as many times as it takes
+            // Maybe have a seperate functionality for data that can fit in one block
+            // Return 1 if file was written to succesfully
+            return 1;
+        };
         // Issue #47 | Retrieve a directory file by filename
-        DeviceDriverFileSystem.prototype.getDirectoryFileTSBByFilename = function (filename) {
+        DeviceDriverFileSystem.prototype.getDirectoryBlockTSBByFilename = function (filename) {
             // Loop through the sectors and blocks of the first track to find directory file with given file name
             for (var j = 0; j < _Disk.sections; j++) {
                 for (var k = 0; k < _Disk.blocks; k++) {
