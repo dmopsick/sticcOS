@@ -2,7 +2,8 @@
 module TSOS {
     export class DeviceDriverFileSystem extends DeviceDriver {
         private _DirectoryTrack: number = 0;
-        private _FirstDataTrack: number = 1
+        private _FirstDataTrack: number = 1;
+        private _IsActiveDataByte: string = "01";
 
         constructor() {
             super();
@@ -16,37 +17,50 @@ module TSOS {
         // Issue #47 create the directory file
         public createFile(filename: string): number {
             // Check if there is already a file with the specified name | Will return false if the file does not exist
-            if (this.getDirectoryFileTSBByFilename(filename)) {
+            if (this.getDirectoryFileTSBByFilename(filename) !== null) {
                 // Return -1 to indicate that the file already exists
                 return -1;
             }
 
             // Check if there is any open directory blocks
-            const directoryTSB = this.findOpenDirectoryBlock();
+            const directoryTSB: TSB = this.findOpenDirectoryBlock();
 
             console.log("Directory TSB");
             console.log(directoryTSB);
 
             // directoryTSB will === false if there is no open directory blocks
-            if (directoryTSB === false) {
+            if (directoryTSB ===  null) {
                 // Return -2 to indicate that there is no room to create files
                 return -2;
             }
 
             // Check if there is any open data blocks for the file
-            const dataTSB = this.findOpenDataBlock();
+            const dataTSB: TSB = this.findOpenDataBlock();
 
             console.log("Data TSB");
             console.log(dataTSB);
 
-            if (dataTSB === false) {
+            if (dataTSB === null) {
                 // Return -3 to indicate there is no open data blocks for the file
                 return -3;
             }
 
             console.log("Okay time to create");
 
+            // Convert filename to Hex
+            const hexFilename = Utils.convertStringToHex(filename);
+
+            // Generate data to save to directory TSB .. ex: 01 for isactive, TSB of data, and filename
+            const directoryData = this._IsActiveDataByte + dataTSB.getTSBByte() + hexFilename;
+
+            console.log(this._IsActiveDataByte);
+            console.log(dataTSB.getTSBByte());
+            console.log(hexFilename);
+
+            console.log(directoryData);
+
             // Create the directory file
+            _Disk.writeToDisk(directoryTSB, directoryData);
 
             // Create first data file associated with directory file to prepare for writing
 
@@ -56,7 +70,7 @@ module TSOS {
         }
 
         // Issue #47 | Retrieve a directory file by filename
-        public getDirectoryFileTSBByFilename(filename: string): any {
+        public getDirectoryFileTSBByFilename(filename: string): TSB {
             // Loop through the sectors and blocks of the first track to find directory file with given file name
             for (let j = 0; j < _Disk.sections; j++) {
                 for (let k = 0; k < _Disk.blocks; k++) {
@@ -77,9 +91,11 @@ module TSOS {
                         const filenameData = data.substring(8);
 
                         // Created util function to convert the ascii data to a string... maybe it works we will see
-                        const dataFilename = Utils.convertAsciiToString(filenameData);
+                        const dataFilename = Utils.convertHexToString(filenameData);
 
-                        console.log(dataFilename);
+                        /* console.log('FILENAME vs DATAFILENAME');
+                        console.log("_" + filename + "_");
+                        console.log("_" + dataFilename + "_"); */
 
                         // If the filename is equal to the data in the TSB, return the TSB 
                         if (filename == dataFilename) {
@@ -91,13 +107,13 @@ module TSOS {
             }
 
             // Return false if the file does not exist
-            return false;
+            return null;
         }
 
         // Issue #47 | Find an open directory block. 
         // Returns TSB if there is an open directory block
         // Return false if there is no open directory block
-        public findOpenDirectoryBlock(): any {
+        public findOpenDirectoryBlock(): TSB {
             // I suppose loop through the directory blocks and find one that is not in use then return the TSB for it
 
             // Loop through each directory block to find one thtat has a zero for in use
@@ -117,13 +133,13 @@ module TSOS {
             }
 
             // Return false if there is no open directory block
-            return false;
+            return null;
         }
 
         // Issue #49 | Finds an open data block
         // Returns TSB if there is an open Data block
         // Returns false if there is no open data block
-        public findOpenDataBlock(): any {
+        public findOpenDataBlock(): TSB {
             // Loop through each TSB to find a open block
             for (let i = this._FirstDataTrack; i < _Disk.tracks; i++) {
                 for (let j = 0; j < _Disk.sections; j++) {
@@ -143,7 +159,7 @@ module TSOS {
             }
 
             // An open data block has not been found
-            return false;
+            return null;
         }
 
         private blockIsInUse(data: string): boolean {

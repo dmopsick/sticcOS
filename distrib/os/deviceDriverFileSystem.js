@@ -20,6 +20,7 @@ var TSOS;
             var _this = _super.call(this) || this;
             _this._DirectoryTrack = 0;
             _this._FirstDataTrack = 1;
+            _this._IsActiveDataByte = "01";
             _this.driverEntry = _this.krnFileSystemDriverEntry;
             return _this;
         }
@@ -29,7 +30,7 @@ var TSOS;
         // Issue #47 create the directory file
         DeviceDriverFileSystem.prototype.createFile = function (filename) {
             // Check if there is already a file with the specified name | Will return false if the file does not exist
-            if (this.getDirectoryFileTSBByFilename(filename)) {
+            if (this.getDirectoryFileTSBByFilename(filename) !== null) {
                 // Return -1 to indicate that the file already exists
                 return -1;
             }
@@ -38,7 +39,7 @@ var TSOS;
             console.log("Directory TSB");
             console.log(directoryTSB);
             // directoryTSB will === false if there is no open directory blocks
-            if (directoryTSB === false) {
+            if (directoryTSB === null) {
                 // Return -2 to indicate that there is no room to create files
                 return -2;
             }
@@ -46,12 +47,21 @@ var TSOS;
             var dataTSB = this.findOpenDataBlock();
             console.log("Data TSB");
             console.log(dataTSB);
-            if (dataTSB === false) {
+            if (dataTSB === null) {
                 // Return -3 to indicate there is no open data blocks for the file
                 return -3;
             }
             console.log("Okay time to create");
+            // Convert filename to Hex
+            var hexFilename = TSOS.Utils.convertStringToHex(filename);
+            // Generate data to save to directory TSB .. ex: 01 for isactive, TSB of data, and filename
+            var directoryData = this._IsActiveDataByte + dataTSB.getTSBByte() + hexFilename;
+            console.log(this._IsActiveDataByte);
+            console.log(dataTSB.getTSBByte());
+            console.log(hexFilename);
+            console.log(directoryData);
             // Create the directory file
+            _Disk.writeToDisk(directoryTSB, directoryData);
             // Create first data file associated with directory file to prepare for writing
             // Return 1 if the file was created successfully with no error
             return 1;
@@ -74,8 +84,10 @@ var TSOS;
                         // Either convert the filename to ascii... or the ascii to a string
                         var filenameData = data.substring(8);
                         // Created util function to convert the ascii data to a string... maybe it works we will see
-                        var dataFilename = TSOS.Utils.convertAsciiToString(filenameData);
-                        console.log(dataFilename);
+                        var dataFilename = TSOS.Utils.convertHexToString(filenameData);
+                        /* console.log('FILENAME vs DATAFILENAME');
+                        console.log("_" + filename + "_");
+                        console.log("_" + dataFilename + "_"); */
                         // If the filename is equal to the data in the TSB, return the TSB 
                         if (filename == dataFilename) {
                             return tsb;
@@ -85,7 +97,7 @@ var TSOS;
                 }
             }
             // Return false if the file does not exist
-            return false;
+            return null;
         };
         // Issue #47 | Find an open directory block. 
         // Returns TSB if there is an open directory block
@@ -106,7 +118,7 @@ var TSOS;
                 }
             }
             // Return false if there is no open directory block
-            return false;
+            return null;
         };
         // Issue #49 | Finds an open data block
         // Returns TSB if there is an open Data block
@@ -128,7 +140,7 @@ var TSOS;
                 }
             }
             // An open data block has not been found
-            return false;
+            return null;
         };
         DeviceDriverFileSystem.prototype.blockIsInUse = function (data) {
             // The first character of the in use byte will always be 0. In use is either 0 or 1

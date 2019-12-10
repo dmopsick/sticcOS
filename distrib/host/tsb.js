@@ -15,6 +15,10 @@ var TSOS;
         TSB.prototype.getRawTSB = function () {
             return this.track.toString() + this.section.toString() + this.block.toString();
         };
+        // Returns TSB formatted as one byte each ex 000001 for 0:0:1
+        TSB.prototype.getTSBByte = function () {
+            return "0" + this.track.toString() + "0" + this.section.toString() + "0" + this.block.toString();
+        };
         return TSB;
     }());
     TSOS.TSB = TSB;
