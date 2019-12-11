@@ -33,6 +33,10 @@ module TSOS {
                             // What do I want to put in the MBR? May change this
                             data += "01000000000001010000";
                         }
+                        else {
+                            // Fill in basic data with 00 for in use and place holder for the nextTSB
+                            data += "000-0-0-";
+                        }
 
                         // Create TSB to write to the disk with
                         const tsb = new TSB(i, j, k);

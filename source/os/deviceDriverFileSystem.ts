@@ -4,7 +4,8 @@ module TSOS {
         // Constants that will be used in one or more file functions
         private _DirectoryTrack: number = 0;
         private _FirstDataTrack: number = 1;
-        private _IsActiveDataByte: string = "01";
+        private _InUseDataByte: string = "01";
+        private _NotInUseDataByte: string = "00";
         private _NextBlockPlaceholder: string = "0-0-0-";
 
         constructor() {
@@ -52,13 +53,13 @@ module TSOS {
             const hexFilename = Utils.convertStringToHex(filename);
 
             // Generate data to save to directory TSB .. ex: 01 for isactive, TSB of data, and filename
-            const directoryBlockData = this._IsActiveDataByte + dataTSB.getTSBByte() + hexFilename;
+            const directoryBlockData = this._InUseDataByte + dataTSB.getTSBByte() + hexFilename;
 
             // Create the directory file
             _Disk.writeToDisk(directoryTSB, directoryBlockData);
 
             // Generate data to initialize data block
-            const dataBlockData = this._IsActiveDataByte + this._NextBlockPlaceholder;
+            const dataBlockData = this._InUseDataByte + this._NextBlockPlaceholder;
 
             // Create data file
             _Disk.writeToDisk(dataTSB, dataBlockData);
@@ -81,8 +82,8 @@ module TSOS {
                 return -1;
             }
 
-            // Since it is a destructive write I believe will have to overwrite some data, or make old data blocks not in use
-            // Need to make existing data blocks for this file no longer active.
+            // To make it a destructive write, delete the current data associated with this file | True to signifiy overwrite
+            this.deleteAssociatedDataBlocksByDirectoryTSB(directoryTSB, true);
 
             // Read the data in the directory to find the value of the first TSB for data block
             let dataTSB = this.getNextTSBByTSB(directoryTSB); // Need to get the next TSB from the directory data and use it as location of first data block to save
@@ -90,15 +91,8 @@ module TSOS {
             console.log("First data TSB");
             console.log(dataTSB);
 
-            // console.log(data);
-            // console.log(data.length);
-
             // There is open blocks and the file exists... convert the data to hex
             let hexData = Utils.convertStringToHex(data);
-
-            // console.log(hexData);
-            // console.log(hexData.length);
-
 
             // Loop through the data as many times as it takes and save the data to data block(s)
             // Write the file 60 bytes at a time
@@ -115,7 +109,10 @@ module TSOS {
                 hexData = hexData.slice(_Disk.blockSize * 2);
 
                 // Create a variable to hold the data to save... with the inuse block and the proper nextTSB data
-                let dataToSave = this._IsActiveDataByte;
+                let dataToSave = this._InUseDataByte;
+
+                // Mark this TSB as inuse real quick
+                _Disk.writeToDisk(dataTSB, dataToSave);
 
                 // Variable for next TSB if needed
                 let nextTSB = null;
@@ -148,8 +145,6 @@ module TSOS {
                 console.log(Utils.convertHexToString(hexDataHead));
                 // Need to sure I can read the file to verify that I did this correctly.
             }
-
-            console.log("The while loop is not infinite yay");
             // Return 1 if file was written to succesfully
             return 1;
         }
@@ -285,13 +280,58 @@ module TSOS {
 
             // Extract the track, sector, and block byte to be used to create a TSB
             // Track is element 3, Section 5, Block 7 ... because it goes in use then TSB... ex: 01 01 00 01
-            const track = parseInt(rawHexData[3], 16)
-            const section = parseInt(rawHexData[5], 16);
-            const block = parseInt(rawHexData[7], 16);
+            const trackString = rawHexData[3];
+            const sectionString = rawHexData[5];
+            const blockString = rawHexData[7];
 
+            // If the next TSB is equal to the placeholder value of  - - - then there is no next TSB! 
+            if ((trackString === sectionString && trackString === blockString) && trackString === "-") {
+                return null;
+            }
+
+            // Parse the Track, Section, Block values as ints
+            const track = parseInt(trackString, 16)
+            const section = parseInt(sectionString, 16);
+            const block = parseInt(blockString, 16);
+
+            // Create TSB object to return of the next TSB
             const nextTSB = new TSB(track, section, block);
 
             return nextTSB;
+        }
+
+        // Issue #47 | Makes all data files associated with TSB no longer inUse
+        // Will be used for overwriting files and deleting files
+        // Deleting in this conext means to make the block inactive and zero filled
+        // If overwrite is true then it keeps the first data block as being active
+        public deleteAssociatedDataBlocksByDirectoryTSB(directoryTSB: TSB, overwrite: boolean = false): void {
+            // Keep track of the first data block TSB to keep it active
+            const firstDataTSB = this.getNextTSBByTSB(directoryTSB);
+
+            // Get the first data TSB to delete
+            let dataTSB = firstDataTSB
+
+            // While loop to keep checking if there is a next tsb and then selecting that 
+            while (dataTSB !== null) {
+                // Check if there is a next TSB after this 
+                const nextTSB = this.getNextTSBByTSB(dataTSB);
+
+                let resetData = "";
+
+                // Keep the first data block active
+                if ((dataTSB.getRawTSB() == firstDataTSB.getRawTSB()) && overwrite) {
+                    resetData = this._InUseDataByte + this._NextBlockPlaceholder;
+                }
+                else {
+                    resetData = this._NotInUseDataByte + this._NextBlockPlaceholder;
+                }
+
+                // Overwrite the dataTSB and make it inactive
+                _Disk.writeToDisk(dataTSB, resetData);
+
+                // Set the nextTSB as the next TSB to work with
+                dataTSB = nextTSB;
+            }
         }
     }
 }

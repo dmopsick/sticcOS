@@ -21,7 +21,8 @@ var TSOS;
             // Constants that will be used in one or more file functions
             _this._DirectoryTrack = 0;
             _this._FirstDataTrack = 1;
-            _this._IsActiveDataByte = "01";
+            _this._InUseDataByte = "01";
+            _this._NotInUseDataByte = "00";
             _this._NextBlockPlaceholder = "0-0-0-";
             _this.driverEntry = _this.krnFileSystemDriverEntry;
             return _this;
@@ -57,11 +58,11 @@ var TSOS;
             // Convert filename to Hex
             var hexFilename = TSOS.Utils.convertStringToHex(filename);
             // Generate data to save to directory TSB .. ex: 01 for isactive, TSB of data, and filename
-            var directoryBlockData = this._IsActiveDataByte + dataTSB.getTSBByte() + hexFilename;
+            var directoryBlockData = this._InUseDataByte + dataTSB.getTSBByte() + hexFilename;
             // Create the directory file
             _Disk.writeToDisk(directoryTSB, directoryBlockData);
             // Generate data to initialize data block
-            var dataBlockData = this._IsActiveDataByte + this._NextBlockPlaceholder;
+            var dataBlockData = this._InUseDataByte + this._NextBlockPlaceholder;
             // Create data file
             _Disk.writeToDisk(dataTSB, dataBlockData);
             // Return 1 if the file was created successfully with no error
@@ -78,17 +79,14 @@ var TSOS;
                 // Return -1 represents that there is no directory file for specified filename
                 return -1;
             }
-            // Since it is a destructive write I believe will have to overwrite some data, or make old data blocks not in use
+            // To make it a destructive write, delete the current data associated with this file | True to signifiy overwrite
+            this.deleteAssociatedDataBlocksByDirectoryTSB(directoryTSB, true);
             // Read the data in the directory to find the value of the first TSB for data block
             var dataTSB = this.getNextTSBByTSB(directoryTSB); // Need to get the next TSB from the directory data and use it as location of first data block to save
             console.log("First data TSB");
             console.log(dataTSB);
-            // console.log(data);
-            // console.log(data.length);
             // There is open blocks and the file exists... convert the data to hex
             var hexData = TSOS.Utils.convertStringToHex(data);
-            // console.log(hexData);
-            // console.log(hexData.length);
             // Loop through the data as many times as it takes and save the data to data block(s)
             // Write the file 60 bytes at a time
             while (hexData.length > 0) {
@@ -101,7 +99,9 @@ var TSOS;
                 // Remove the hexDataHead that has been saved from the hexData to leave remaining data
                 hexData = hexData.slice(_Disk.blockSize * 2);
                 // Create a variable to hold the data to save... with the inuse block and the proper nextTSB data
-                var dataToSave = this._IsActiveDataByte;
+                var dataToSave = this._InUseDataByte;
+                // Mark this TSB as inuse real quick
+                _Disk.writeToDisk(dataTSB, dataToSave);
                 // Variable for next TSB if needed
                 var nextTSB = null;
                 // There will be another block after this
@@ -127,7 +127,6 @@ var TSOS;
                 console.log(TSOS.Utils.convertHexToString(hexDataHead));
                 // Need to sure I can read the file to verify that I did this correctly.
             }
-            console.log("The while loop is not infinite yay");
             // Return 1 if file was written to succesfully
             return 1;
         };
@@ -239,11 +238,48 @@ var TSOS;
             var rawHexData = _Disk.readFromDisk(tsb);
             // Extract the track, sector, and block byte to be used to create a TSB
             // Track is element 3, Section 5, Block 7 ... because it goes in use then TSB... ex: 01 01 00 01
-            var track = parseInt(rawHexData[3], 16);
-            var section = parseInt(rawHexData[5], 16);
-            var block = parseInt(rawHexData[7], 16);
+            var trackString = rawHexData[3];
+            var sectionString = rawHexData[5];
+            var blockString = rawHexData[7];
+            // If the next TSB is equal to the placeholder value of  - - - then there is no next TSB! 
+            if ((trackString === sectionString && trackString === blockString) && trackString === "-") {
+                return null;
+            }
+            // Parse the Track, Section, Block values as ints
+            var track = parseInt(trackString, 16);
+            var section = parseInt(sectionString, 16);
+            var block = parseInt(blockString, 16);
+            // Create TSB object to return of the next TSB
             var nextTSB = new TSOS.TSB(track, section, block);
             return nextTSB;
+        };
+        // Issue #47 | Makes all data files associated with TSB no longer inUse
+        // Will be used for overwriting files and deleting files
+        // Deleting in this conext means to make the block inactive and zero filled
+        // If overwrite is true then it keeps the first data block as being active
+        DeviceDriverFileSystem.prototype.deleteAssociatedDataBlocksByDirectoryTSB = function (directoryTSB, overwrite) {
+            if (overwrite === void 0) { overwrite = false; }
+            // Keep track of the first data block TSB to keep it active
+            var firstDataTSB = this.getNextTSBByTSB(directoryTSB);
+            // Get the first data TSB to delete
+            var dataTSB = firstDataTSB;
+            // While loop to keep checking if there is a next tsb and then selecting that 
+            while (dataTSB !== null) {
+                // Check if there is a next TSB after this 
+                var nextTSB = this.getNextTSBByTSB(dataTSB);
+                var resetData = "";
+                // Keep the first data block active
+                if ((dataTSB.getRawTSB() == firstDataTSB.getRawTSB()) && overwrite) {
+                    resetData = this._InUseDataByte + this._NextBlockPlaceholder;
+                }
+                else {
+                    resetData = this._NotInUseDataByte + this._NextBlockPlaceholder;
+                }
+                // Overwrite the dataTSB and make it inactive
+                _Disk.writeToDisk(dataTSB, resetData);
+                // Set the nextTSB as the next TSB to work with
+                dataTSB = nextTSB;
+            }
         };
         return DeviceDriverFileSystem;
     }(TSOS.DeviceDriver));

@@ -28,6 +28,10 @@ var TSOS;
                             // What do I want to put in the MBR? May change this
                             data += "01000000000001010000";
                         }
+                        else {
+                            // Fill in basic data with 00 for in use and place holder for the nextTSB
+                            data += "000-0-0-";
+                        }
                         // Create TSB to write to the disk with
                         var tsb = new TSOS.TSB(i, j, k);
                         // Write a blank block to the disk, the zero fill write will fill in the 00s.
