@@ -180,7 +180,13 @@ module TSOS {
             // write <filename> "<data>"
             sc = new ShellCommand(this.shellWriteFile,
                 "write",
-                '<filename> "<data>" - Writes the specified data to the specified file.');
+                '<filename> "<data>" - Writes the specified data to the specified file. Quotes requried.');
+            this.commandList[this.commandList.length] = sc;
+
+            // read <filename>
+            sc = new ShellCommand(this.shellReadFile,
+                "read",
+                "<filename> - Reads the contents of the specified file.");
             this.commandList[this.commandList.length] = sc;
 
             // Display the initial prompt.
@@ -433,6 +439,9 @@ module TSOS {
                         break;
                     case "write":
                         _StdOut.putText('Write <filename> "<data>" writes the specified data to the file with the provided name. The write is a destructive write not an append.')
+                        break;
+                    case "read":
+                        _StdOut.putText("Read <filename> returns the contents of the specified file to the user.");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -1078,7 +1087,7 @@ module TSOS {
                         }
                     }
                     else {
-                        // Inform user they entered an invalid filename
+                        // Inform user they entered an invalid filename becasue it is too long
                         _StdOut.putText("Error: Invalid argument for filename. Filenames are 60 characters or less.");
                     }
                 }
@@ -1089,7 +1098,30 @@ module TSOS {
             }
             else {
                 // Let user know they must format the disk before doing file operations
-                _StdOut.putText("Error: This disk must be formatted before files can be created or written to.");
+                _StdOut.putText("Error: The disk must be formatted before files can be created or written to.");
+            }
+        }
+
+        // Issue #47 | Read the contents of a file
+        // Should be less thicc then writing
+        public shellReadFile(args: string[]) {
+            if (_Disk.isFormatted) {
+                if (args.length > 0) {
+                    // Get file name from the arguments
+                    const filename = args[0];
+
+                    // Pass it on to the file system driver
+                    const readResponse = _krnFileSystemDriver.readFile(filename);
+
+                    // Print the results to the user
+                    _StdOut.putText(readResponse);
+                }
+                else {
+                    _StdOut.putText("Error: No filename provided.");
+                }
+            }
+            else {
+                _StdOut.putText("Error: The disk must be formatted before files can be read");
             }
         }
     }

@@ -74,7 +74,6 @@ var TSOS;
         DeviceDriverFileSystem.prototype.writeFile = function (filename, data) {
             // Get TSB for specified file
             var directoryTSB = this.getDirectoryBlockTSBByFilename(filename);
-            // console.log(directoryTSB);
             if (directoryTSB === null) {
                 // Return -1 represents that there is no directory file for specified filename
                 return -1;
@@ -83,8 +82,6 @@ var TSOS;
             this.deleteAssociatedDataBlocksByDirectoryTSB(directoryTSB, true);
             // Read the data in the directory to find the value of the first TSB for data block
             var dataTSB = this.getNextTSBByTSB(directoryTSB); // Need to get the next TSB from the directory data and use it as location of first data block to save
-            console.log("First data TSB");
-            console.log(dataTSB);
             // There is open blocks and the file exists... convert the data to hex
             var hexData = TSOS.Utils.convertStringToHex(data);
             // Loop through the data as many times as it takes and save the data to data block(s)
@@ -100,7 +97,7 @@ var TSOS;
                 hexData = hexData.slice(_Disk.blockSize * 2);
                 // Create a variable to hold the data to save... with the inuse block and the proper nextTSB data
                 var dataToSave = this._InUseDataByte;
-                // Mark this TSB as inuse real quick
+                // Mark this TSB as inuse real quick so finding an open data block does not choose this one! We already using it!
                 _Disk.writeToDisk(dataTSB, dataToSave);
                 // Variable for next TSB if needed
                 var nextTSB = null;
@@ -120,15 +117,40 @@ var TSOS;
                 if (nextTSB !== null) {
                     // Assign a new TSB to be the dataTSB for the next iteration
                     dataTSB = nextTSB;
-                    console.log("Next TSB");
-                    console.log(dataTSB);
                 }
-                console.log("FLAG 15: " + hexData.length);
-                console.log(TSOS.Utils.convertHexToString(hexDataHead));
+                // console.log("FLAG 15: " + hexData.length);
+                // console.log(Utils.convertHexToString(hexDataHead));
                 // Need to sure I can read the file to verify that I did this correctly.
             }
             // Return 1 if file was written to succesfully
             return 1;
+        };
+        // Issue #47 | Reads and returns the contents of a file by specified filename
+        // Will need to go through each data TSB and build a big ol string to return
+        DeviceDriverFileSystem.prototype.readFile = function (filename) {
+            var directoryTSB = this.getDirectoryBlockTSBByFilename(filename);
+            if (directoryTSB === null) {
+                return "Error: File not found.";
+            }
+            // Create a variable to hold the string we are building
+            var fileContents = "";
+            // Get the first data TSB
+            var dataTSB = this.getNextTSBByTSB(directoryTSB);
+            // Read the file data block by data block
+            while (dataTSB !== null) {
+                // Get the hex file data from disk
+                var data = this.getDataStringByTSB(dataTSB);
+                // Add it to the fileContents string
+                fileContents += data;
+                // Move onto the next TSB (if it exists)
+                dataTSB = this.getNextTSBByTSB(dataTSB);
+            }
+            // Return a message if the file is empty
+            if (fileContents === "") {
+                return "File " + filename + " is empty.";
+            }
+            // Need to handle what I want to return for an empty file
+            return fileContents;
         };
         // Issue #47 | Retrieve a directory file by filename
         DeviceDriverFileSystem.prototype.getDirectoryBlockTSBByFilename = function (filename) {
@@ -138,10 +160,7 @@ var TSOS;
                     // Create TSB object of the current TSB to check
                     var tsb = new TSOS.TSB(this._DirectoryTrack, j, k);
                     // Get the data stored in the specified Directory TSB
-                    // Need to read from the disk
                     var data = _Disk.readFromDisk(tsb);
-                    // console.log("FLAG 11");
-                    // console.log(data);
                     // The block is in use | It's in use block will be zero if it is indeed in use
                     if (this.blockIsInUse(data)) {
                         // Need to compare the data to the file name

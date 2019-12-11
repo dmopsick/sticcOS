@@ -75,8 +75,6 @@ module TSOS {
             // Get TSB for specified file
             const directoryTSB = this.getDirectoryBlockTSBByFilename(filename);
 
-            // console.log(directoryTSB);
-
             if (directoryTSB === null) {
                 // Return -1 represents that there is no directory file for specified filename
                 return -1;
@@ -87,9 +85,6 @@ module TSOS {
 
             // Read the data in the directory to find the value of the first TSB for data block
             let dataTSB = this.getNextTSBByTSB(directoryTSB); // Need to get the next TSB from the directory data and use it as location of first data block to save
-
-            console.log("First data TSB");
-            console.log(dataTSB);
 
             // There is open blocks and the file exists... convert the data to hex
             let hexData = Utils.convertStringToHex(data);
@@ -111,7 +106,7 @@ module TSOS {
                 // Create a variable to hold the data to save... with the inuse block and the proper nextTSB data
                 let dataToSave = this._InUseDataByte;
 
-                // Mark this TSB as inuse real quick
+                // Mark this TSB as inuse real quick so finding an open data block does not choose this one! We already using it!
                 _Disk.writeToDisk(dataTSB, dataToSave);
 
                 // Variable for next TSB if needed
@@ -136,17 +131,51 @@ module TSOS {
                 if (nextTSB !== null) {
                     // Assign a new TSB to be the dataTSB for the next iteration
                     dataTSB = nextTSB;
-
-                    console.log("Next TSB");
-                    console.log(dataTSB);
                 }
 
-                console.log("FLAG 15: " + hexData.length);
-                console.log(Utils.convertHexToString(hexDataHead));
+                // console.log("FLAG 15: " + hexData.length);
+                // console.log(Utils.convertHexToString(hexDataHead));
                 // Need to sure I can read the file to verify that I did this correctly.
             }
             // Return 1 if file was written to succesfully
             return 1;
+        }
+
+
+        // Issue #47 | Reads and returns the contents of a file by specified filename
+        // Will need to go through each data TSB and build a big ol string to return
+        public readFile(filename: string): string {
+            const directoryTSB = this.getDirectoryBlockTSBByFilename(filename);
+
+            if (directoryTSB === null) {
+                return "Error: File not found.";
+            }
+            
+            // Create a variable to hold the string we are building
+            let fileContents = "";
+
+            // Get the first data TSB
+            let dataTSB = this.getNextTSBByTSB(directoryTSB);
+
+            // Read the file data block by data block
+            while (dataTSB !== null) {
+                // Get the hex file data from disk
+                const data = this.getDataStringByTSB(dataTSB);
+
+                // Add it to the fileContents string
+                fileContents += data;
+
+                // Move onto the next TSB (if it exists)
+                dataTSB = this.getNextTSBByTSB(dataTSB);
+            }
+
+            // Return a message if the file is empty
+            if (fileContents === "") {
+                return "File " + filename + " is empty.";
+            }
+
+            // Need to handle what I want to return for an empty file
+            return fileContents;
         }
 
         // Issue #47 | Retrieve a directory file by filename
@@ -158,11 +187,7 @@ module TSOS {
                     const tsb = new TSB(this._DirectoryTrack, j, k);
 
                     // Get the data stored in the specified Directory TSB
-                    // Need to read from the disk
                     const data = _Disk.readFromDisk(tsb);
-
-                    // console.log("FLAG 11");
-                    // console.log(data);
 
                     // The block is in use | It's in use block will be zero if it is indeed in use
                     if (this.blockIsInUse(data)) {
@@ -185,7 +210,6 @@ module TSOS {
                     // If the block is in use we do not need to check if it is the block we are looking for
                 }
             }
-
             // Return false if the file does not exist
             return null;
         }
@@ -211,7 +235,6 @@ module TSOS {
                     }
                 }
             }
-
             // Return false if there is no open directory block
             return null;
         }
@@ -237,7 +260,6 @@ module TSOS {
                     }
                 }
             }
-
             // An open data block has not been found
             return null;
         }

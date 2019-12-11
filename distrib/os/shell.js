@@ -98,7 +98,10 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellCreateFile, "create", "<filename> - Creates a file with the given name.");
             this.commandList[this.commandList.length] = sc;
             // write <filename> "<data>"
-            sc = new TSOS.ShellCommand(this.shellWriteFile, "write", '<filename> "<data>" - Writes the specified data to the specified file.');
+            sc = new TSOS.ShellCommand(this.shellWriteFile, "write", '<filename> "<data>" - Writes the specified data to the specified file. Quotes requried.');
+            this.commandList[this.commandList.length] = sc;
+            // read <filename>
+            sc = new TSOS.ShellCommand(this.shellReadFile, "read", "<filename> - Reads the contents of the specified file.");
             this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
@@ -332,6 +335,9 @@ var TSOS;
                         break;
                     case "write":
                         _StdOut.putText('Write <filename> "<data>" writes the specified data to the file with the provided name. The write is a destructive write not an append.');
+                        break;
+                    case "read":
+                        _StdOut.putText("Read <filename> returns the contents of the specified file to the user.");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -893,7 +899,7 @@ var TSOS;
                         }
                     }
                     else {
-                        // Inform user they entered an invalid filename
+                        // Inform user they entered an invalid filename becasue it is too long
                         _StdOut.putText("Error: Invalid argument for filename. Filenames are 60 characters or less.");
                     }
                 }
@@ -904,7 +910,27 @@ var TSOS;
             }
             else {
                 // Let user know they must format the disk before doing file operations
-                _StdOut.putText("Error: This disk must be formatted before files can be created or written to.");
+                _StdOut.putText("Error: The disk must be formatted before files can be created or written to.");
+            }
+        };
+        // Issue #47 | Read the contents of a file
+        // Should be less thicc then writing
+        Shell.prototype.shellReadFile = function (args) {
+            if (_Disk.isFormatted) {
+                if (args.length > 0) {
+                    // Get file name from the arguments
+                    var filename = args[0];
+                    // Pass it on to the file system driver
+                    var readResponse = _krnFileSystemDriver.readFile(filename);
+                    // Print the results to the user
+                    _StdOut.putText(readResponse);
+                }
+                else {
+                    _StdOut.putText("Error: No filename provided.");
+                }
+            }
+            else {
+                _StdOut.putText("Error: The disk must be formatted before files can be read");
             }
         };
         return Shell;
