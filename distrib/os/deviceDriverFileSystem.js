@@ -77,17 +77,39 @@ var TSOS;
                 // Return -1 represents that there is no directory file for specified filename
                 return -1;
             }
-            var dataTSB = this.findOpenDataBlock();
+            // Since it is a destructive write I believe will have to overwrite some data, or make old data blocks not in use
+            // Read the data in the directory to find the value of the first TSB for data block
+            var directoryData = this.getDataStringByTSB(directoryTSB);
+            console.log("DIRECTORY TSB");
+            console.log(directoryTSB);
+            console.log("DIRECTORY DATA");
+            console.log(directoryData);
+            /* let dataTSB = this.findOpenDataBlock();
+
             if (dataTSB === null) {
                 // Returning -2 means that there are no datablocks open in the system
                 return -2;
-            }
-            // Check that there is that many?
-            // Data that os 60 or less characters will only take one 
-            // if (data <=)
+            } */
+            console.log(data);
+            console.log(data.length);
+            // There is open blocks and the file exists... convert the data to hex
+            var hexData = TSOS.Utils.convertStringToHex(data);
+            console.log(hexData);
+            console.log(hexData.length);
             // Loop through the data as many times as it takes and save the data to data block(s)
-            while (false) {
-            }
+            // Write the file 60 bytes at a time
+            /* while (hexData.length > 0 ) {
+                // Get the first block size (60) bytes to save to this data block | Times two because each byte is two characters
+                const hexDataHead = hexData.substring(0, (_Disk.blockSize * 2));
+
+                // Save the data
+
+                // Remove the hexDataHead that has been saved from the hexData to leave remaining data
+                // Splice the hexData string to remove the head
+                // If there is data remaining the loop will run again and save in a new TSB
+
+                // Get new TSB
+            } */
             // So maybe a while loop to write data to file as many times as it takes
             // Maybe have a seperate functionality for data that can fit in one block
             // Return 1 if file was written to succesfully
@@ -182,6 +204,17 @@ var TSOS;
                 // Uh if the in use is not 0 or 1 we got a problem
                 throw Error;
             }
+        };
+        // Issue #47 | Returns the data from a TSB
+        // Ignores the inUse and next TSB byetes, just returns the data
+        DeviceDriverFileSystem.prototype.getDataStringByTSB = function (tsb) {
+            // Get the raw hex data from the disk
+            var rawHexData = _Disk.readFromDisk(tsb);
+            // Trim the hex data to remove next TSB and inUse
+            var trimmedHexData = rawHexData.slice(8);
+            // Conver the hex data to a normal string
+            var convertedData = TSOS.Utils.convertHexToString(trimmedHexData);
+            return convertedData;
         };
         return DeviceDriverFileSystem;
     }(TSOS.DeviceDriver));
