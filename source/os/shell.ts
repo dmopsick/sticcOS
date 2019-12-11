@@ -180,7 +180,25 @@ module TSOS {
             // write <filename> "<data>"
             sc = new ShellCommand(this.shellWriteFile,
                 "write",
-                '<filename> "<data>" - Writes the specified data to the specified file.');
+                '<filename> "<data>" - Writes the specified data to the specified file. Quotes requried.');
+            this.commandList[this.commandList.length] = sc;
+
+            // read <filename>
+            sc = new ShellCommand(this.shellReadFile,
+                "read",
+                "<filename> - Reads the contents of the specified file.");
+            this.commandList[this.commandList.length] = sc;
+
+            // delete <filename>
+            sc = new ShellCommand(this.shellDeleteFile,
+                "delete",
+                "<filename> - Deletes a file saved to the disk in SticcOS.");
+            this.commandList[this.commandList.length] = sc;
+
+            // ls
+            sc = new ShellCommand(this.shellLS,
+                "ls",
+                "- lists the files currently saved in SticcOS.");
             this.commandList[this.commandList.length] = sc;
 
             // Display the initial prompt.
@@ -434,6 +452,15 @@ module TSOS {
                     case "write":
                         _StdOut.putText('Write <filename> "<data>" writes the specified data to the file with the provided name. The write is a destructive write not an append.')
                         break;
+                    case "read":
+                        _StdOut.putText("Read <filename> returns the contents of the specified file to the user.");
+                        break;
+                    case "delete":
+                        _StdOut.putText("Delete <filename> deletes a file saved to the disk in SticcOS.");
+                        break;
+                    case "ls":
+                        _StdOut.putText("ls returns a list of the files saved in SticcOS.");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                         break;
@@ -636,7 +663,8 @@ module TSOS {
                             _NextPID,
                             memStart,
                             memRange,
-                            priority
+                            priority,
+                            "MEMORY"
                         )
 
                         // Add new PCB to global instance array
@@ -1078,7 +1106,7 @@ module TSOS {
                         }
                     }
                     else {
-                        // Inform user they entered an invalid filename
+                        // Inform user they entered an invalid filename becasue it is too long
                         _StdOut.putText("Error: Invalid argument for filename. Filenames are 60 characters or less.");
                     }
                 }
@@ -1089,7 +1117,85 @@ module TSOS {
             }
             else {
                 // Let user know they must format the disk before doing file operations
-                _StdOut.putText("Error: This disk must be formatted before files can be created or written to.");
+                _StdOut.putText("Error: The disk must be formatted before files can be created or written to.");
+            }
+        }
+
+        // Issue #47 | Read the contents of a file
+        // Should be less thicc then writing
+        public shellReadFile(args: string[]) {
+            if (_Disk.isFormatted) {
+                if (args.length > 0) {
+                    // Get filename from the arguments
+                    const filename = args[0];
+
+                    // Pass it on to the file system driver
+                    const readResponse = _krnFileSystemDriver.readFile(filename);
+
+                    // Print the results to the user
+                    // No switch here because reading the file requires the returning of the string of file contents
+                    _StdOut.putText(readResponse);
+                }
+                else {
+                    _StdOut.putText("Error: No filename provided.");
+                }
+            }
+            else {
+                _StdOut.putText("Error: The disk must be formatted before files can be read");
+            }
+        }
+
+        // Issue #47 | Delete a file
+        public shellDeleteFile(args: string[]) {
+            if (_Disk.isFormatted) {
+                if (args.length > 0) {
+                    // Get filename from the arguments
+                    const filename = args[0];
+
+                    // Pass the file name to the file system driver
+                    const deleteResponse = _krnFileSystemDriver.deleteFile(filename);
+
+                    // Display response to the user based on the response from the deleteFile function
+                    switch (deleteResponse) {
+                        case -1:
+                            _StdOut.putText("Error: File: '" + filename + "' not found.");
+                            break;
+                        case 1:
+                            _StdOut.putText("File: '" + filename + "' successfully deleted.");
+                            break;
+                        default:
+                            _StdOut.putText("Error: Unexpected delete response");
+                            break;
+                    }
+                }
+                else {
+                    _StdOut.putText("Error: No filename provided.");
+                }
+            }
+            else {
+                _StdOut.putText("Error: The disk must be formatted before files can be deleted.");
+            }
+        }
+
+        // Issue #47 | Return a list of files saved on the disk
+        public shellLS(args: string[]) {
+            if (_Disk.isFormatted) {
+                // Get the file list response from the file system driver
+                const fileList: string[] = _krnFileSystemDriver.listActiveFiles();
+
+                if(fileList.length == 0) {
+                    _StdOut.putText("No files are saved to SticcOS");
+                }
+                else {
+                    _StdOut.putText("Files:");
+                    _StdOut.advanceLine();
+                    fileList.forEach(file => {
+                        _StdOut.putText(" " + file);
+                    });
+                }
+            }
+            else {
+                _StdOut.putText("Error: Disk operations unavailable until disk is formatted.");
             }
         }
     }

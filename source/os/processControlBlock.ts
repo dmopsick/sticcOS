@@ -5,6 +5,7 @@ module TSOS {
             public memAddrStart: number,
             public memRange: number = 256,
             public priority: number = 4, // Issue #48 | 0 (high) - 5 (low) | Default to 4 |  Processes all have a priority value now for priority based scheduling.
+            public storageLocation: string = "MEMORY", // MEMORY or DISK
             public PC: number = 0,
             public Acc: number = 0,
             public Xreg: number = 0,

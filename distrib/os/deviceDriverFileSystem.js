@@ -74,17 +74,14 @@ var TSOS;
         DeviceDriverFileSystem.prototype.writeFile = function (filename, data) {
             // Get TSB for specified file
             var directoryTSB = this.getDirectoryBlockTSBByFilename(filename);
-            // console.log(directoryTSB);
             if (directoryTSB === null) {
                 // Return -1 represents that there is no directory file for specified filename
                 return -1;
             }
             // To make it a destructive write, delete the current data associated with this file | True to signifiy overwrite
-            this.deleteAssociatedDataBlocksByDirectoryTSB(directoryTSB, true);
+            this.deleteDataBlocksByDirectoryTSB(directoryTSB, true);
             // Read the data in the directory to find the value of the first TSB for data block
             var dataTSB = this.getNextTSBByTSB(directoryTSB); // Need to get the next TSB from the directory data and use it as location of first data block to save
-            console.log("First data TSB");
-            console.log(dataTSB);
             // There is open blocks and the file exists... convert the data to hex
             var hexData = TSOS.Utils.convertStringToHex(data);
             // Loop through the data as many times as it takes and save the data to data block(s)
@@ -100,7 +97,7 @@ var TSOS;
                 hexData = hexData.slice(_Disk.blockSize * 2);
                 // Create a variable to hold the data to save... with the inuse block and the proper nextTSB data
                 var dataToSave = this._InUseDataByte;
-                // Mark this TSB as inuse real quick
+                // Mark this TSB as inuse real quick so finding an open data block does not choose this one! We already using it!
                 _Disk.writeToDisk(dataTSB, dataToSave);
                 // Variable for next TSB if needed
                 var nextTSB = null;
@@ -120,16 +117,81 @@ var TSOS;
                 if (nextTSB !== null) {
                     // Assign a new TSB to be the dataTSB for the next iteration
                     dataTSB = nextTSB;
-                    console.log("Next TSB");
-                    console.log(dataTSB);
                 }
-                console.log("FLAG 15: " + hexData.length);
-                console.log(TSOS.Utils.convertHexToString(hexDataHead));
+                // console.log("FLAG 15: " + hexData.length);
+                // console.log(Utils.convertHexToString(hexDataHead));
                 // Need to sure I can read the file to verify that I did this correctly.
             }
             // Return 1 if file was written to succesfully
             return 1;
         };
+        // Issue #47 | Reads and returns the contents of a file by specified filename
+        // Will need to go through each data TSB and build a big ol string to return
+        DeviceDriverFileSystem.prototype.readFile = function (filename) {
+            var directoryTSB = this.getDirectoryBlockTSBByFilename(filename);
+            if (directoryTSB === null) {
+                return "Error: File not found.";
+            }
+            // Create a variable to hold the string we are building
+            var fileContents = "";
+            // Get the first data TSB
+            var dataTSB = this.getNextTSBByTSB(directoryTSB);
+            // Read the file data block by data block
+            while (dataTSB !== null) {
+                // Get the hex file data from disk
+                var data = this.getDataStringByTSB(dataTSB);
+                // Add it to the fileContents string
+                fileContents += data;
+                // Move onto the next TSB (if it exists)
+                dataTSB = this.getNextTSBByTSB(dataTSB);
+            }
+            // Return a message if the file is empty
+            if (fileContents === "") {
+                return "File " + filename + " is empty.";
+            }
+            // Need to handle what I want to return for an empty file
+            return fileContents;
+        };
+        // Issue #47 | Deletes a file 
+        // Delete the Directory TSB and the associated data TSBs
+        DeviceDriverFileSystem.prototype.deleteFile = function (filename) {
+            // Get the directory TSB of the file we want to delete
+            var directoryTSB = this.getDirectoryBlockTSBByFilename(filename);
+            if (directoryTSB === null) {
+                // The file the user wants to delete does not exist
+                return -1;
+            }
+            // Delete the associated data blocks
+            this.deleteDataBlocksByDirectoryTSB(directoryTSB, false);
+            // Delete the directory entry
+            this.deleteSingleTSB(directoryTSB);
+            // Returning 1 means deletion went as planned
+            return 1;
+        };
+        // Issue #47 | Display a list of in use files
+        DeviceDriverFileSystem.prototype.listActiveFiles = function () {
+            // Create variable to hold list of the file names
+            var fileList = [];
+            // Loop through the directory blocks and add the name of all active files to the list
+            for (var j = 0; j < _Disk.sections; j++) {
+                for (var k = 1; k < _Disk.blocks; k++) {
+                    // Get TSB of each directory Block
+                    var tsb = new TSOS.TSB(this._DirectoryTrack, j, k);
+                    // Get the data stored stored in specified directory TSB
+                    var data = _Disk.readFromDisk(tsb);
+                    // Check if the block is in use
+                    if (this.blockIsInUse(data)) {
+                        // Strip out the in use and next TSB bytes
+                        var hexFilenameData = data.substring(8);
+                        // Convert filename from hex to ENGLISH
+                        var convertedFilename = TSOS.Utils.convertHexToString(hexFilenameData);
+                        fileList.push(convertedFilename);
+                    }
+                }
+            }
+            return fileList;
+        };
+        /*  Util Functions */
         // Issue #47 | Retrieve a directory file by filename
         DeviceDriverFileSystem.prototype.getDirectoryBlockTSBByFilename = function (filename) {
             // Loop through the sectors and blocks of the first track to find directory file with given file name
@@ -137,17 +199,13 @@ var TSOS;
                 for (var k = 0; k < _Disk.blocks; k++) {
                     // Create TSB object of the current TSB to check
                     var tsb = new TSOS.TSB(this._DirectoryTrack, j, k);
-                    // Get the data stored in the specified Directory TSB
-                    // Need to read from the disk
+                    // Get the data stored in the specified directory TSB
                     var data = _Disk.readFromDisk(tsb);
-                    // console.log("FLAG 11");
-                    // console.log(data);
                     // The block is in use | It's in use block will be zero if it is indeed in use
                     if (this.blockIsInUse(data)) {
-                        // Need to compare the data to the file name
-                        // Either convert the filename to ascii... or the ascii to a string
+                        // Strip out the in use and next TSB bytes
                         var filenameData = data.substring(8);
-                        // Created util function to convert the ascii data to a string... maybe it works we will see
+                        // Convert filename from hex to ENGLISH
                         var dataFilename = TSOS.Utils.convertHexToString(filenameData);
                         /* console.log('FILENAME vs DATAFILENAME');
                         console.log("_" + filename + "_");
@@ -257,7 +315,7 @@ var TSOS;
         // Will be used for overwriting files and deleting files
         // Deleting in this conext means to make the block inactive and zero filled
         // If overwrite is true then it keeps the first data block as being active
-        DeviceDriverFileSystem.prototype.deleteAssociatedDataBlocksByDirectoryTSB = function (directoryTSB, overwrite) {
+        DeviceDriverFileSystem.prototype.deleteDataBlocksByDirectoryTSB = function (directoryTSB, overwrite) {
             if (overwrite === void 0) { overwrite = false; }
             // Keep track of the first data block TSB to keep it active
             var firstDataTSB = this.getNextTSBByTSB(directoryTSB);
@@ -280,6 +338,11 @@ var TSOS;
                 // Set the nextTSB as the next TSB to work with
                 dataTSB = nextTSB;
             }
+        };
+        // Issue #47 | Delete a Directory TSB
+        DeviceDriverFileSystem.prototype.deleteSingleTSB = function (tsb) {
+            var resetData = this._NotInUseDataByte + this._NextBlockPlaceholder;
+            _Disk.writeToDisk(tsb, resetData);
         };
         return DeviceDriverFileSystem;
     }(TSOS.DeviceDriver));

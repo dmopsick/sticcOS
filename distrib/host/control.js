@@ -126,6 +126,7 @@ var TSOS;
                 "<td id='processDisplayX-" + pcb.pid + "'> </td>" +
                 "<td id='processDisplayY-" + pcb.pid + "'> </td>" +
                 "<td id='processDisplayZ-" + pcb.pid + "'> </td>" +
+                "<td id ='processDisplayStorageLocation-" + pcb.pid + "'> </td>" +
                 "</tr>";
         };
         // Issue #27 #21 Update the HTML PCB display with the most recent PCB info
@@ -140,6 +141,7 @@ var TSOS;
                 document.getElementById("processDisplayX-" + pcb.pid).innerHTML = "" + TSOS.Utils.displayHex(pcb.Xreg);
                 document.getElementById("processDisplayY-" + pcb.pid).innerHTML = "" + TSOS.Utils.displayHex(pcb.Yreg);
                 document.getElementById("processDisplayZ-" + pcb.pid).innerHTML = "" + TSOS.Utils.displayHex(pcb.ZFlag);
+                document.getElementById("processDisplayStorageLocation-" + pcb.pid).innerHTML = pcb.storageLocation;
             });
         };
         // Issue #36 Remove any process(es) from the PCB display on the HTML display | Used in Kill all, clearmem
