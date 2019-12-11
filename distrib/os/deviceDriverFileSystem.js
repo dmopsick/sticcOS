@@ -73,6 +73,7 @@ var TSOS;
         DeviceDriverFileSystem.prototype.writeFile = function (filename, data) {
             // Get TSB for specified file
             var directoryTSB = this.getDirectoryBlockTSBByFilename(filename);
+            // console.log(directoryTSB);
             if (directoryTSB === null) {
                 // Return -1 represents that there is no directory file for specified filename
                 return -1;
@@ -80,32 +81,53 @@ var TSOS;
             // Since it is a destructive write I believe will have to overwrite some data, or make old data blocks not in use
             // Read the data in the directory to find the value of the first TSB for data block
             var dataTSB = this.getNextTSBByTSB(directoryTSB); // Need to get the next TSB from the directory data and use it as location of first data block to save
-            if (dataTSB === null) {
-                // Returning -2 means that there are no datablocks associated with this file in the system.
-                return -2;
-            }
-            console.log(data);
-            console.log(data.length);
+            console.log("First data TSB");
+            console.log(dataTSB);
+            // console.log(data);
+            // console.log(data.length);
             // There is open blocks and the file exists... convert the data to hex
             var hexData = TSOS.Utils.convertStringToHex(data);
-            console.log(hexData);
-            console.log(hexData.length);
+            // console.log(hexData);
+            // console.log(hexData.length);
             // Loop through the data as many times as it takes and save the data to data block(s)
             // Write the file 60 bytes at a time
-            /* while (hexData.length > 0 ) {
+            while (hexData.length > 0) {
+                if (dataTSB === null) {
+                    // Returning -2 means that there are no open data blocks in the system
+                    return -2;
+                }
                 // Get the first block size (60) bytes to save to this data block | Times two because each byte is two characters
-                const hexDataHead = hexData.substring(0, (_Disk.blockSize * 2));
-
-                // Save the data
-
+                var hexDataHead = hexData.substring(0, (_Disk.blockSize * 2));
                 // Remove the hexDataHead that has been saved from the hexData to leave remaining data
-                // Splice the hexData string to remove the head
-                // If there is data remaining the loop will run again and save in a new TSB
-
-                // Get new TSB
-            } */
-            // So maybe a while loop to write data to file as many times as it takes
-            // Maybe have a seperate functionality for data that can fit in one block
+                hexData = hexData.slice(_Disk.blockSize * 2);
+                // Create a variable to hold the data to save... with the inuse block and the proper nextTSB data
+                var dataToSave = this._IsActiveDataByte;
+                // Variable for next TSB if needed
+                var nextTSB = null;
+                // There will be another block after this
+                if (hexData.length > 0) {
+                    nextTSB = this.findOpenDataBlock();
+                    // Add in the next value of the TSB then the hexDataHead
+                    dataToSave += nextTSB.getTSBByte() + hexDataHead;
+                }
+                // This will be the last block required for saving the file
+                else {
+                    // Add in the placeholder next value then the hexDataHead
+                    dataToSave += this._NextBlockPlaceholder + hexDataHead;
+                }
+                // Write the first 60 bytes to the disk
+                _Disk.writeToDisk(dataTSB, dataToSave);
+                if (nextTSB !== null) {
+                    // Assign a new TSB to be the dataTSB for the next iteration
+                    dataTSB = nextTSB;
+                    console.log("Next TSB");
+                    console.log(dataTSB);
+                }
+                console.log("FLAG 15: " + hexData.length);
+                console.log(TSOS.Utils.convertHexToString(hexDataHead));
+                // Need to sure I can read the file to verify that I did this correctly.
+            }
+            console.log("The while loop is not infinite yay");
             // Return 1 if file was written to succesfully
             return 1;
         };
@@ -196,7 +218,7 @@ var TSOS;
             }
             else {
                 // Uh if the in use is not 0 or 1 we got a problem
-                throw Error;
+                throw Error("Invalid byte for inUse: " + inUseByte);
             }
         };
         // Issue #47 | Returns the data from a TSB

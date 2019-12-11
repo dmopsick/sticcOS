@@ -1062,7 +1062,6 @@ module TSOS {
                                      _StdOut.putText("Error: No file exists with the name " + filename + " in SticcOS.");
                                     break;
                                 case -2:
-                                    // I do not think this case should be reached but it is here just in case
                                     _StdOut.putText("Error: There are no open data blocks for this file in SticcOS.");
                                     break;
                                 case 1:
