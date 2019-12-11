@@ -533,7 +533,7 @@ var TSOS;
                     }
                     // If there is a free memblock continue the loading
                     if (freeMemoryBlock != -1) {
-                        var newPCB = new TSOS.ProcessControlBlock(_NextPID, memStart, memRange, priority);
+                        var newPCB = new TSOS.ProcessControlBlock(_NextPID, memStart, memRange, priority, "MEMORY");
                         // Add new PCB to global instance array
                         _PCBInstances.push(newPCB);
                         // Get the mem segment of the PCB being loaded

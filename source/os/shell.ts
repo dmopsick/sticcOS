@@ -663,7 +663,8 @@ module TSOS {
                             _NextPID,
                             memStart,
                             memRange,
-                            priority
+                            priority,
+                            "MEMORY"
                         )
 
                         // Add new PCB to global instance array

@@ -150,6 +150,7 @@ module TSOS {
                 "<td id='processDisplayX-" + pcb.pid + "'> </td>" +
                 "<td id='processDisplayY-" + pcb.pid + "'> </td>" +
                 "<td id='processDisplayZ-" + pcb.pid + "'> </td>" +
+                "<td id ='processDisplayStorageLocation-" + pcb.pid + "'> </td>" +
                 "</tr>";
         }
 
@@ -165,6 +166,7 @@ module TSOS {
                 (<HTMLElement>document.getElementById("processDisplayX-" + pcb.pid)).innerHTML = "" + TSOS.Utils.displayHex(pcb.Xreg);
                 (<HTMLElement>document.getElementById("processDisplayY-" + pcb.pid)).innerHTML = "" + TSOS.Utils.displayHex(pcb.Yreg);
                 (<HTMLElement>document.getElementById("processDisplayZ-" + pcb.pid)).innerHTML = "" + TSOS.Utils.displayHex(pcb.ZFlag);
+                (<HTMLElement>document.getElementById("processDisplayStorageLocation-" + pcb.pid)).innerHTML = pcb.storageLocation;
             });
         }
 
@@ -175,7 +177,6 @@ module TSOS {
             // Will be dependent on the above rework...
 
         }
-
 
         // Issue #27 #19 Update the HTML Memory display with the most recent memory info
         public static updateMemoryDisplay(): void {
