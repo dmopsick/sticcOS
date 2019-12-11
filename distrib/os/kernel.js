@@ -31,12 +31,21 @@ var TSOS;
             _krnKeyboardDriver = new TSOS.DeviceDriverKeyboard(); // Construct it.
             _krnKeyboardDriver.driverEntry(); // Call the driverEntry() initialization routine.
             this.krnTrace(_krnKeyboardDriver.status);
+            // Load the file system devivce driver 
+            this.krnTrace("Loading the file system device driver.");
+            _krnFileSystemDriver = new TSOS.DeviceDriverFileSystem();
+            _krnFileSystemDriver.driverEntry();
+            this.krnTrace(_krnFileSystemDriver.status);
             // Issue #45 Initialize global memory variables based on the size of the passed in memory
             _MemoryBlockSize = _Memory.memoryBlockSize;
             _MemoryBlockCount = _Memory.memoryBlockCount;
             // Issue #25 Initialize Memory Manager
             _MemoryManager = new TSOS.MemoryManager();
             _MemoryManager.init();
+            // Issue #46 initialize Disk object 
+            _Disk = new TSOS.Disk();
+            // Issue #49 | Initialize the HTML Disk display
+            TSOS.Control.initDiskDisplay();
             // Issue #42 | Initialize scheduler and dispatcher
             _Scheduler = new TSOS.Scheduler();
             _Dispatcher = new TSOS.Dispatcher();
@@ -90,6 +99,7 @@ var TSOS;
             TSOS.Control.updateMemoryDisplay();
             TSOS.Control.updateCPUDisplay();
             TSOS.Control.updatePCBDisplay();
+            // Issue #49 update disk display here?
         };
         //
         // Interrupt Handling

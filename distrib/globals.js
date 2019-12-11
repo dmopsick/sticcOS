@@ -10,8 +10,8 @@
 //
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
-var APP_NAME = "SticcOS"; // My nickname is Sticc
-var APP_VERSION = "0.22";
+var APP_NAME = "SticcOS"; // My nickname is Sticc :)
+var APP_VERSION = "0.69";
 var CPU_CLOCK_INTERVAL = 100; // This is in ms (milliseconds) so 1000 = 1 second.
 var TIMER_IRQ = 0; // Pages 23 (timer), 9 (interrupts), and 561 (interrupt priority).
 // NOTE: The timer is different from hardware/host clock pulses. Don't confuse these.
@@ -53,6 +53,7 @@ var _OsShell;
 var _SarcasticMode = false;
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver = null;
+var _krnFileSystemDriver = null;
 var _hardwareClockID = null;
 // For testing (and enrichment)...
 var Glados = null; // This is the function Glados() in glados-ip*.js http://alanclasses.github.io/TSOS/test/ .
@@ -63,6 +64,8 @@ var _MemoryBlockCount; // Issue #24 | Keeps track of the amount of memory blocks
 var _Memory;
 var _MemoryAccessor;
 var _MemoryManager = null;
+// Disk
+var _Disk;
 // Process Control Block
 var _PCBInstances = new Array();
 var _CurrentPID; // Issue #21 keeps track of the current PID that is being executed

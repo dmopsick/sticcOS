@@ -11,8 +11,8 @@
 //
 // Global CONSTANTS (TypeScript 1.5 introduced const. Very cool.)
 //
-const APP_NAME: string    = "SticcOS";   // My nickname is Sticc
-const APP_VERSION: string = "0.22";   
+const APP_NAME: string    = "SticcOS";   // My nickname is Sticc :)
+const APP_VERSION: string = "0.69";   
 
 const CPU_CLOCK_INTERVAL: number = 100;   // This is in ms (milliseconds) so 1000 = 1 second.
 
@@ -71,6 +71,7 @@ var _SarcasticMode: boolean = false;
 
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver: TSOS.DeviceDriverKeyboard  = null;
+var _krnFileSystemDriver: TSOS.DeviceDriverFileSystem = null;
 
 var _hardwareClockID: number = null;
 
@@ -84,6 +85,9 @@ var _MemoryBlockCount: number; // Issue #24 | Keeps track of the amount of memor
 var _Memory: TSOS.Memory;
 var _MemoryAccessor: TSOS.MemoryAccessor;
 var _MemoryManager: TSOS.MemoryManager = null;
+
+// Disk
+var _Disk: TSOS.Disk;
 
 // Process Control Block
 var _PCBInstances = new Array<TSOS.ProcessControlBlock>();

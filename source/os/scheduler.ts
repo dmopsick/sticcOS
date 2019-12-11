@@ -27,11 +27,12 @@ module TSOS {
                     this.roundRobinScheduling(this.fcfsQuantum);
                     break;
                 case 2:
+                    // This is commented so that the ready queue is not sorted by priority on every clock tick
                     // this.priorityScheduling();
                     break;
                 default:
                     // This should not be reached
-                    console.log("ERROR: Scheduling arlgorithm N/A")
+                    console.log("ERROR: Scheduling arlgorithm N/A");
                     break;
             }
 
@@ -75,8 +76,6 @@ module TSOS {
             this.readyQueue.q = this.readyQueue.q.sort(function(a, b) {
                 return a.priority - b.priority;
             });
-
-            console.log(this.readyQueue.q);
         }
     }
 }

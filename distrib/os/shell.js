@@ -91,6 +91,15 @@ var TSOS;
             // set schedule [rr, fcfs, priority]
             sc = new TSOS.ShellCommand(this.shellSetSchedule, "setschedule", "[rr, fcfs, priority] - sets which scheduling algorithm to use");
             this.commandList[this.commandList.length] = sc;
+            // format
+            sc = new TSOS.ShellCommand(this.shellFormat, "format", "- Formats the disk. Erases all saved data on disk and reinitializes it to all 00s.");
+            this.commandList[this.commandList.length] = sc;
+            // create <filename>
+            sc = new TSOS.ShellCommand(this.shellCreateFile, "create", "<filename> - Creates a file with the given name.");
+            this.commandList[this.commandList.length] = sc;
+            // write <filename> "<data>"
+            sc = new TSOS.ShellCommand(this.shellWriteFile, "write", '<filename> "<data>" - Writes the specified data to the specified file.');
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -315,6 +324,15 @@ var TSOS;
                     case "setschedule":
                         _StdOut.putText("Setschedule [rr, fcfs, priority] allows user to set the cpu scheduling algorithm.");
                         break;
+                    case "format":
+                        _StdOut.putText("Format clears and intializes the disk.");
+                        break;
+                    case "create":
+                        _StdOut.putText("Create <filename> create a new file in the SticcOS file system.");
+                        break;
+                    case "write":
+                        _StdOut.putText('Write <filename> "<data>" writes the specified data to the file with the provided name. The write is a destructive write not an append.');
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                         break;
@@ -501,7 +519,7 @@ var TSOS;
                         // Add new PCB to global instance array
                         _PCBInstances.push(newPCB);
                         // Get the mem segment of the PCB being loaded
-                        var memSegment = newPCB.memSegment;
+                        // const memSegment = newPCB.memSegment;
                         // Write the program into memory
                         _MemoryManager.loadProgramToMemory(newPCB, splitProgramInput);
                         // Issue #35 Add the Loaded PCB as a new row in the table
@@ -511,7 +529,6 @@ var TSOS;
                         _StdOut.advanceLine();
                         _StdOut.putText("Process ID: " + _NextPID);
                         // Last but not least Increment the current PID
-                        // _CurrentPID = _NextPID; // Maybe remove this line ... current PID will prob be set by scheduler
                         _NextPID++;
                     }
                     // There is no free memory block 
@@ -779,6 +796,115 @@ var TSOS;
             else {
                 // Let user know they need to pass an argument
                 _StdOut.putText("Error: No argument provided. Valid arguments: 'rr', 'fcfs', & 'priority'");
+            }
+        };
+        // Issue #47 | Format the disk... Clear and reinitialize the disk
+        Shell.prototype.shellFormat = function (args) {
+            // Do we need to check here that nothing is running? What about formatting while process ran from disk
+            // Format the disk
+            _Disk.init();
+            // What about programs that are loaded on disk? Do we need to change PCB
+            // Let the user know that the disk was formatted
+            _StdOut.putText("The disk has been formatted.");
+        };
+        // Issue #47 | Create a file
+        // Creates a directory file block for a file with the provided name
+        Shell.prototype.shellCreateFile = function (args) {
+            // cannot create a file if the disk is not formatted
+            if (_Disk.isFormatted) {
+                // Check to see argument has been passed
+                if (args.length > 0) {
+                    var filename = args[0];
+                    // Ensure filename is not too long. Must be Less than 60 characters
+                    if (filename.length <= 60) {
+                        var createResponse = _krnFileSystemDriver.createFile(filename);
+                        // Based on the number returned from the create File function, return the appropriate message
+                        // R E S P O N S I V E
+                        switch (createResponse) {
+                            case -1:
+                                _StdOut.putText("Error: The file you are attempting to create already exists");
+                                break;
+                            case -2:
+                                _StdOut.putText("Error: There are no directory blocks currently open in SticcOS.");
+                                break;
+                            case -3:
+                                _StdOut.putText("Error: There are no data blocks currently open in SticcOS.");
+                                break;
+                            case 1:
+                                _StdOut.putText("Successfully created a file with the name: " + filename);
+                                break;
+                            default:
+                                _StdOut.putText("Error: Unexpected response number");
+                                break;
+                        }
+                    }
+                    else {
+                        // Let the user know to shorten their filename
+                        _StdOut.putText("Error: Filename too long. Must be 60 characters or less.");
+                    }
+                }
+                else {
+                    // Let user know they must pass an argument for file name
+                    _StdOut.putText("Error: No argument provided. Enter a name for the file.");
+                }
+            }
+            else {
+                // Let the user know they must first format the disk
+                _StdOut.putText("Error: The disk must be formatted before files can be created.");
+            }
+        };
+        // Issue #47 | Writes the data of the specified file
+        Shell.prototype.shellWriteFile = function (args) {
+            // Ensure that the disk is formatted before attempting any file operations
+            if (_Disk.isFormatted) {
+                if (args.length >= 2) {
+                    // The filename will be the first argument
+                    var filename = args[0];
+                    if (filename.length <= 60) {
+                        // Create a string of all the arguments following the filename
+                        var data = args.slice(1).join(" ");
+                        // Get the first and last character of the data to ensure that the data begins and ends with quotes
+                        var firstChar = data[0];
+                        var lastChar = data[data.length - 1];
+                        // If the first and last char are both double or single quotes, proceed
+                        if ((firstChar === lastChar) && ((firstChar === "'") || (firstChar === '"'))) {
+                            // Strip the data of its single or double quotes to send to the file system driver
+                            var strippedData = data.substring(1, data.length - 1);
+                            // Call the file system driver to write the file and return appropriate response to the user
+                            var writeResponse = _krnFileSystemDriver.writeFile(filename, strippedData);
+                            switch (writeResponse) {
+                                case -1:
+                                    _StdOut.putText("Error: No file exists with the name " + filename + " in SticcOS.");
+                                    break;
+                                case -2:
+                                    _StdOut.putText("Error: There are no open data blocks for this file in SticcOS.");
+                                    break;
+                                case 1:
+                                    _StdOut.putText("Successfully wrote to the file: " + filename);
+                                    break;
+                                default:
+                                    _StdOut.putText("Error: Unexpected write response");
+                                    break;
+                            }
+                        }
+                        else {
+                            // Let the user know how to correctly format their data
+                            _StdOut.putText("Error: Invalid argument for data. Data must be contained within single or double quotes with no preceding or following characters.");
+                        }
+                    }
+                    else {
+                        // Inform user they entered an invalid filename
+                        _StdOut.putText("Error: Invalid argument for filename. Filenames are 60 characters or less.");
+                    }
+                }
+                else {
+                    // If there are not enough arguments for filename and data, infrom the user of the correct usage
+                    _StdOut.putText('Error: Invalid argument structure. Usage: write <filename> "data"');
+                }
+            }
+            else {
+                // Let user know they must format the disk before doing file operations
+                _StdOut.putText("Error: This disk must be formatted before files can be created or written to.");
             }
         };
         return Shell;

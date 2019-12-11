@@ -54,6 +54,7 @@ h3 {
 #cpuInfoDiv,
 #processInfoDiv,
 #memoryInfoDiv,
+#diskInfoDiv
   {
   flex-basis: 100%;
 }
@@ -85,8 +86,9 @@ tr, th, td {
   font-size: 10px !important;
 }
 
-#memoryInfoDiv {
+#memoryInfoDiv, #diskInfoDiv {
   height: 200px;
+  max-width: 500px;
   overflow: scroll;
 }
 

@@ -19,6 +19,8 @@
         <script type="text/javascript" src="distrib/host/cpu.js"></script>
         <script type="text/javascript" src="distrib/host/memory.js"></script>
         <script type="text/javascript" src="distrib/host/memoryAccessor.js"></script>
+        <script type="text/javascript" src="distrib/host/disk.js"></script>
+        <script type="text/javascript" src="distrib/host/tsb.js"></script>
 
         <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
         <script type="text/javascript" src="distrib/os/interrupt.js"></script>
@@ -26,6 +28,7 @@
         <script type="text/javascript" src="distrib/os/console.js"></script>
         <script type="text/javascript" src="distrib/os/deviceDriver.js"></script>
         <script type="text/javascript" src="distrib/os/deviceDriverKeyboard.js"></script>
+        <script type="text/javascript" src="distrib/os/deviceDriverFileSystem.js"></script>
         <script type="text/javascript" src="distrib/os/queue.js"></script>
         <script type="text/javascript" src="distrib/os/shell.js"></script>
         <script type="text/javascript" src="distrib/os/shellCommand.js"></script>
@@ -43,7 +46,8 @@
         <!-- <script type="text/javascript" src="test/glados-ip3.js"></script> -->
 
         <!-- Importing Bootstrap to use to improve the visuals of the components -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+                integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
                 crossorigin="anonymous">
 
 </head>
@@ -53,12 +57,14 @@
         <div id="divMain" style="width:100%;">
 
                 <div id="divButtonBar" style="margin:4px;">
-                        <input type="button" id="btnStartOS" name="brnStartOS" class="normal_button" value="Start" tabindex="0" onclick="TSOS.Control.hostBtnStartOS_click(this);">
+                        <input type="button" id="btnStartOS" name="brnStartOS" class="normal_button" value="Start"
+                                tabindex="0" onclick="TSOS.Control.hostBtnStartOS_click(this);">
 
-                        <input type="button" id="btnHaltOS" name="brnHaltOS" class="normal_button" disabled="disabled" value="Halt" tabindex="1"
-                                onclick="TSOS.Control.hostBtnHaltOS_click(this);">
+                        <input type="button" id="btnHaltOS" name="brnHaltOS" class="normal_button" disabled="disabled"
+                                value="Halt" tabindex="1" onclick="TSOS.Control.hostBtnHaltOS_click(this);">
 
-                        <input type="button" id="btnReset" name="brnReset" class="normal_button" disabled="disabled" value="Reset" tabindex="2" onclick="TSOS.Control.hostBtnReset_click(this);">
+                        <input type="button" id="btnReset" name="brnReset" class="normal_button" disabled="disabled"
+                                value="Reset" tabindex="2" onclick="TSOS.Control.hostBtnReset_click(this);">
                 </div>
 
                 <div class="flex-box" id="hostStatusDiv">
@@ -82,14 +88,16 @@
                                         <label>
                                                 Host Log
                                                 <br>
-                                                <textarea class="form-control" name="taHostLog" id="taHostLog" rows="26" cols="48" readonly></textarea>
+                                                <textarea class="form-control" name="taHostLog" id="taHostLog" rows="26"
+                                                        cols="48" readonly></textarea>
                                         </label>
                                 </div>
                                 <div id="divUserProgramInput">
                                         <label>
                                                 User Program Input
                                                 <br>
-                                                <textarea class="form-control" name="taProgramInput" id="taProgramInput" rows="8" cols="48" placeholder="Input program code here..."
+                                                <textarea class="form-control" name="taProgramInput" id="taProgramInput"
+                                                        rows="8" cols="48" placeholder="Input program code here..."
                                                         disabled></textarea>
                                         </label>
                                 </div>
@@ -139,6 +147,30 @@
 
                                         </div>
 
+                                        <!-- Issue #49 Display the contents of the disk -->
+                                        <div class="overflow-wrapper">
+                                                <label for="diskInfoDiv">
+                                                        Disk Display
+                                                </label>
+                                                <div id="diskInfoDiv">
+                                                        <table class="table table-dark" id="diskInfoTable">
+                                                                <thead>
+                                                                        <tr>
+                                                                                <th>TSB</th>
+                                                                                <th>In Use</th>
+                                                                                <th>Next</th>
+                                                                                <th>Data</th>
+                                                                        </tr>
+                                                                </thead>
+                                                                <tbody id="diskInfoTableBody">
+                                                                        <tr>
+                                                                                <td colspan="4">Disk not loaded</td>
+                                                                        </tr>
+                                                                </tbody>
+                                                        </table>
+                                                </div>
+                                        </div>
+
                                         <!-- Issue #19 Display the processes -->
                                         <div class="overflow-wrapper">
                                                 <label for="processInfoDiv">
@@ -180,8 +212,8 @@
         </div>
 
         <p class="footerText" style="clear:both;">
-                <br> Copyright &copy; 2019 One Right Reserved.
-                <br> Reproduction is encouraged so long as you say please and thank you.
+                <br> Copyright &copy; 2019 Two Rights Reserved.
+                <br> Reproduce this operating system by any means necessary.
         </p>
 
 </body>
