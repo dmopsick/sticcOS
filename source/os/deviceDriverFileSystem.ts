@@ -81,7 +81,7 @@ module TSOS {
             }
 
             // To make it a destructive write, delete the current data associated with this file | True to signifiy overwrite
-            this.deleteAssociatedDataBlocksByDirectoryTSB(directoryTSB, true);
+            this.deleteDataBlocksByDirectoryTSB(directoryTSB, true);
 
             // Read the data in the directory to find the value of the first TSB for data block
             let dataTSB = this.getNextTSBByTSB(directoryTSB); // Need to get the next TSB from the directory data and use it as location of first data block to save
@@ -176,6 +176,27 @@ module TSOS {
 
             // Need to handle what I want to return for an empty file
             return fileContents;
+        }
+
+        // Issue #47 | Deletes a file 
+        // Delete the Directory TSB and the associated data TSBs
+        public deleteFile(filename: string): number {
+            // Get the directory TSB of the file we want to delete
+            const directoryTSB = this.getDirectoryBlockTSBByFilename(filename);
+
+            if (directoryTSB === null) {
+                // The file the user wants to delete does not exist
+                return -1;
+            }
+
+            // Delete the associated data blocks
+            this.deleteDataBlocksByDirectoryTSB(directoryTSB, false);
+
+            // Delete the directory entry
+            this.deleteSingleTSB(directoryTSB);
+
+            // Returning 1 means deletion went as planned
+            return 1;
         }
 
         // Issue #47 | Retrieve a directory file by filename
@@ -326,7 +347,7 @@ module TSOS {
         // Will be used for overwriting files and deleting files
         // Deleting in this conext means to make the block inactive and zero filled
         // If overwrite is true then it keeps the first data block as being active
-        public deleteAssociatedDataBlocksByDirectoryTSB(directoryTSB: TSB, overwrite: boolean = false): void {
+        public deleteDataBlocksByDirectoryTSB(directoryTSB: TSB, overwrite: boolean = false): void {
             // Keep track of the first data block TSB to keep it active
             const firstDataTSB = this.getNextTSBByTSB(directoryTSB);
 
@@ -354,6 +375,13 @@ module TSOS {
                 // Set the nextTSB as the next TSB to work with
                 dataTSB = nextTSB;
             }
+        }
+
+        // Issue #47 | Delete a Directory TSB
+        public deleteSingleTSB(tsb: TSB): void {
+            const resetData = this._NotInUseDataByte + this._NextBlockPlaceholder;
+
+            _Disk.writeToDisk(tsb, resetData);
         }
     }
 }

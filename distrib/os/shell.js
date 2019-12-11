@@ -103,6 +103,9 @@ var TSOS;
             // read <filename>
             sc = new TSOS.ShellCommand(this.shellReadFile, "read", "<filename> - Reads the contents of the specified file.");
             this.commandList[this.commandList.length] = sc;
+            // delete <filename>
+            sc = new TSOS.ShellCommand(this.shellDeleteFile, "delete", "<filename> - Deletes a file saved to the disk in SticcOS.");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -338,6 +341,9 @@ var TSOS;
                         break;
                     case "read":
                         _StdOut.putText("Read <filename> returns the contents of the specified file to the user.");
+                        break;
+                    case "delete":
+                        _StdOut.putText("Delete <filename> deletes a file saved to the disk in SticcOS.");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -918,11 +924,12 @@ var TSOS;
         Shell.prototype.shellReadFile = function (args) {
             if (_Disk.isFormatted) {
                 if (args.length > 0) {
-                    // Get file name from the arguments
+                    // Get filename from the arguments
                     var filename = args[0];
                     // Pass it on to the file system driver
                     var readResponse = _krnFileSystemDriver.readFile(filename);
                     // Print the results to the user
+                    // No switch here because reading the file requires the returning of the string of file contents
                     _StdOut.putText(readResponse);
                 }
                 else {
@@ -931,6 +938,35 @@ var TSOS;
             }
             else {
                 _StdOut.putText("Error: The disk must be formatted before files can be read");
+            }
+        };
+        // Issue #47 | Delete a file
+        Shell.prototype.shellDeleteFile = function (args) {
+            if (_Disk.isFormatted) {
+                if (args.length > 0) {
+                    // Get filename from the arguments
+                    var filename = args[0];
+                    // Pass the file name to the file system driver
+                    var deleteResponse = _krnFileSystemDriver.deleteFile(filename);
+                    // Display response to the user based on the response from the deleteFile function
+                    switch (deleteResponse) {
+                        case -1:
+                            _StdOut.putText("Error: File: '" + filename + "' not found.");
+                            break;
+                        case 1:
+                            _StdOut.putText("File: '" + filename + "' successfully deleted.");
+                            break;
+                        default:
+                            _StdOut.putText("Error: Unexpected delete response");
+                            break;
+                    }
+                }
+                else {
+                    _StdOut.putText("Error: No filename provided.");
+                }
+            }
+            else {
+                _StdOut.putText("Error: The disk must be formatted before files can be deleted.");
             }
         };
         return Shell;

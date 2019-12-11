@@ -79,7 +79,7 @@ var TSOS;
                 return -1;
             }
             // To make it a destructive write, delete the current data associated with this file | True to signifiy overwrite
-            this.deleteAssociatedDataBlocksByDirectoryTSB(directoryTSB, true);
+            this.deleteDataBlocksByDirectoryTSB(directoryTSB, true);
             // Read the data in the directory to find the value of the first TSB for data block
             var dataTSB = this.getNextTSBByTSB(directoryTSB); // Need to get the next TSB from the directory data and use it as location of first data block to save
             // There is open blocks and the file exists... convert the data to hex
@@ -151,6 +151,22 @@ var TSOS;
             }
             // Need to handle what I want to return for an empty file
             return fileContents;
+        };
+        // Issue #47 | Deletes a file 
+        // Delete the Directory TSB and the associated data TSBs
+        DeviceDriverFileSystem.prototype.deleteFile = function (filename) {
+            // Get the directory TSB of the file we want to delete
+            var directoryTSB = this.getDirectoryBlockTSBByFilename(filename);
+            if (directoryTSB === null) {
+                // The file the user wants to delete does not exist
+                return -1;
+            }
+            // Delete the associated data blocks
+            this.deleteDataBlocksByDirectoryTSB(directoryTSB, false);
+            // Delete the directory entry
+            this.deleteSingleTSB(directoryTSB);
+            // Returning 1 means deletion went as planned
+            return 1;
         };
         // Issue #47 | Retrieve a directory file by filename
         DeviceDriverFileSystem.prototype.getDirectoryBlockTSBByFilename = function (filename) {
@@ -276,7 +292,7 @@ var TSOS;
         // Will be used for overwriting files and deleting files
         // Deleting in this conext means to make the block inactive and zero filled
         // If overwrite is true then it keeps the first data block as being active
-        DeviceDriverFileSystem.prototype.deleteAssociatedDataBlocksByDirectoryTSB = function (directoryTSB, overwrite) {
+        DeviceDriverFileSystem.prototype.deleteDataBlocksByDirectoryTSB = function (directoryTSB, overwrite) {
             if (overwrite === void 0) { overwrite = false; }
             // Keep track of the first data block TSB to keep it active
             var firstDataTSB = this.getNextTSBByTSB(directoryTSB);
@@ -299,6 +315,11 @@ var TSOS;
                 // Set the nextTSB as the next TSB to work with
                 dataTSB = nextTSB;
             }
+        };
+        // Issue #47 | Delete a Directory TSB
+        DeviceDriverFileSystem.prototype.deleteSingleTSB = function (tsb) {
+            var resetData = this._NotInUseDataByte + this._NextBlockPlaceholder;
+            _Disk.writeToDisk(tsb, resetData);
         };
         return DeviceDriverFileSystem;
     }(TSOS.DeviceDriver));
