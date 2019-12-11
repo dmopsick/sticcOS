@@ -83,22 +83,12 @@ module TSOS {
 
 
             // Read the data in the directory to find the value of the first TSB for data block
-            const directoryData = ""; // Need to get the next TSB from the directory data and use it as location of first data block to save
-
-
-
-            console.log("DIRECTORY TSB");
-            console.log(directoryTSB);
-            console.log("DIRECTORY DATA");
-            console.log(directoryData);
-
-
-            /* let dataTSB = this.findOpenDataBlock();
+            const dataTSB = this.getNextTSBByTSB(directoryTSB); // Need to get the next TSB from the directory data and use it as location of first data block to save
 
             if (dataTSB === null) {
-                // Returning -2 means that there are no datablocks open in the system
+                // Returning -2 means that there are no datablocks associated with this file in the system.
                 return -2;
-            } */
+            }
 
             console.log(data);
             console.log(data.length);
@@ -253,6 +243,23 @@ module TSOS {
             const convertedData = Utils.convertHexToString(trimmedHexData);
 
             return convertedData;
+        }
+
+        // Issue #47 | Returns the next TSB pointed to by a TSB
+        // Used to get the next TSB from a directory block to find the first data block
+        // Or when there are multiple data blocks to move from block to block
+        private getNextTSBByTSB(tsb: TSB): TSB {
+            const rawHexData = _Disk.readFromDisk(tsb);
+
+            // Extract the track, sector, and block byte to be used to create a TSB
+            // Track is element 3, Section 5, Block 7 ... because it goes in use then TSB... ex: 01 01 00 01
+            const track =  parseInt(rawHexData[3], 16)
+            const section = parseInt(rawHexData[5], 16);
+            const block = parseInt(rawHexData[7], 16);
+
+            const nextTSB = new TSB(track, section, block);
+
+            return nextTSB;
         }
     }
 }

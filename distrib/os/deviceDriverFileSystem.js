@@ -79,17 +79,11 @@ var TSOS;
             }
             // Since it is a destructive write I believe will have to overwrite some data, or make old data blocks not in use
             // Read the data in the directory to find the value of the first TSB for data block
-            var directoryData = this.getDataStringByTSB(directoryTSB);
-            console.log("DIRECTORY TSB");
-            console.log(directoryTSB);
-            console.log("DIRECTORY DATA");
-            console.log(directoryData);
-            /* let dataTSB = this.findOpenDataBlock();
-
+            var dataTSB = this.getNextTSBByTSB(directoryTSB); // Need to get the next TSB from the directory data and use it as location of first data block to save
             if (dataTSB === null) {
-                // Returning -2 means that there are no datablocks open in the system
+                // Returning -2 means that there are no datablocks associated with this file in the system.
                 return -2;
-            } */
+            }
             console.log(data);
             console.log(data.length);
             // There is open blocks and the file exists... convert the data to hex
@@ -215,6 +209,19 @@ var TSOS;
             // Conver the hex data to a normal string
             var convertedData = TSOS.Utils.convertHexToString(trimmedHexData);
             return convertedData;
+        };
+        // Issue #47 | Returns the next TSB pointed to by a TSB
+        // Used to get the next TSB from a directory block to find the first data block
+        // Or when there are multiple data blocks to move from block to block
+        DeviceDriverFileSystem.prototype.getNextTSBByTSB = function (tsb) {
+            var rawHexData = _Disk.readFromDisk(tsb);
+            // Extract the track, sector, and block byte to be used to create a TSB
+            // Track is element 3, Section 5, Block 7 ... because it goes in use then TSB... ex: 01 01 00 01
+            var track = parseInt(rawHexData[3], 16);
+            var section = parseInt(rawHexData[5], 16);
+            var block = parseInt(rawHexData[7], 16);
+            var nextTSB = new TSOS.TSB(track, section, block);
+            return nextTSB;
         };
         return DeviceDriverFileSystem;
     }(TSOS.DeviceDriver));
