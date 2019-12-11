@@ -106,6 +106,9 @@ var TSOS;
             // delete <filename>
             sc = new TSOS.ShellCommand(this.shellDeleteFile, "delete", "<filename> - Deletes a file saved to the disk in SticcOS.");
             this.commandList[this.commandList.length] = sc;
+            // ls
+            sc = new TSOS.ShellCommand(this.shellLS, "ls", "- lists the files currently saved in SticcOS.");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         };
@@ -344,6 +347,9 @@ var TSOS;
                         break;
                     case "delete":
                         _StdOut.putText("Delete <filename> deletes a file saved to the disk in SticcOS.");
+                        break;
+                    case "ls":
+                        _StdOut.putText("ls returns a list of the files saved in SticcOS.");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -967,6 +973,26 @@ var TSOS;
             }
             else {
                 _StdOut.putText("Error: The disk must be formatted before files can be deleted.");
+            }
+        };
+        // Issue #47 | Return a list of files saved on the disk
+        Shell.prototype.shellLS = function (args) {
+            if (_Disk.isFormatted) {
+                // Get the file list response from the file system driver
+                var fileList = _krnFileSystemDriver.listActiveFiles();
+                if (fileList.length == 0) {
+                    _StdOut.putText("No files are saved to SticcOS");
+                }
+                else {
+                    _StdOut.putText("Files:");
+                    _StdOut.advanceLine();
+                    fileList.forEach(function (file) {
+                        _StdOut.putText(" " + file);
+                    });
+                }
+            }
+            else {
+                _StdOut.putText("Error: Disk operations unavailable until disk is formatted.");
             }
         };
         return Shell;

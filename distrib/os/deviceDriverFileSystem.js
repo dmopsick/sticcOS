@@ -168,6 +168,30 @@ var TSOS;
             // Returning 1 means deletion went as planned
             return 1;
         };
+        // Issue #47 | Display a list of in use files
+        DeviceDriverFileSystem.prototype.listActiveFiles = function () {
+            // Create variable to hold list of the file names
+            var fileList = [];
+            // Loop through the directory blocks and add the name of all active files to the list
+            for (var j = 0; j < _Disk.sections; j++) {
+                for (var k = 1; k < _Disk.blocks; k++) {
+                    // Get TSB of each directory Block
+                    var tsb = new TSOS.TSB(this._DirectoryTrack, j, k);
+                    // Get the data stored stored in specified directory TSB
+                    var data = _Disk.readFromDisk(tsb);
+                    // Check if the block is in use
+                    if (this.blockIsInUse(data)) {
+                        // Strip out the in use and next TSB bytes
+                        var hexFilenameData = data.substring(8);
+                        // Convert filename from hex to ENGLISH
+                        var convertedFilename = TSOS.Utils.convertHexToString(hexFilenameData);
+                        fileList.push(convertedFilename);
+                    }
+                }
+            }
+            return fileList;
+        };
+        /*  Util Functions */
         // Issue #47 | Retrieve a directory file by filename
         DeviceDriverFileSystem.prototype.getDirectoryBlockTSBByFilename = function (filename) {
             // Loop through the sectors and blocks of the first track to find directory file with given file name
@@ -175,14 +199,13 @@ var TSOS;
                 for (var k = 0; k < _Disk.blocks; k++) {
                     // Create TSB object of the current TSB to check
                     var tsb = new TSOS.TSB(this._DirectoryTrack, j, k);
-                    // Get the data stored in the specified Directory TSB
+                    // Get the data stored in the specified directory TSB
                     var data = _Disk.readFromDisk(tsb);
                     // The block is in use | It's in use block will be zero if it is indeed in use
                     if (this.blockIsInUse(data)) {
-                        // Need to compare the data to the file name
-                        // Either convert the filename to ascii... or the ascii to a string
+                        // Strip out the in use and next TSB bytes
                         var filenameData = data.substring(8);
-                        // Created util function to convert the ascii data to a string... maybe it works we will see
+                        // Convert filename from hex to ENGLISH
                         var dataFilename = TSOS.Utils.convertHexToString(filenameData);
                         /* console.log('FILENAME vs DATAFILENAME');
                         console.log("_" + filename + "_");
