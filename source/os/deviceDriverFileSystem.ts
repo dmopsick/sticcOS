@@ -200,7 +200,7 @@ module TSOS {
         }
 
         // Issue #47 | Display a list of in use files
-        public listActiveFiles(): string[] {
+        public listActiveFiles(includeSecret: boolean = false): string[] {
             // Create variable to hold list of the file names
             const fileList = [];
 
@@ -221,7 +221,15 @@ module TSOS {
                         // Convert filename from hex to ENGLISH
                         const convertedFilename = Utils.convertHexToString(hexFilenameData);
 
-                        fileList.push(convertedFilename);
+                        // If including the secret files, let it rip
+                        if (includeSecret) {
+                            fileList.push(convertedFilename);
+                        }
+                        else {
+                            if (convertedFilename[0] != '.') {
+                                fileList.push(convertedFilename);
+                            }
+                        }
                     }
                 }
             }

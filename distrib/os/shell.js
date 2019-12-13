@@ -978,8 +978,23 @@ var TSOS;
         // Issue #47 | Return a list of files saved on the disk
         Shell.prototype.shellLS = function (args) {
             if (_Disk.isFormatted) {
-                // Get the file list response from the file system driver
-                var fileList = _krnFileSystemDriver.listActiveFiles();
+                // Declare variable to hold the file list
+                var fileList = void 0;
+                // Check if an argument has been passed
+                if (args.length > 0) {
+                    // Check if optional -l has been passed to include secret files
+                    if (args[0] == "-l") {
+                        fileList = _krnFileSystemDriver.listActiveFiles(true);
+                    }
+                    else {
+                        // Get the file list response from the file system driver
+                        fileList = _krnFileSystemDriver.listActiveFiles(false);
+                    }
+                }
+                else {
+                    // Get the file list response from the file system driver
+                    fileList = _krnFileSystemDriver.listActiveFiles(false);
+                }
                 if (fileList.length == 0) {
                     _StdOut.putText("No files are saved to SticcOS");
                 }

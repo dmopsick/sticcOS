@@ -169,7 +169,8 @@ var TSOS;
             return 1;
         };
         // Issue #47 | Display a list of in use files
-        DeviceDriverFileSystem.prototype.listActiveFiles = function () {
+        DeviceDriverFileSystem.prototype.listActiveFiles = function (includeSecret) {
+            if (includeSecret === void 0) { includeSecret = false; }
             // Create variable to hold list of the file names
             var fileList = [];
             // Loop through the directory blocks and add the name of all active files to the list
@@ -185,7 +186,15 @@ var TSOS;
                         var hexFilenameData = data.substring(8);
                         // Convert filename from hex to ENGLISH
                         var convertedFilename = TSOS.Utils.convertHexToString(hexFilenameData);
-                        fileList.push(convertedFilename);
+                        // If including the secret files, let it rip
+                        if (includeSecret) {
+                            fileList.push(convertedFilename);
+                        }
+                        else {
+                            if (convertedFilename[0] != '.') {
+                                fileList.push(convertedFilename);
+                            }
+                        }
                     }
                 }
             }

@@ -1078,7 +1078,7 @@ module TSOS {
                         const lastChar = data[data.length - 1];
 
                         // If the first and last char are both double or single quotes, proceed
-                        if ((firstChar === lastChar) && ((firstChar === "'")|| (firstChar === '"'))) {
+                        if ((firstChar === lastChar) && ((firstChar === "'") || (firstChar === '"'))) {
                             // Strip the data of its single or double quotes to send to the file system driver
                             const strippedData = data.substring(1, data.length - 1);
 
@@ -1087,7 +1087,7 @@ module TSOS {
 
                             switch (writeResponse) {
                                 case -1:
-                                     _StdOut.putText("Error: No file exists with the name " + filename + " in SticcOS.");
+                                    _StdOut.putText("Error: No file exists with the name " + filename + " in SticcOS.");
                                     break;
                                 case -2:
                                     _StdOut.putText("Error: There are no open data blocks for this file in SticcOS.");
@@ -1095,7 +1095,7 @@ module TSOS {
                                 case 1:
                                     _StdOut.putText("Successfully wrote to the file: " + filename);
                                     break;
-                                default: 
+                                default:
                                     _StdOut.putText("Error: Unexpected write response");
                                     break;
                             }
@@ -1180,10 +1180,27 @@ module TSOS {
         // Issue #47 | Return a list of files saved on the disk
         public shellLS(args: string[]) {
             if (_Disk.isFormatted) {
-                // Get the file list response from the file system driver
-                const fileList: string[] = _krnFileSystemDriver.listActiveFiles();
+                // Declare variable to hold the file list
+                let fileList: string[];
 
-                if(fileList.length == 0) {
+                // Check if an argument has been passed
+                if (args.length > 0) {
+                    // Check if optional -l has been passed to include secret files
+                    if (args[0] == "-l") {
+                        fileList = _krnFileSystemDriver.listActiveFiles(true);
+                    }
+                    else {
+                        // Get the file list response from the file system driver
+                        fileList = _krnFileSystemDriver.listActiveFiles(false);
+                    }
+                }
+                else {
+                    // Get the file list response from the file system driver
+                    fileList = _krnFileSystemDriver.listActiveFiles(false);
+                }
+
+
+                if (fileList.length == 0) {
                     _StdOut.putText("No files are saved to SticcOS");
                 }
                 else {
